@@ -1,0 +1,17 @@
+<%
+  // Props: updates (array from updates.js)
+%>
+<ul class="update-list">
+  <% updates.forEach(function(update) { %>
+    <li class="update-list__item">
+      <span class="update-list__date"><%= formatDate(update.date) %></span>
+      <span class="update-list__text">
+        <% if (update.projectSlug) { %>
+          <a href="/projects/<%= update.projectSlug %>" class="update-list__link"><%= update.text %></a>
+        <% } else { %>
+          <%= update.text %>
+        <% } %>
+      </span>
+    </li>
+  <% }); %>
+</ul>

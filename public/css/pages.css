@@ -1,0 +1,208 @@
+/* Page-specific styles */
+
+/* ── Hero (home) ───────────────────────────────────────────── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-8);
+  padding-top: var(--space-20);
+  padding-bottom: var(--space-12);
+}
+
+.hero__overline {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-4);
+}
+
+.hero__heading {
+  margin-bottom: var(--space-5);
+  color: var(--color-text);
+}
+
+.hero__sub {
+  max-width: 48ch;
+  margin-bottom: var(--space-8);
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* The </> badge decoration */
+.hero__code-badge {
+  width: 120px;
+  height: 120px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hero__code-badge pre {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--color-accent);
+  background: none;
+  padding: 0;
+}
+
+.cb-punct { color: var(--color-text-muted); }
+.cb-tag   { color: var(--color-accent); }
+
+@media (max-width: 640px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: var(--space-12);
+  }
+  .hero__code-badge { display: none; }
+}
+
+/* ── Index page hero ───────────────────────────────────────── */
+.page-hero {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--color-border-soft);
+  margin-bottom: var(--space-10);
+}
+
+.page-hero__heading {
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-3);
+  color: var(--color-text);
+}
+
+.page-hero__desc {
+  max-width: 56ch;
+  color: var(--color-text-muted);
+}
+
+/* ── Detail page ───────────────────────────────────────────── */
+.page--detail .container {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-16);
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.detail-header__category {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.detail-header__visibility {
+  margin-left: auto;
+}
+
+.detail-title {
+  margin-bottom: var(--space-4);
+}
+
+.detail-desc {
+  font-size: 1.05rem;
+  color: var(--color-text-soft);
+  max-width: 60ch;
+  margin-bottom: var(--space-5);
+}
+
+.detail-section {
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.detail-section__heading {
+  margin-bottom: var(--space-4);
+  color: var(--color-text);
+}
+
+.detail-section__body {
+  color: var(--color-text-soft);
+  line-height: 1.7;
+}
+
+.detail-section__body--muted {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.detail-sidebar__panel {
+  margin-bottom: var(--space-4);
+}
+
+.detail-sidebar__heading {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.detail-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.detail-meta dt {
+  color: var(--color-text-muted);
+}
+
+.detail-meta dd {
+  color: var(--color-text-soft);
+}
+
+.detail-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ── Error page ────────────────────────────────────────────── */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  gap: var(--space-4);
+}
+
+.error-code {
+  font-size: 6rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-border);
+  letter-spacing: -0.04em;
+}
+
+.error-heading {
+  color: var(--color-text);
+}
+
+.error-message {
+  color: var(--color-text-muted);
+  max-width: 36ch;
+  margin-bottom: var(--space-4);
+}

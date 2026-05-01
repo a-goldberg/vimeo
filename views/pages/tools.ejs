@@ -1,0 +1,39 @@
+<div class="page page--index">
+
+  <div class="page-hero container">
+    <p class="hero__overline">Internal Utilities</p>
+    <h1 class="page-hero__heading">Tools</h1>
+    <p class="page-hero__desc">Workflow helpers, data transformers, and utilities for everyday tasks.</p>
+  </div>
+
+  <div class="container">
+
+    <!-- Search/filter placeholder -->
+    <div class="filter-bar">
+      <input
+        type="search"
+        class="filter-bar__input"
+        placeholder="Filter tools… (coming soon)"
+        disabled
+        aria-label="Filter tools"
+      />
+      <span class="filter-bar__note">Search &amp; filter coming soon</span>
+    </div>
+
+    <!-- Project cards -->
+    <% if (projects.length > 0) { %>
+      <div class="card-grid">
+        <% projects.forEach(function(project) { %>
+          <%- include('../partials/project-card', { project }) %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state">
+        <span class="empty-state__icon">⚙</span>
+        <h3 class="empty-state__heading">No tools yet</h3>
+        <p class="empty-state__desc">Add tools to <code>src/data/projects.js</code> with <code>category: "Tools"</code>.</p>
+      </div>
+    <% } %>
+
+  </div>
+</div>
