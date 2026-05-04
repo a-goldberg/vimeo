@@ -327,6 +327,25 @@
   white-space: pre-wrap;
 }
 
+.sc-card-desc--clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+}
+
+.sc-desc-expand {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  transition: opacity 0.15s;
+}
+
+.sc-desc-expand:hover { opacity: 0.75; color: var(--color-accent); }
+
 .sc-open-link {
   display: inline-flex;
   align-items: center;

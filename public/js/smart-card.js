@@ -17,6 +17,7 @@ const videoSection = document.getElementById('videoSection');
 const embedIframe = document.getElementById('embedIframe');
 const cardSubtitle = document.getElementById('cardSubtitle');
 const cardDescription = document.getElementById('cardDescription');
+const descExpandBtn = document.getElementById('descExpandBtn');
 const cardLink = document.getElementById('cardLink');
 
 //const cardTitleInput      = document.getElementById('cardTitleInput');
@@ -87,12 +88,28 @@ function setLoading(loading) {
 videoDescriptionInput.addEventListener('input', () => {
   cardDescription.textContent = videoDescriptionInput.value;
   autoResizeTextarea(videoDescriptionInput);
+  updateDescExpand();
 });
 
 function autoResizeTextarea(el) {
   el.style.height = 'auto';
   el.style.height = el.scrollHeight + 'px';
 }
+
+// ── Description expand/collapse ───────────────────────────────────────────────
+function updateDescExpand() {
+  cardDescription.classList.add('sc-card-desc--clamped');
+  descExpandBtn.textContent = 'Click to Expand »';
+  const overflows = cardDescription.scrollHeight > cardDescription.clientHeight + 2;
+  descExpandBtn.classList.toggle('hidden', !overflows);
+}
+
+descExpandBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  const isExpanded = !cardDescription.classList.contains('sc-card-desc--clamped');
+  cardDescription.classList.toggle('sc-card-desc--clamped', isExpanded);
+  descExpandBtn.textContent = isExpanded ? 'Click to Expand »' : 'Show Less «';
+});
 
 // ── URL form submit ───────────────────────────────────────────────────────────
 urlForm.addEventListener('submit', async (e) => {
@@ -153,6 +170,7 @@ function populateFields(data) {
   // Card preview
   cardSubtitle.textContent = title;
   cardDescription.textContent = desc;
+  updateDescExpand();
   cardLink.href = link;
   embedIframe.src = src;
 
