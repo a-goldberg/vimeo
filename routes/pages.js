@@ -42,6 +42,14 @@ router.get('/testing', (req, res) => {
   });
 });
 
+// Smart Card tool
+router.get('/smart-card', (req, res) => {
+  res.render('pages/smart-card', {
+    title: 'Smart Card Preview',
+    extraScripts: '<script src="/js/smart-card.js"></script>',
+  });
+});
+
 // Project detail — driven entirely by data/projects.js
 router.get('/projects/:slug', (req, res, next) => {
   const project = projects.find((p) => p.slug === req.params.slug);

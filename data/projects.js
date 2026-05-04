@@ -31,7 +31,7 @@ const projects = [
   status: "In Progress",         // Live | In Progress | Planned | Archived
   description: "User supplies a Vimeo video link or ID, and we display an embedded player preview, plus ability to fetch and update metadata via Vimeo API",
   tags: ["Player", "Metadata", "Vimeo API"],  // short labels shown on the card
-  externalUrl: "",               // optional: link to a live version
+  externalUrl: "/smart-card",    // optional: link to a live version
   repoUrl: "",                   // optional: GitHub link
   featured: true,
   visibility: "Customer",        // Internal | Customer | Public

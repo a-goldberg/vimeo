@@ -7,6 +7,7 @@ const path = require('path');
 const { formatDate, statusClass } = require('./utils/helpers');
 const pagesRouter = require('./routes/pages');
 const apiRouter = require('./routes/api');
+const smartCardRouter = require('./routes/smart-card');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -38,8 +39,11 @@ app.locals.statusClass = statusClass;
 // Page routes (HTML)
 app.use('/', pagesRouter);
 
-// Data routes (JSON) — also where future API-backed tools should live
+// Data routes (JSON) — hub project metadata
 app.use('/api', apiRouter);
+
+// Tool-specific API routes — each tool gets its own sub-path
+app.use('/api/smart-card', smartCardRouter);
 
 // Health check — returns JSON; useful for uptime monitors and confirming deploys
 app.get('/health', (req, res) => {

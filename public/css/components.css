@@ -530,3 +530,121 @@
 .breadcrumb__current {
   color: var(--color-text-soft);
 }
+
+/* ── Form fields ───────────────────────────────────────────────
+   Reusable across any tool page that has form inputs.
+   Usage:
+     <div class="field-group">
+       <label class="field-label" for="myInput">Label</label>
+       <input id="myInput" class="field-input" />
+     </div>
+   ──────────────────────────────────────────────────────────── */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0.01em;
+}
+
+.field-input,
+.field-textarea {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field-input::placeholder,
+.field-textarea::placeholder {
+  color: var(--color-text-soft);
+}
+
+.field-input:focus,
+.field-textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.55;
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: var(--color-archived);
+}
+
+.field-hint {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.field-divider {
+  border: none;
+  border-top: 1px solid var(--color-border-soft);
+  margin: var(--space-2) 0;
+}
+
+/* ── Toast notifications ───────────────────────────────────────
+   Any tool that needs user feedback can use this. Attach a
+   #toastContainer div near the end of the page template, then
+   call showToast() from the page's JS (copy the pattern from
+   public/js/smart-card.js).
+
+   Usage in HTML:
+     <div id="toastContainer" class="toast-container" role="status" aria-live="polite"></div>
+
+   Usage in JS:
+     toast.className = `toast toast-${type}`;   // type: success | error | warning | info
+     toast.classList.add('toast-visible');       // to show
+     toast.classList.remove('toast-visible');    // to dismiss
+   ──────────────────────────────────────────────────────────── */
+.toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  z-index: 999;
+  pointer-events: none;
+}
+
+.toast {
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: var(--shadow-medium);
+  max-width: 300px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: auto;
+}
+
+.toast.toast-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.toast-success { background: var(--color-live); }
+.toast.toast-error   { background: var(--color-archived); }
+.toast.toast-warning { background: var(--color-progress); }
+.toast.toast-info    { background: var(--color-accent); }

@@ -1,0 +1,126 @@
+<div class="page page--smart-card">
+  <div class="container">
+
+    <!-- Page header -->
+    <div class="page-hero">
+      <p class="hero__overline">Customer Projects</p>
+      <h1 class="page-hero__heading">Smart Card Preview</h1>
+      <p class="page-hero__desc">Enter a Vimeo video URL or ID to preview its smart card, edit metadata, and manage tags and thumbnails.</p>
+    </div>
+
+    <!-- URL input -->
+    <div class="card">
+      <form id="urlForm" class="sc-url-form" novalidate>
+        <div class="sc-url-input-group">
+          <input
+            type="text"
+            id="urlInput"
+            class="sc-url-input"
+            placeholder="Paste a Vimeo video URL or ID to get started…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="submit" class="btn btn--primary" id="loadBtn">Load Video</button>
+        </div>
+        <p id="urlError" class="field-error hidden"></p>
+      </form>
+    </div>
+
+    <!-- Video content — hidden until a video is loaded -->
+    <section id="videoSection" class="sc-grid hidden">
+
+      <!-- Left column: embed preview + transcript -->
+      <div class="sc-left-col">
+
+        <!-- Smart card preview -->
+        <div class="card sc-panel">
+          <div class="sc-card-header">
+            <h2 class="sc-card-title">Smart Card Preview</h2>
+            <p id="cardSubtitle" class="sc-card-subtitle"></p>
+          </div>
+          <div class="sc-card-body">
+            <div class="sc-embed-wrapper">
+              <iframe
+                id="embedIframe"
+                src=""
+                frameborder="0"
+                allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <p id="cardDescription" class="sc-card-desc"></p>
+            <a id="cardLink" href="#" target="_blank" rel="noopener noreferrer" class="sc-open-link">
+              Open in Vimeo ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Transcript (collapsible) -->
+        <div class="card sc-panel sc-transcript-panel" id="transcriptPanel">
+          <div class="sc-transcript-toggle" id="transcriptToggle" role="button" tabindex="0" aria-expanded="false">
+            <h2 class="sc-card-title">Transcript</h2>
+            <span class="sc-transcript-chevron" aria-hidden="true">›</span>
+          </div>
+          <div class="sc-transcript-body" id="transcriptBody">
+            <div id="transcriptContent" class="sc-transcript-text">Loading transcript…</div>
+          </div>
+        </div>
+
+      </div><!-- /.sc-left-col -->
+
+      <!-- Right column: metadata editor -->
+      <div class="card sc-panel">
+        <div class="sc-card-header">
+          <h2 class="sc-card-title">Video Metadata</h2>
+          <p class="sc-card-subtitle">Changes are saved directly to Vimeo</p>
+        </div>
+        <div class="sc-card-body">
+
+          <div class="field-group">
+            <label class="field-label" for="videoTitleInput">Video Title</label>
+            <input type="text" id="videoTitleInput" class="field-input" />
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="videoDescriptionInput">Description</label>
+            <textarea id="videoDescriptionInput" class="field-textarea"></textarea>
+          </div>
+
+          <button id="saveMetadataBtn" class="btn btn--primary">Save Changes</button>
+
+          <div class="field-divider"></div>
+
+          <div class="field-group">
+            <label class="field-label">Tags</label>
+            <div class="sc-tag-input-row">
+              <input type="text" id="videoTagsInput" class="field-input" placeholder="Add a tag…" />
+              <button type="button" id="addTagBtn" class="btn btn--ghost btn--sm" title="Add tag" aria-label="Add tag">+</button>
+            </div>
+            <div id="tagsContainer" class="sc-tags-container"></div>
+          </div>
+
+          <div class="field-divider"></div>
+
+          <div class="field-group">
+            <label class="field-label">Thumbnail</label>
+            <div class="sc-thumbnail-preview-wrapper">
+              <img id="thumbnailPreview" src="" alt="Video thumbnail" class="sc-thumbnail-preview hidden" />
+            </div>
+            <div class="sc-thumbnail-actions">
+              <input type="file" id="thumbnailFileInput" accept=".jpg,.jpeg,.png,.gif,.bmp,.tiff" class="hidden" />
+              <button type="button" id="selectThumbBtn" class="btn btn--ghost btn--sm">Select Image…</button>
+              <button type="button" id="uploadThumbBtn" class="btn btn--primary btn--sm" disabled>Upload Thumbnail</button>
+            </div>
+            <p id="thumbFilename" class="field-hint hidden"></p>
+          </div>
+
+        </div>
+      </div><!-- /.metadata card -->
+
+    </section><!-- /#videoSection -->
+
+  </div><!-- /.container -->
+</div><!-- /.page -->
+
+<!-- Toast container lives outside the main flow so it can be fixed-position -->
+<div id="toastContainer" class="toast-container" role="status" aria-live="polite"></div>
