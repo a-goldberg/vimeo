@@ -1,34 +1,35 @@
 /* Design tokens — change these to retheme the entire site */
 :root {
-  /* Background layers (darkest → elevated) */
-  --color-bg:          #070b0d;
-  --color-bg-elevated: #0d1416;
-  --color-surface:     #11191c;
-  --color-surface-2:   #162023;
-  --color-border:      #243034;
-  --color-border-soft: #1a272b;
+  /* Background layers  */
+  --color-bg:          #F8FAFC;
+  --color-bg-elevated: #FFFFFF;
+  --color-surface:     #FFFFFF;
+  --color-surface-2:   #F1F5F9;
+  --color-border:      #F8FAFC;
+  --color-border-soft: #F1F5F9;
 
   /* Text */
-  --color-text:        #f4f7f5;
-  --color-text-muted:  #9aa6a0;
-  --color-text-soft:   #c5cec8;
+  --color-text:        #0F2238;
+  --color-text-muted:  #7A8899;
+  --color-text-soft:   #A0AEC0;
+  --color-text-inverted: #FFFFFF;
 
-  /* Accent — green */
-  --color-accent:        #56d364;
-  --color-accent-strong: #2ea043;
-  --color-accent-soft:   rgba(86, 211, 100, 0.12);
-  --color-accent-glow:   rgba(86, 211, 100, 0.06);
+  /* Accent — blue */
+  --color-accent:        #1189A7;
+  --color-accent-strong: #0D7893;
+  --color-accent-soft:   #E6F6FA;
+  --color-accent-glow:   #A7DCE8;
 
   /* Status colors */
-  --color-live:     #56d364;
-  --color-progress: #e3b341;
-  --color-planned:  #79c0ff;
-  --color-archived: #8b949e;
+  --color-live:     #12A36A;
+  --color-progress: #D97706;
+  --color-planned:  #2563EB;
+  --color-archived: #DC3F45;
 
   /* Shadows */
-  --shadow-soft:   0 4px 24px rgba(0, 0, 0, 0.32);
-  --shadow-medium: 0 8px 40px rgba(0, 0, 0, 0.40);
-  --shadow-card:   0 2px 12px rgba(0, 0, 0, 0.28);
+  --shadow-soft:   0 1px 2px rgba(15, 34, 56, 0.06);
+  --shadow-medium: 0 8px 24px rgba(15, 34, 56, 0.08);
+  --shadow-card:   0 18px 48px rgba(15, 34, 56, 0.10);
 
   /* Border radius */
   --radius-sm: 6px;

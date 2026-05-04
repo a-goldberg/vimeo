@@ -24,6 +24,20 @@
 //   notes       — Optional longer text shown on the detail page
 
 const projects = [
+{
+  title: "SmartCard CMS Embed Demo", // displayed on the card and detail page
+  slug: "smart-card",           // used in /projects/my-new-tool URL
+  category: "Customer Projects",             // Tools | Customer Projects | API Docs | Testing
+  status: "In Progress",         // Live | In Progress | Planned | Archived
+  description: "User supplies a Vimeo video link or ID, and we display an embedded player preview, plus ability to fetch and update metadata via Vimeo API",
+  tags: ["Player", "Metadata", "Vimeo API"],  // short labels shown on the card
+  externalUrl: "",               // optional: link to a live version
+  repoUrl: "",                   // optional: GitHub link
+  featured: true,
+  visibility: "Customer",        // Internal | Customer | Public
+  updatedAt: "2026-05-01",
+  notes: "",
+},
   {
     title: 'Vimeo API Playground',
     slug: 'vimeo-api-playground',

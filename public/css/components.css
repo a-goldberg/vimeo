@@ -129,27 +129,27 @@
 }
 
 .pill--live {
-  color: var(--color-live);
-  background: rgba(86, 211, 100, 0.1);
-  border-color: rgba(86, 211, 100, 0.25);
+  color: var(--color-text-muted);
+  background: #E7F8F0;
+  border-color: #A8E6C8;
 }
 
 .pill--progress {
-  color: var(--color-progress);
-  background: rgba(227, 179, 65, 0.1);
-  border-color: rgba(227, 179, 65, 0.25);
+  color: var(--color-text-muted);
+  background: #FFF7E6;
+  border-color: #F6D28B;
 }
 
 .pill--planned {
   color: var(--color-planned);
-  background: rgba(121, 192, 255, 0.1);
-  border-color: rgba(121, 192, 255, 0.25);
+  background: #EAF1FF;
+  border-color: #BFD2FF;
 }
 
 .pill--archived {
   color: var(--color-archived);
-  background: rgba(139, 148, 158, 0.1);
-  border-color: rgba(139, 148, 158, 0.25);
+  background: #FCECEC;
+  border-color: #F3B6B9;
 }
 
 .pill--internal {
@@ -160,7 +160,7 @@
 
 .pill--customer {
   color: #79c0ff;
-  background: rgba(121, 192, 255, 0.08);
+  background: rgba(121, 192, 255, 0.3);
   border-color: rgba(121, 192, 255, 0.2);
 }
 
@@ -204,7 +204,7 @@
 }
 
 .btn--primary {
-  background: var(--color-accent);
+  background: var(--color-surface-2);
   color: #070b0d;
   border-color: var(--color-accent);
 }
