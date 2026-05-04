@@ -409,6 +409,11 @@
   font-style: italic;
 }
 
+#videoDescriptionInput {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
 /* Tag chips (editable — different from hub's read-only .tag) */
 .sc-tag-input-row {
   display: flex;

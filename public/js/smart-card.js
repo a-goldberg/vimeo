@@ -206,13 +206,13 @@ function renderTags() {
 
 function createTagChip(tag) {
   const chip = document.createElement('span');
-  chip.className = 'tag-chip';
+  chip.className = 'sc-tag-chip';
 
   const label = document.createElement('span');
   label.textContent = tag;
 
   const btn = document.createElement('button');
-  btn.className = 'tag-remove';
+  btn.className = 'sc-tag-remove';
   btn.type = 'button';
   btn.setAttribute('aria-label', `Remove tag ${tag}`);
   btn.textContent = '×';
