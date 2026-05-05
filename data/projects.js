@@ -25,11 +25,11 @@
 
 const projects = [
 {
-  title: "SmartCard CMS Embed Demo", // displayed on the card and detail page
+  title: "SmartCard CMS Embed", // displayed on the card and detail page
   slug: "smart-card",           // used in /projects/my-new-tool URL
   category: "Customer Projects",             // Tools | Customer Projects | API Docs | Testing
-  status: "In Progress",         // Live | In Progress | Planned | Archived
-  description: "User supplies a Vimeo video link or ID, and we display an embedded player preview, plus ability to fetch and update metadata via Vimeo API",
+  status: "Live",         // Live | In Progress | Planned | Archived
+  description: "User supplies a Vimeo video link, and we display an embedded player preview, plus ability to fetch and update metadata via Vimeo API",
   tags: ["Player", "Metadata", "Vimeo API"],  // short labels shown on the card
   externalUrl: "/smart-card",    // optional: link to a live version
   repoUrl: "",                   // optional: GitHub link

@@ -600,6 +600,8 @@
   margin: var(--space-2) 0;
 }
 
+.hidden { display: none; }
+
 /* ── Toast notifications ───────────────────────────────────────
    Any tool that needs user feedback can use this. Attach a
    #toastContainer div near the end of the page template, then
