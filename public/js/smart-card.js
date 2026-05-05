@@ -62,14 +62,14 @@ async function api(method, path, body) {
 // ── Toasts ────────────────────────────────────────────────────────────────────
 function showToast(message, type = 'info', duration = 4000) {
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
+  toast.className = `toast toast--${type}`;
   toast.textContent = message;
   toastContainer.appendChild(toast);
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => toast.classList.add('toast-visible'));
+    requestAnimationFrame(() => toast.classList.add('toast--visible'));
   });
   setTimeout(() => {
-    toast.classList.remove('toast-visible');
+    toast.classList.remove('toast--visible');
     toast.addEventListener('transitionend', () => toast.remove(), { once: true });
   }, duration);
 }
@@ -98,7 +98,7 @@ function autoResizeTextarea(el) {
 
 // ── Description expand/collapse ───────────────────────────────────────────────
 function updateDescExpand() {
-  cardDescription.classList.add('sc-card-desc--clamped');
+  cardDescription.classList.add('panel__desc--clamped');
   descExpandBtn.textContent = 'Click to Expand »';
   const overflows = cardDescription.scrollHeight > cardDescription.clientHeight + 2;
   descExpandBtn.classList.toggle('hidden', !overflows);
@@ -106,8 +106,8 @@ function updateDescExpand() {
 
 descExpandBtn.addEventListener('click', (e) => {
   e.preventDefault();
-  const isExpanded = !cardDescription.classList.contains('sc-card-desc--clamped');
-  cardDescription.classList.toggle('sc-card-desc--clamped', isExpanded);
+  const isExpanded = !cardDescription.classList.contains('panel__desc--clamped');
+  cardDescription.classList.toggle('panel__desc--clamped', isExpanded);
   descExpandBtn.textContent = isExpanded ? 'Click to Expand »' : 'Show Less «';
 });
 
@@ -186,10 +186,10 @@ function populateFields(data) {
 
   // Reset transcript state
   state.transcriptLoaded = false;
-  transcriptPanel.classList.remove('is-open');
+  transcriptPanel.classList.remove('collapsible--open');
   transcriptToggle.setAttribute('aria-expanded', 'false');
   transcriptContent.textContent = 'Loading transcript...';
-  transcriptContent.classList.remove('is-muted');
+  transcriptContent.classList.remove('collapsible__content--muted');
 
   // Reset thumbnail upload state
   state.thumbFile = null;
@@ -206,13 +206,13 @@ function renderTags() {
 
 function createTagChip(tag) {
   const chip = document.createElement('span');
-  chip.className = 'sc-tag-chip';
+  chip.className = 'chip';
 
   const label = document.createElement('span');
   label.textContent = tag;
 
   const btn = document.createElement('button');
-  btn.className = 'sc-tag-remove';
+  btn.className = 'chip__remove';
   btn.type = 'button';
   btn.setAttribute('aria-label', `Remove tag ${tag}`);
   btn.textContent = '×';
@@ -254,7 +254,7 @@ async function addTag() {
 }
 
 tagsContainer.addEventListener('click', async (e) => {
-  const btn = e.target.closest('.tag-remove');
+  const btn = e.target.closest('.chip__remove');
   if (!btn || !state.videoId) return;
 
   const tag = btn.dataset.tag;
@@ -322,7 +322,7 @@ transcriptToggle.addEventListener('keydown', e => {
 });
 
 function handleTranscriptToggle() {
-  const isOpen = transcriptPanel.classList.toggle('is-open');
+  const isOpen = transcriptPanel.classList.toggle('collapsible--open');
   transcriptToggle.setAttribute('aria-expanded', String(isOpen));
 
   if (isOpen && !state.transcriptLoaded && state.videoId) {
@@ -388,7 +388,7 @@ async function loadTranscript(videoId, language) {
 
 function setTranscriptText(text, muted) {
   transcriptContent.textContent = text;
-  transcriptContent.classList.toggle('is-muted', muted);
+  transcriptContent.classList.toggle('collapsible__content--muted', muted);
 }
 
 function formatTranscript(segments) {

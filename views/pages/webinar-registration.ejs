@@ -14,38 +14,34 @@
     <!-- API / event config -->
     <div class="card">
       <form id="configForm" novalidate>
-        <div class="field-group">
-          <label class="field-label" for="tokenInput"
-            >Personal Access Token
-            <span class="field-optional"
-              >(optional — overrides server default)</span
-            ></label
-          >
+        <div class="form-group">
+          <label class="form-group__label" for="tokenInput">
+            Personal Access Token
+            <span class="form-group__optional">(optional — overrides server default)</span>
+          </label>
           <input
             type="text"
             id="tokenInput"
-            class="field-input"
+            class="form-group__input"
             placeholder="Your Token must have the CAPABILITY_ACCESS_LEADS capability."
             autocomplete="off"
             spellcheck="false" />
         </div>
-        <div class="field-group">
-          <label class="field-label" for="eventIdInput"
-            >Webinar Event ID
-            <span class="field-optional"
-              >(optional — overrides server default)</span
-            ></label
-          >
+        <div class="form-group">
+          <label class="form-group__label" for="eventIdInput">
+            Webinar Event ID
+            <span class="form-group__optional">(optional — overrides server default)</span>
+          </label>
           <input
             type="text"
             id="eventIdInput"
-            class="field-input"
+            class="form-group__input"
             placeholder="Your Event must be scheduled and accepting registrations."
             autocomplete="off"
             spellcheck="false" />
         </div>
-        <p id="configError" class="field-error hidden"></p>
-        <p id="configStatus" class="field-hint hidden"></p>
+        <p id="configError" class="form-group__error hidden"></p>
+        <p id="configStatus" class="form-group__hint hidden"></p>
         <button type="submit" class="btn btn--primary right">
           Apply Config
         </button>
@@ -55,54 +51,54 @@
     <!-- Attendee registration form -->
     <div class="card">
       <form id="regForm" novalidate>
-        <div class="field-group">
-          <label class="field-label" for="firstNameInput">First Name</label>
+        <div class="form-group">
+          <label class="form-group__label" for="firstNameInput">First Name</label>
           <input
             type="text"
             id="firstNameInput"
-            class="field-input"
+            class="form-group__input"
             placeholder="Jane"
             autocomplete="given-name" />
         </div>
-        <div class="field-group">
-          <label class="field-label" for="lastNameInput">Last Name</label>
+        <div class="form-group">
+          <label class="form-group__label" for="lastNameInput">Last Name</label>
           <input
             type="text"
             id="lastNameInput"
-            class="field-input"
+            class="form-group__input"
             placeholder="Smith"
             autocomplete="family-name" />
         </div>
-        <div class="field-group">
-          <label class="field-label" for="emailInput">Email Address</label>
+        <div class="form-group">
+          <label class="form-group__label" for="emailInput">Email Address</label>
           <input
             type="email"
             id="emailInput"
-            class="field-input"
+            class="form-group__input"
             placeholder="jane@example.com"
             autocomplete="email" />
         </div>
-        <p id="regError" class="field-error hidden"></p>
+        <p id="regError" class="form-group__error hidden"></p>
         <button type="submit" id="registerBtn" class="btn btn--primary right">
           Register
         </button>
       </form>
 
       <!-- Shown after successful registration -->
-      <div id="regConfirmed" class="wr-status-block hidden">
-        <p class="wr-status-icon wr-status-icon--success">✓</p>
-        <p class="wr-status-heading">You're Registered!</p>
-        <p class="wr-status-body">
+      <div id="regConfirmed" class="status hidden">
+        <p class="status__icon status__icon--success">✓</p>
+        <p class="status__heading">You're Registered!</p>
+        <p class="status__body">
           You will receive a reminder email 24 hours before the webinar starts.
           See you there!
         </p>
       </div>
 
       <!-- Shown when duplicate email detected -->
-      <div id="alreadyReg" class="wr-status-block hidden">
-        <p class="wr-status-icon wr-status-icon--info">i</p>
-        <p class="wr-status-heading">Already Registered</p>
-        <p class="wr-status-body">
+      <div id="alreadyReg" class="status hidden">
+        <p class="status__icon status__icon--info">i</p>
+        <p class="status__heading">Already Registered</p>
+        <p class="status__body">
           This email address is already signed up for this event.
         </p>
       </div>

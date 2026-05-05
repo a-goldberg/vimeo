@@ -24,14 +24,14 @@ const toastContainer = document.getElementById('toastContainer');
 // ── Toasts ────────────────────────────────────────────────────────────────────
 function showToast(message, type = 'info', duration = 4000) {
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
+  toast.className = `toast toast--${type}`;
   toast.textContent = message;
   toastContainer.appendChild(toast);
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => toast.classList.add('toast-visible'));
+    requestAnimationFrame(() => toast.classList.add('toast--visible'));
   });
   setTimeout(() => {
-    toast.classList.remove('toast-visible');
+    toast.classList.remove('toast--visible');
     toast.addEventListener('transitionend', () => toast.remove(), { once: true });
   }, duration);
 }

@@ -532,28 +532,34 @@
 }
 
 /* ── Form fields ───────────────────────────────────────────────
-   Reusable across any tool page that has form inputs.
-   Usage:
-     <div class="field-group">
-       <label class="field-label" for="myInput">Label</label>
-       <input id="myInput" class="field-input" />
-     </div>
+   Block:    .form-group
+   Elements: .form-group__label   .form-group__input
+             .form-group__textarea .form-group__error
+             .form-group__hint    .form-group__optional
+             .form-group__divider
    ──────────────────────────────────────────────────────────── */
-.field-group {
+.form-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.field-label {
+.form-group__label {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-text-muted);
   letter-spacing: 0.01em;
 }
 
-.field-input,
-.field-textarea {
+.form-group__optional {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.8em;
+  margin-left: var(--space-1);
+}
+
+.form-group__input,
+.form-group__textarea {
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-sm);
@@ -566,57 +572,342 @@
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.field-input::placeholder,
-.field-textarea::placeholder {
+.form-group__input::placeholder,
+.form-group__textarea::placeholder {
   color: var(--color-text-soft);
 }
 
-.field-input:focus,
-.field-textarea:focus {
+.form-group__input:focus,
+.form-group__textarea:focus {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
-.field-textarea {
+.form-group__textarea {
   resize: vertical;
   min-height: 80px;
   line-height: 1.55;
 }
 
-.field-error {
+.form-group__error {
   font-size: 0.8rem;
   color: var(--color-archived);
 }
 
-.field-hint {
+.form-group__hint {
   font-size: 0.8rem;
   color: var(--color-text-muted);
   font-style: italic;
 }
 
-.field-divider {
+.form-group__divider {
   border: none;
   border-top: 1px solid var(--color-border-soft);
   margin: var(--space-2) 0;
 }
 
+/* ── Panel ─────────────────────────────────────────────────────
+   A card with a structured header + body. Apply .panel alongside
+   .card to zero card's default padding.
+   Block:    .panel
+   Elements: .panel__header .panel__title .panel__subtitle
+             .panel__body   .panel__desc
+   Modifier: .panel__desc--clamped (5-line clamp; JS toggles it off)
+   ──────────────────────────────────────────────────────────── */
+.panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.panel__header {
+  padding: var(--space-4) var(--space-6) var(--space-3);
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.panel__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.panel__subtitle {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+  min-height: 1em;
+}
+
+.panel__body {
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.panel__desc {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.panel__desc--clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+}
+
+/* ── Layout helpers ────────────────────────────────────────────
+   .col-2  — 2-column grid; collapses to 1-column below 860px
+   .stack  — flex column with gap; use for left/right columns
+   ──────────────────────────────────────────────────────────── */
+.col-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .col-2 { grid-template-columns: 1fr; }
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ── Collapsible ───────────────────────────────────────────────
+   Block:    .collapsible
+   Modifier: .collapsible--open  (JS-toggled)
+   Elements: .collapsible__toggle .collapsible__chevron
+             .collapsible__body   .collapsible__content
+   Modifier: .collapsible__content--muted
+   ──────────────────────────────────────────────────────────── */
+.collapsible__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--radius-md);
+  transition: background 0.15s;
+}
+
+.collapsible__toggle:hover {
+  background: var(--color-surface-2);
+}
+
+.collapsible__chevron {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+  line-height: 1;
+}
+
+.collapsible--open .collapsible__chevron {
+  transform: rotate(90deg);
+}
+
+.collapsible__body {
+  display: none;
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 0 var(--space-6) var(--space-5);
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.collapsible--open .collapsible__body {
+  display: block;
+}
+
+.collapsible__content {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.collapsible__content--muted {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ── Embed ─────────────────────────────────────────────────────
+   Block:    .embed
+   Modifier: .embed--16-9  (56.25% padding-bottom aspect ratio)
+   ──────────────────────────────────────────────────────────── */
+.embed { display: block; }
+
+.embed--16-9 {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: #000;
+}
+
+.embed--16-9 iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ── Chip ──────────────────────────────────────────────────────
+   Editable tag with remove button. Distinct from read-only .tag.
+   Block:      .chip
+   Element:    .chip__remove
+   Containers: .chip-list       (flex-wrap row of chips)
+               .chip-input-row  (input + add-button inline)
+   ──────────────────────────────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.2em var(--space-2) 0.2em var(--space-3);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  border: 1px solid var(--color-accent-glow);
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-accent-strong);
+  font-size: 0.875rem;
+  line-height: 1;
+  border-radius: 50%;
+  padding: 0;
+  opacity: 0.6;
+  transition: opacity 0.1s;
+}
+
+.chip__remove:hover { opacity: 1; }
+.chip__remove:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-height: 0;
+}
+
+.chip-list:empty { display: none; }
+
+.chip-input-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.chip-input-row .form-group__input { flex: 1; }
+
+/* ── Status block ──────────────────────────────────────────────
+   Centered success/info/error message shown after a form action.
+   Block:     .status
+   Elements:  .status__icon .status__heading .status__body
+   Modifiers: .status__icon--success  .status__icon--info
+   ──────────────────────────────────────────────────────────── */
+.status {
+  text-align: center;
+  padding: var(--space-6) 0 var(--space-4);
+}
+
+.status__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-3);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.status__icon--success { background: var(--color-live); }
+.status__icon--info    { background: var(--color-accent); }
+
+.status__heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.status__body {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* ── Expand toggle ─────────────────────────────────────────────
+   "Click to Expand / Show Less" link below a .panel__desc--clamped.
+   JS removes .panel__desc--clamped to expand, re-adds to collapse.
+   ──────────────────────────────────────────────────────────── */
+.expand-toggle {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  transition: opacity 0.15s;
+}
+
+.expand-toggle:hover { opacity: 0.75; color: var(--color-accent); }
+
+/* ── External link ─────────────────────────────────────────────
+   Styled outbound link with gap for an ↗ or similar indicator.
+   ──────────────────────────────────────────────────────────── */
+.external-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  transition: opacity 0.15s;
+}
+
+.external-link:hover { opacity: 0.75; color: var(--color-accent); }
+
+/* ── Utility ───────────────────────────────────────────────────
+   .hidden lives here so JS can toggle it on any element.
+   ──────────────────────────────────────────────────────────── */
 .hidden {
-  display: none !important; 
+  display: none !important;
 }
 
 /* ── Toast notifications ───────────────────────────────────────
-   Any tool that needs user feedback can use this. Attach a
-   #toastContainer div near the end of the page template, then
-   call showToast() from the page's JS (copy the pattern from
-   public/js/smart-card.js).
+   Fixed-position feedback toasts. Add a #toastContainer div
+   near the end of any page template, then call showToast() from
+   the page's JS (see public/js/smart-card.js for the pattern).
 
    Usage in HTML:
-     <div id="toastContainer" class="toast-container" role="status" aria-live="polite"></div>
+     <div id="toastContainer" class="toast-container"
+          role="status" aria-live="polite"></div>
 
    Usage in JS:
-     toast.className = `toast toast-${type}`;   // type: success | error | warning | info
-     toast.classList.add('toast-visible');       // to show
-     toast.classList.remove('toast-visible');    // to dismiss
+     toast.className = `toast toast--${type}`;  // type: success | error | warning | info
+     toast.classList.add('toast--visible');      // show
+     toast.classList.remove('toast--visible');   // dismiss
    ──────────────────────────────────────────────────────────── */
 .toast-container {
   position: fixed;
@@ -643,12 +934,12 @@
   pointer-events: auto;
 }
 
-.toast.toast-visible {
+.toast.toast--visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-.toast.toast-success { background: var(--color-live); }
-.toast.toast-error   { background: var(--color-archived); }
-.toast.toast-warning { background: var(--color-progress); }
-.toast.toast-info    { background: var(--color-accent); }
+.toast.toast--success { background: var(--color-live); }
+.toast.toast--error   { background: var(--color-archived); }
+.toast.toast--warning { background: var(--color-progress); }
+.toast.toast--info    { background: var(--color-accent); }

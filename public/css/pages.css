@@ -1,4 +1,5 @@
-/* Page-specific styles */
+/* Page-specific styles — container sizing and page-unique elements only.
+   Reusable components live in components.css. */
 
 /* ── Hero (home) ───────────────────────────────────────────── */
 .hero {
@@ -208,8 +209,9 @@
 }
 
 /* ── Smart Card tool ───────────────────────────────────────────
-   Styles specific to /smart-card. Everything else reuses hub
-   components: .card, .btn, .field-group, .field-input, etc.
+   Page container + elements unique to /smart-card.
+   Reusable layout: .col-2, .stack, .panel, .embed--16-9,
+   .chip, .collapsible, .expand-toggle, .external-link (components.css)
    ──────────────────────────────────────────────────────────── */
 .page--smart-card .container {
   padding-top: var(--space-16);
@@ -219,19 +221,19 @@
   gap: var(--space-6);
 }
 
-/* URL input bar */
-.sc-url-form {
+/* URL input bar — smart-card specific */
+.url-bar {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.sc-url-input-group {
+.url-bar__row {
   display: flex;
   gap: var(--space-3);
 }
 
-.sc-url-input {
+.url-bar__input {
   flex: 1;
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border-soft);
@@ -244,237 +246,26 @@
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.sc-url-input::placeholder { color: var(--color-text-soft); }
+.url-bar__input::placeholder { color: var(--color-text-soft); }
 
-.sc-url-input:focus {
+.url-bar__input:focus {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
-/* Two-column layout */
-.sc-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-  align-items: start;
-}
-
 @media (max-width: 860px) {
-  .sc-grid { grid-template-columns: 1fr; }
-  .sc-url-input-group { flex-direction: column; }
+  .url-bar__row { flex-direction: column; }
 }
 
-.sc-left-col {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-/* Panel header/body inside cards */
-.sc-card-header {
-  padding: var(--space-4) var(--space-6) var(--space-3);
-  border-bottom: 1px solid var(--color-border-soft);
-}
-
-.sc-card-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-.sc-card-subtitle {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  margin-top: var(--space-1);
-  min-height: 1em;
-}
-
-.sc-card-body {
-  padding: var(--space-5) var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-/* Override .card padding when using sc-card-header/body */
-.sc-panel {
-  padding: 0;
-  overflow: hidden;
-}
-
-/* 16:9 embed wrapper */
-.sc-embed-wrapper {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-  border-radius: var(--radius-sm);
-  background: #000;
-}
-
-.sc-embed-wrapper iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-.sc-card-desc {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  line-height: 1.65;
-  white-space: pre-wrap;
-}
-
-.sc-card-desc--clamped {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  white-space: normal;
-}
-
-.sc-desc-expand {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--color-accent);
-  transition: opacity 0.15s;
-}
-
-.sc-desc-expand:hover { opacity: 0.75; color: var(--color-accent); }
-
-.sc-open-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--color-accent);
-  transition: opacity 0.15s;
-}
-
-.sc-open-link:hover { opacity: 0.75; color: var(--color-accent); }
-
-/* Transcript (collapsible) */
-.sc-transcript-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-6);
-  cursor: pointer;
-  user-select: none;
-  border-radius: var(--radius-md);
-  transition: background 0.15s;
-}
-
-.sc-transcript-toggle:hover {
-  background: var(--color-surface-2);
-}
-
-.sc-transcript-chevron {
-  color: var(--color-text-muted);
-  font-size: 1.1rem;
-  transition: transform 0.2s ease;
-  line-height: 1;
-}
-
-.sc-transcript-panel.is-open .sc-transcript-chevron {
-  transform: rotate(90deg);
-}
-
-.sc-transcript-body {
-  display: none;
-  max-height: 360px;
-  overflow-y: auto;
-  padding: 0 var(--space-6) var(--space-5);
-  border-top: 1px solid var(--color-border-soft);
-}
-
-.sc-transcript-panel.is-open .sc-transcript-body {
-  display: block;
-}
-
-.sc-transcript-text {
-  font-size: 0.875rem;
-  color: var(--color-text);
-  line-height: 1.75;
-  white-space: pre-wrap;
-}
-
-.sc-transcript-text.is-muted {
-  color: var(--color-text-muted);
-  font-style: italic;
-}
-
-#videoDescriptionInput {
-  max-height: 150px;
-  overflow-y: auto;
-}
-
-/* Tag chips (editable — different from hub's read-only .tag) */
-.sc-tag-input-row {
-  display: flex;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-.sc-tag-input-row .field-input { flex: 1; }
-
-.sc-tags-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  min-height: 0;
-}
-
-.sc-tags-container:empty { display: none; }
-
-.sc-tag-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 0.2em var(--space-2) 0.2em var(--space-3);
-  background: var(--color-accent-soft);
-  color: var(--color-accent-strong);
-  border: 1px solid var(--color-accent-glow);
-  border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.sc-tag-remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-accent-strong);
-  font-size: 0.875rem;
-  line-height: 1;
-  border-radius: 50%;
-  padding: 0;
-  opacity: 0.6;
-  transition: opacity 0.1s;
-}
-
-.sc-tag-remove:hover { opacity: 1; }
-.sc-tag-remove:disabled { opacity: 0.3; cursor: not-allowed; }
-
-/* Thumbnail */
-.sc-thumbnail-preview-wrapper {
+/* Thumbnail preview — smart-card specific */
+.thumb-wrapper {
   border-radius: var(--radius-sm);
   overflow: hidden;
   background: var(--color-surface-2);
   min-height: 0;
 }
 
-.sc-thumbnail-preview {
+.thumb-wrapper__img {
   display: block;
   width: 100%;
   height: auto;
@@ -482,22 +273,23 @@
   object-fit: contain;
 }
 
-.sc-thumbnail-actions {
+.thumb-wrapper__actions {
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
 }
 
-
-
-/* ── Webinar Registration tool ───────────────────────────────────────────
-   Styles specific to /webinar-registration. Everything else reuses hub
-   components: .card, .btn, .field-group, .field-input, etc.
-   ──────────────────────────────────────────────────────────── */
-#configForm .btn, #regForm .btn {
-  margin-top: 15px;
+/* Textarea height cap for the description input */
+#videoDescriptionInput {
+  max-height: 150px;
+  overflow-y: auto;
 }
 
+/* ── Webinar Registration tool ─────────────────────────────────
+   Page container + button spacing unique to /webinar-registration.
+   Reusable form fields: .form-group (components.css)
+   Reusable status blocks: .status (components.css)
+   ──────────────────────────────────────────────────────────── */
 .page--webinar-registration .container {
   padding-top: var(--space-16);
   padding-bottom: var(--space-16);
@@ -507,48 +299,7 @@
   max-width: 640px;
 }
 
-.field-optional {
-  font-weight: 400;
-  color: var(--color-text-muted);
-  font-size: 0.8em;
-  margin-left: var(--space-1);
+#configForm .btn,
+#regForm .btn {
+  margin-top: 15px;
 }
-
-/* Success / already-registered state blocks */
-.wr-status-block {
-  text-align: center;
-  padding: var(--space-6) 0 var(--space-4);
-}
-
-.wr-status-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto var(--space-3);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1;
-}
-
-.wr-status-icon--success { background: var(--color-live); }
-.wr-status-icon--info    { background: var(--color-accent); }
-
-.wr-status-heading {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: var(--space-1);
-}
-
-.wr-status-body {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-}
-
-
-
-/* Toast styles live in components.css — see .toast-container / .toast */
