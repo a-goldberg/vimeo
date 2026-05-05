@@ -50,6 +50,14 @@ router.get('/smart-card', (req, res) => {
   });
 });
 
+// Webinar Registration demo
+router.get('/webinar-registration', (req, res) => {
+  res.render('pages/webinar-registration', {
+    title: 'Webinar Registration',
+    extraScripts: '<script src="/js/webinar-registration.js"></script>',
+  });
+});
+
 // Project detail — driven entirely by data/projects.js
 router.get('/projects/:slug', (req, res, next) => {
   const project = projects.find((p) => p.slug === req.params.slug);

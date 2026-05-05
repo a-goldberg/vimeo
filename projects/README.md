@@ -9,9 +9,9 @@ They are served under `/projects-static/` by Express:
 
 ## How to add a project
 
-1. Create a subdirectory here:  `projects/my-tool/`
+1. Create a subdirectory here:  `/projects/my-tool/`
 2. Add `index.html`, `style.css`, `script.js` as needed.
-3. Optionally add an entry in `src/data/projects.js` and set `externalUrl`
+3. Optionally add an entry in `/data/projects.js` and set `externalUrl`
    to point visitors to `/projects-static/my-tool/`.
 
 ## Notes

@@ -8,6 +8,7 @@ const { formatDate, statusClass } = require('./utils/helpers');
 const pagesRouter = require('./routes/pages');
 const apiRouter = require('./routes/api');
 const smartCardRouter = require('./routes/smart-card');
+const webinarRouter = require('./routes/webinar-registration');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -44,6 +45,7 @@ app.use('/api', apiRouter);
 
 // Tool-specific API routes — each tool gets its own sub-path
 app.use('/api/smart-card', smartCardRouter);
+app.use('/api/webinar-registration', webinarRouter);
 
 // Health check — returns JSON; useful for uptime monitors and confirming deploys
 app.get('/health', (req, res) => {

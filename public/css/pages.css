@@ -488,4 +488,67 @@
   flex-wrap: wrap;
 }
 
+
+
+/* ── Webinar Registration tool ───────────────────────────────────────────
+   Styles specific to /webinar-registration. Everything else reuses hub
+   components: .card, .btn, .field-group, .field-input, etc.
+   ──────────────────────────────────────────────────────────── */
+#configForm .btn, #regForm .btn {
+  margin-top: 15px;
+}
+
+.page--webinar-registration .container {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 640px;
+}
+
+.field-optional {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.8em;
+  margin-left: var(--space-1);
+}
+
+/* Success / already-registered state blocks */
+.wr-status-block {
+  text-align: center;
+  padding: var(--space-6) 0 var(--space-4);
+}
+
+.wr-status-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-3);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.wr-status-icon--success { background: var(--color-live); }
+.wr-status-icon--info    { background: var(--color-accent); }
+
+.wr-status-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.wr-status-body {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+
+
 /* Toast styles live in components.css — see .toast-container / .toast */
