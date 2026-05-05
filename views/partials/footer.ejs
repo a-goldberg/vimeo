@@ -2,7 +2,7 @@
   <div class="footer__inner container">
     <div class="footer__brand">
       <span class="nav__logo-mark">▸</span>
-      <span class="footer__brand-text">Project Hub</span>
+      <span class="footer__brand-text"><%= process.env.FIRST_NAME + '\'s' || "" %> Project Hub</span>
       <p class="footer__tagline">Personal project hub for internal tools, demos, and experiments.</p>
     </div>
 
@@ -27,6 +27,6 @@
   </div>
 
   <div class="footer__bottom container">
-    <p class="footer__copy">&copy; <%= new Date().getFullYear() %> Adam Goldberg &mdash; Vimeo Sales Engineering</p>
+    <p class="footer__copy">&copy; <%= new Date().getFullYear() %> <%= process.env.FIRST_NAME || "" %> <%= process.env.LAST_NAME || "" %> &mdash; Vimeo Sales Engineering</p>
   </div>
 </footer>

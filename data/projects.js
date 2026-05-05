@@ -29,14 +29,14 @@ const projects = [
   slug: "smart-card",           // used in /projects/my-new-tool URL
   category: "Customer Projects",             // Tools | Customer Projects | API Docs | Testing
   status: "Live",         // Live | In Progress | Planned | Archived
-  description: "User supplies a Vimeo video link, and we display an embedded player preview, plus ability to fetch and update metadata via Vimeo API",
+  description: "Demonstrating dynamic player embed plus CMS/DAM functionality using the Vimeo API.", // short text shown on the card
   tags: ["Player", "Metadata", "Vimeo API"],  // short labels shown on the card
   externalUrl: "/smart-card",    // optional: link to a live version
   repoUrl: "",                   // optional: GitHub link
   featured: true,
   visibility: "Customer",        // Internal | Customer | Public
   updatedAt: "2026-05-01",
-  notes: "",
+  notes: "Enter a Vimeo video link (really, any Vimeo video URL that has an ID in it), and we display an embedded player preview and fetch metadata to display alongside the player.  To simulate a custom integration with CMS or DAM type tools, an interface is also provided for viewing and updating video metadata, with the ability to sync changes back to Vimeo via standard API endpoints. <br><br> Future updates will include support for providing your own access token to test with different Vimeo accounts.  I also need to add support for standalone video IDs and links with a custom alias (i.e., no vimeo ID in the URL).",
 },
   {
     title: 'Vimeo API Playground',
