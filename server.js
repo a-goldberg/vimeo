@@ -9,6 +9,8 @@ const pagesRouter = require('./routes/pages');
 const apiRouter = require('./routes/api');
 const smartCardRouter = require('./routes/smart-card');
 const webinarRouter = require('./routes/webinar-registration');
+const vimeoProxyRouter = require('./routes/vimeo-proxy');
+const vimeoReferenceRouter = require('./routes/vimeo-reference');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,6 +41,11 @@ app.locals.statusClass = statusClass;
 
 // Page routes (HTML)
 app.use('/', pagesRouter);
+
+// Vimeo API proxy + reference — mounted before the generic /api router to
+// prevent the /api prefix-match from intercepting these more-specific paths.
+app.use('/api/vimeo', vimeoProxyRouter);
+app.use('/api/vimeo-reference', vimeoReferenceRouter);
 
 // Data routes (JSON) — hub project metadata
 app.use('/api', apiRouter);

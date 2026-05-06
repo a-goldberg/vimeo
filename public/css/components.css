@@ -995,3 +995,145 @@
 .toast.toast--error   { background: var(--color-archived); }
 .toast.toast--warning { background: var(--color-progress); }
 .toast.toast--info    { background: var(--color-accent); }
+
+/* ── Method badge ─────────────────────────────────────────────
+   Small colored pill for HTTP method labels.
+   Used in sidebar rows, URL blocks, and response panels.
+   ──────────────────────────────────────────────────────────── */
+.method-badge {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.18em 0.5em;
+  border-radius: 3px;
+  flex-shrink: 0;
+  min-width: 36px;
+  text-align: center;
+  display: inline-block;
+}
+.method-badge--get    { background: #E6F6FA; color: #0D7893; }
+.method-badge--post   { background: #E6F9EF; color: #0D7A51; }
+.method-badge--patch  { background: #FFF3E0; color: #B45309; }
+.method-badge--put    { background: #EDE9FE; color: #6D28D9; }
+.method-badge--delete { background: #FEE2E2; color: #B91C1C; }
+
+/* ── URL block ────────────────────────────────────────────────
+   Dark card displaying the full request URL with method pill
+   and syntax-highlighted path parameters.
+   ──────────────────────────────────────────────────────────── */
+.url-block {
+  display: flex;
+  align-items: center;
+  gap: 0.6875rem;
+  background: #0F2238;
+  border-radius: var(--radius-md);
+  padding: 0.6875rem 1.125rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+.url-block__method {
+  font-size: 0.7rem;
+  padding: 0.28em 0.65em;
+}
+.url-block__base { font-family: var(--font-mono); font-size: 0.8rem; color: #5E7A96; white-space: nowrap; }
+.url-block__path { font-family: var(--font-mono); font-size: 0.8rem; color: #D8E8F5; white-space: nowrap; }
+.url-block__param { color: var(--color-accent-glow); }
+
+/* ── Scope badge ──────────────────────────────────────────────
+   Tiny mono pill showing an OAuth2 scope name.
+   ──────────────────────────────────────────────────────────── */
+.scope-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  background: var(--color-accent);
+  color: white;
+  padding: 0.18em 0.55em;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+}
+
+/* ── Capability badge ─────────────────────────────────────────
+   Endpoint-level visibility label (Public / Internal / Private).
+   ──────────────────────────────────────────────────────────── */
+.cap-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.22em 0.6em;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+}
+.cap-badge--public   { background: #E6F9EF; color: #0D7A51; border: 1px solid #BBF7D0; }
+.cap-badge--internal { background: #FFF3E0; color: #B45309; border: 1px solid #FDE68A; }
+.cap-badge--private  { background: #FEE2E2; color: #B91C1C; border: 1px solid #FECACA; }
+
+/* ── Private param tag ────────────────────────────────────────
+   Inline red label for parameters flagged as private/internal
+   in data/vimeo-private-endpoints.json.
+   ──────────────────────────────────────────────────────────── */
+.priv-tag {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: #FEE2E2;
+  color: #B91C1C;
+  border: 1px solid #FECACA;
+  padding: 0.15em 0.45em;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+/* ── Breadcrumb ───────────────────────────────────────────────
+   Navigation trail at the top of a docs panel.
+   ──────────────────────────────────────────────────────────── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.125rem;
+  flex-wrap: wrap;
+}
+.breadcrumb__sep { color: var(--color-text-soft); }
+
+/* ── Empty state ──────────────────────────────────────────────
+   Centered placeholder shown before the user selects an item.
+   ──────────────────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5rem 2rem;
+  height: 100%;
+  min-height: 300px;
+  color: var(--color-text-muted);
+}
+.empty-state__icon {
+  width: 44px;
+  height: 44px;
+  background: var(--color-surface-2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+  color: var(--color-text-soft);
+}
+.empty-state__heading {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+.empty-state__body {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  max-width: 32ch;
+}

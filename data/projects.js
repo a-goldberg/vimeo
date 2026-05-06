@@ -23,7 +23,40 @@
 //   updatedAt   — Date in YYYY-MM-DD format
 //   notes       — Optional longer text shown on the detail page
 
+
 const projects = [
+  {
+    title: "Vimeo API Reference",
+    slug: "vimeo-api-reference",
+    category: "API Docs",
+    status: "In Progress",
+    description:
+      "Browse and search all 380 Vimeo API endpoints organized by category, with full parameter tables, required scopes, and example responses.",
+    tags: ["API", "Documentation", "Vimeo", "OpenAPI"],
+    externalUrl: "/vimeo-api-reference",
+    repoUrl: "",
+    featured: true,
+    visibility: "Internal",
+    updatedAt: "2026-05-06",
+    notes:
+      "Procedurally generated from the cached Vimeo OpenAPI spec (data/vimeo-spec.json). Refresh the spec via POST /api/vimeo-reference/refresh-spec when Vimeo releases API updates. Private endpoint annotations can be added to data/vimeo-private-endpoints.json after reviewing Vimeo's internal documentation.",
+  },
+  {
+    title: "Vimeo API Playground",
+    slug: "vimeo-api-playground",
+    category: "Testing",
+    status: "In Progress",
+    description:
+      "A sandbox for sending authenticated Vimeo API requests and inspecting responses in real time.",
+    tags: ["Node", "Express", "API", "Vimeo"],
+    externalUrl: "/vimeo-api-playground",
+    repoUrl: "",
+    featured: true,
+    visibility: "Internal",
+    updatedAt: "2026-05-06",
+    notes:
+      "Select any endpoint from the sidebar, fill in path/query/body parameters, and send a real request. Auth is handled server-side — the Vimeo token never reaches the browser. Links to the API Reference for documentation on each endpoint.",
+  },
   {
     title: "Webinar Registration", // displayed on the card and detail page
     slug: "webinar-registration", // used in /projects/my-new-tool URL
@@ -55,22 +88,7 @@ const projects = [
     notes:
       "Enter a Vimeo video link (really, any Vimeo video URL that has an ID in it), and we display an embedded player preview and fetch metadata to display alongside the player.  To simulate a custom integration with CMS or DAM type tools, an interface is also provided for viewing and updating video metadata, with the ability to sync changes back to Vimeo via standard API endpoints. <br><br> Future updates will include support for providing your own access token to test with different Vimeo accounts.  I also need to add support for standalone video IDs and links with a custom alias (i.e., no vimeo ID in the URL).",
   },
-  {
-    title: "Vimeo API Playground",
-    slug: "vimeo-api-playground",
-    category: "Testing",
-    status: "Planned",
-    description:
-      "A sandbox for testing authenticated Vimeo API requests and inspecting responses in real time.",
-    tags: ["Node", "Express", "API", "Vimeo"],
-    externalUrl: "",
-    repoUrl: "",
-    featured: true,
-    visibility: "Internal",
-    updatedAt: "2026-05-01",
-    notes:
-      "Will support OAuth token input and a simple request builder for common Vimeo API endpoints.",
-  },
+
   {
     title: "Webhook Tester",
     slug: "webhook-tester",

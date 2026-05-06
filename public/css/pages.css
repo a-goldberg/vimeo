@@ -292,3 +292,318 @@
 #regForm .btn {
   margin-top: 15px;
 }
+
+/* ── Vimeo API Reference + Playground ─────────────────────────
+   Full-height two-column layout: fixed sidebar + scrollable
+   main panel. The footer remains in the document flow but
+   sits below the fold — expected behavior for tool pages.
+   ──────────────────────────────────────────────────────────── */
+
+.page--vimeo-api-reference .api-shell,
+.page--vimeo-api-playground .api-shell {
+  display: grid;
+  grid-template-columns: 272px 1fr;
+  margin-top: var(--nav-height);       /* push below the fixed nav */
+  height: calc(100vh - var(--nav-height));
+  overflow: hidden;
+}
+
+/* Sidebar */
+.api-sidebar {
+  border-right: 1px solid var(--color-border-soft);
+  background: var(--color-surface);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.api-sidebar::-webkit-scrollbar { width: 4px; }
+.api-sidebar::-webkit-scrollbar-track { background: transparent; }
+.api-sidebar::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+.api-sidebar__search {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--color-border-soft);
+  position: sticky;
+  top: 0;
+  background: var(--color-surface);
+  z-index: 1;
+}
+
+/* Nav tree inside sidebar */
+.api-nav { flex: 1; padding: 0.375rem 0 1.5rem; }
+
+.api-nav__group-toggle {
+  width: 100%;
+  text-align: left;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  gap: 0.375rem;
+}
+.api-nav__group-toggle:hover { color: var(--color-accent); }
+
+.api-nav__count {
+  margin-left: auto;
+  font-size: 0.68rem;
+  background: var(--color-surface-2);
+  color: var(--color-text-soft);
+  border-radius: 100px;
+  padding: 0.1em 0.5em;
+  font-weight: 500;
+}
+
+.api-nav__subtag {
+  padding: 0.25rem 1rem 0.1875rem 1.625rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-soft);
+  letter-spacing: 0.035em;
+  margin-top: 0.125rem;
+}
+
+.api-nav__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.28rem 1rem 0.28rem 1.625rem;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.api-nav__row:hover { background: var(--color-bg); }
+.api-nav__row.is-active {
+  background: var(--color-accent-soft);
+  border-right: 2px solid var(--color-accent);
+}
+.api-nav__row.is-active .api-nav__name {
+  color: var(--color-accent-strong);
+  font-weight: 500;
+}
+
+.api-nav__name {
+  font-size: 0.8rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Main content panel */
+.api-main {
+  overflow-y: auto;
+  background: var(--color-bg);
+}
+
+.api-main::-webkit-scrollbar { width: 6px; }
+.api-main::-webkit-scrollbar-track { background: transparent; }
+.api-main::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+
+.api-doc-inner {
+  max-width: 800px;
+  padding: 2.25rem 2.5rem 5rem;
+}
+
+/* Endpoint header elements (reference + playground) */
+.api-ep-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 0.625rem;
+}
+
+.api-ep-title {
+  font-size: 1.4375rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.api-ep-summary {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-top: 0.3rem;
+  line-height: 1.6;
+}
+
+.api-try-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.api-divider {
+  border: none;
+  border-top: 1px solid var(--color-border-soft);
+  margin: 1.5rem 0;
+}
+
+.api-section-heading {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 0.625rem;
+  letter-spacing: 0.01em;
+}
+
+/* Scope banner */
+.scope-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6875rem;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent-glow);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.9375rem;
+  margin-bottom: 1.5rem;
+}
+.scope-banner__icon { width: 15px; height: 15px; color: var(--color-accent); flex-shrink: 0; margin-top: 2px; }
+.scope-banner__label { font-size: 0.8rem; color: var(--color-accent-strong); font-weight: 600; margin-bottom: 0.3rem; }
+.scope-banner__note { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.4rem; }
+.scope-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+
+/* Param table (reference + playground) */
+.param-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.8125rem;
+}
+.param-table th {
+  text-align: left;
+  font-size: 0.675rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+  padding: 0 0.75rem 0.4375rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.param-table th:first-child { padding-left: 0; }
+.param-table td {
+  padding: 0.5625rem 0.75rem;
+  border-bottom: 1px solid var(--color-border-soft);
+  vertical-align: top;
+}
+.param-table td:first-child { padding-left: 0; }
+.param-table tr:last-child td { border-bottom: none; }
+
+.param-name {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--color-text);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+.param-type { font-family: var(--font-mono); font-size: 0.73rem; color: var(--color-text-muted); }
+.param-desc { color: var(--color-text-muted); line-height: 1.55; }
+.param-enum { margin-top: 0.2rem; font-size: 0.73rem; color: var(--color-text-soft); }
+.param-enum code {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  background: var(--color-surface-2);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  color: var(--color-text-muted);
+}
+.req-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-archived);
+  flex-shrink: 0;
+}
+
+/* Response tabs */
+.resp-section { margin-top: 0; }
+.resp-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 0.875rem;
+}
+.resp-tab {
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  font-family: var(--font-sans);
+  transition: color 0.15s;
+}
+.resp-tab:hover { color: var(--color-text); }
+.resp-tab.is-active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+.resp-pane { display: none; }
+.resp-pane.is-active { display: block; }
+
+/* Status badge (response codes) */
+.status-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  font-weight: 600;
+  padding: 0.2em 0.55em;
+  border-radius: var(--radius-sm);
+  min-width: 36px;
+  text-align: center;
+}
+.s-2xx { background: #E6F9EF; color: #0D7A51; }
+.s-4xx { background: #FEE2E2; color: #B91C1C; }
+.s-5xx { background: #FFF3E0; color: #B45309; }
+
+/* JSON response block */
+.ex-json {
+  background: #0F2238;
+  border-radius: var(--radius-md);
+  padding: 1.125rem 1.25rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.7875rem;
+  line-height: 1.7;
+  color: #D8E8F5;
+}
+
+/* Content-type label above body param table */
+.content-type-label {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  color: var(--color-text-muted);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.2em 0.6em;
+  margin-bottom: 0.625rem;
+}
+
+@media (max-width: 860px) {
+  .page--vimeo-api-reference .api-shell,
+  .page--vimeo-api-playground .api-shell {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+  .api-sidebar {
+    height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-soft);
+  }
+  .api-main { overflow: visible; }
+}

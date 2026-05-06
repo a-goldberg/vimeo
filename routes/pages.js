@@ -58,6 +58,22 @@ router.get('/webinar-registration', (req, res) => {
   });
 });
 
+// Vimeo API Reference — documentation browser
+router.get('/vimeo-api-reference', (req, res) => {
+  res.render('pages/vimeo-api-reference', {
+    title: 'Vimeo API Reference',
+    extraScripts: '<script src="/js/vimeo-api-reference.js"></script>',
+  });
+});
+
+// Vimeo API Playground — live request sandbox
+router.get('/vimeo-api-playground', (req, res) => {
+  res.render('pages/vimeo-api-playground', {
+    title: 'Vimeo API Playground',
+    extraScripts: '<script src="/js/vimeo-api-playground.js"></script>',
+  });
+});
+
 // Project detail — driven entirely by data/projects.js
 router.get('/projects/:slug', (req, res, next) => {
   const project = projects.find((p) => p.slug === req.params.slug);
