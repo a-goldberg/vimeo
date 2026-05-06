@@ -208,18 +208,15 @@
   margin-bottom: var(--space-4);
 }
 
+
+
+
+
 /* ── Smart Card tool ───────────────────────────────────────────
-   Page container + elements unique to /smart-card.
+   Elements unique to /smart-card.
    Reusable layout: .col-2, .stack, .panel, .embed--16-9,
    .chip, .collapsible, .expand-toggle, .external-link (components.css)
    ──────────────────────────────────────────────────────────── */
-.page--smart-card .container {
-  padding-top: var(--space-16);
-  padding-bottom: var(--space-16);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
 
 /* URL input bar — smart-card specific */
 .url-bar {
@@ -286,18 +283,10 @@
 }
 
 /* ── Webinar Registration tool ─────────────────────────────────
-   Page container + button spacing unique to /webinar-registration.
+   button spacing unique to /webinar-registration.
    Reusable form fields: .form-group (components.css)
    Reusable status blocks: .status (components.css)
    ──────────────────────────────────────────────────────────── */
-.page--webinar-registration .container {
-  padding-top: var(--space-16);
-  padding-bottom: var(--space-16);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  max-width: 640px;
-}
 
 #configForm .btn,
 #regForm .btn {

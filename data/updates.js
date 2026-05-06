@@ -8,16 +8,20 @@
 
 const updates = [
   {
-    date: '2026-05-04',
-    text: 'Published the first project: SmartCard CMS Embed Demo, a tool to demonstrate API-based video embedding and metadata management.',
-    projectSlug: 'smart-card',
+    date: "2026-05-05",
+    text: "Added Webinar Registration demo and refactored CSS to fit a more standardized BEM structure.",
+    projectSlug: "webinar-registration",
   },
   {
-    date: '2026-05-01',
-    text: 'Launched project hub scaffold — routing, templates, and design system in place.',
+    date: "2026-05-04",
+    text: "Published the first project: SmartCard CMS Embed Demo, a tool to demonstrate API-based video embedding and metadata management.",
+    projectSlug: "smart-card",
+  },
+  {
+    date: "2026-05-01",
+    text: "Launched project hub scaffold — routing, templates, and design system in place.",
     projectSlug: null,
   },
-  
 ];
 
 module.exports = updates;

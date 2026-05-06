@@ -28,7 +28,7 @@ const projects = [
     title: "Webinar Registration", // displayed on the card and detail page
     slug: "webinar-registration", // used in /projects/my-new-tool URL
     category: "Customer Projects", // Tools | Customer Projects | API Docs | Testing
-    status: "In Progress", // Live | In Progress | Planned | Archived
+    status: "Live", // Live | In Progress | Planned | Archived
     description: "Remote registration of Vimeo webinar attendees.", // short text shown on the card
     tags: ["Live Events", "Registration", "Vimeo API"], // short labels shown on the card
     externalUrl: "/webinar-registration", // optional: link to a live version
@@ -37,7 +37,7 @@ const projects = [
     visibility: "Customer", // Internal | Customer | Public
     updatedAt: "2026-05-05",
     notes:
-      "Simulating a customer registration form on their own website for an upcoming Vimeo-powered webinar.  Uses the Vimeo API to check if the user is already registered and to submit new registrations.",
+      'Simulating a customer registration form on their own website for an upcoming Vimeo-powered webinar.  Uses the Vimeo API to check if the user is already registered and to submit new registrations.<br><br>Note:  As of 5/5/2026, the "register a new attendee" API endpoint seems to be broken.  I am investigating this with engineering today.',
   },
   {
     title: "SmartCard CMS Embed", // displayed on the card and detail page

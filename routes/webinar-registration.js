@@ -4,12 +4,12 @@ const { VIMEO_API } = require('../utils/vimeo');
 
 const VIMEO_VERSION = '3.4';
 
-// Resolve token and eventId from the request body, falling back to env vars.
-function resolveCredentials(body) {
-  return {
-    token: (body.token || '').trim() || process.env.VIMEO_TOKEN,
-    eventId: (body.eventId || '').trim() || process.env.VIMEO_EVENT_ID,
-  };
+// Token from Authorization header; eventId from query string. Both fall back to env.
+function resolveCredentials(req) {
+  const token = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim()
+    || process.env.VIMEO_TOKEN;
+  const eventId = (req.query.eventId || '').trim() || process.env.VIMEO_EVENT_ID;
+  return { token, eventId };
 }
 
 function vimeoHeaders(token) {
@@ -21,12 +21,14 @@ function vimeoHeaders(token) {
 }
 
 // POST /api/webinar-registration/check-registered
-// Body: { email, token?, eventId? }
+// Headers: Authorization: Bearer <token>  (optional — falls back to VIMEO_TOKEN env)
+// Query:   ?eventId=<id>                  (optional — falls back to VIMEO_EVENT_ID env)
+// Body:    { email }
 // Returns: { registered: boolean }
-// Pages through all registrants (up to 100 per request) to ensure no false negatives.
+// Pages through all registrants (up to 100 per request) to avoid false negatives.
 router.post('/check-registered', async (req, res) => {
   const { email } = req.body;
-  const { token, eventId } = resolveCredentials(req.body);
+  const { token, eventId } = resolveCredentials(req);
 
   if (!email) return res.status(400).json({ error: 'email is required.' });
   if (!token) return res.status(500).json({ error: 'No Vimeo token configured. Add VIMEO_TOKEN to .env or enter one above.' });
@@ -62,10 +64,12 @@ router.post('/check-registered', async (req, res) => {
 });
 
 // POST /api/webinar-registration/register
-// Body: { first_name, last_name, email, token?, eventId? }
+// Headers: Authorization: Bearer <token>  (optional — falls back to VIMEO_TOKEN env)
+// Query:   ?eventId=<id>                  (optional — falls back to VIMEO_EVENT_ID env)
+// Body:    { first_name, last_name, email }
 router.post('/register', async (req, res) => {
   const { first_name, last_name, email } = req.body;
-  const { token, eventId } = resolveCredentials(req.body);
+  const { token, eventId } = resolveCredentials(req);
 
   if (!first_name || !last_name || !email) {
     return res.status(400).json({ error: 'first_name, last_name, and email are required.' });
@@ -102,6 +106,44 @@ router.post('/register', async (req, res) => {
 
   console.log(`[webinar] registered: ${first_name} ${last_name} <${email}>`);
   return res.json({ success: true });
+});
+
+
+// POST /api/webinar-registration/get-attendees
+// Headers: Authorization: Bearer <token>  (optional — falls back to VIMEO_TOKEN env)
+// Query:   ?eventId=<id>                  (optional — falls back to VIMEO_EVENT_ID env)
+// Returns: { attendees: [] }
+// Pages through all registrants (up to 100 per request) to return the full list.
+router.post('/get-attendees', async (req, res) => {
+    const { token, eventId } = resolveCredentials(req);
+
+  if (!token) return res.status(500).json({ error: 'No Vimeo token configured. Add VIMEO_TOKEN to .env or enter one above.' });
+  if (!eventId) return res.status(500).json({ error: 'No event ID configured. Add VIMEO_EVENT_ID to .env or enter one above.' });
+
+  let nextUrl = `${VIMEO_API}/lead_capture/live_events/${eventId}/registrants?fields=email,first_name,last_name&per_page=100`;
+  const attendees = [];
+
+  try {
+    while (nextUrl) {
+      const vimeoRes = await fetch(nextUrl, { headers: vimeoHeaders(token) });
+      const text = await vimeoRes.text();
+      let body = {};
+      try { body = JSON.parse(text); } catch (_) {}
+
+      if (!vimeoRes.ok) {
+        console.error(`[webinar] get-attendees ${vimeoRes.status}:`, text);
+        return res.status(vimeoRes.status).json({ error: body.error || `Vimeo API returned ${vimeoRes.status}.` });
+      }
+
+      attendees.push(...(body.data || []));
+      nextUrl = body.paging?.next ? `${VIMEO_API}${body.paging.next}` : null;
+    }
+  } catch (err) {
+    console.error('[webinar] network error:', err.message);
+    return res.status(502).json({ error: 'Could not reach Vimeo API.' });
+  }
+
+  return res.json({ attendees });
 });
 
 module.exports = router;

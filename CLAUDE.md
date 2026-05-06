@@ -119,6 +119,9 @@ toggles the modifier off/on to let users expand and collapse.
 .status__heading .status__body
 ```
 
+#### Table
+.table
+
 #### Misc
 ```
 .expand-toggle   "Click to Expand / Show Less" link
