@@ -145,7 +145,7 @@
 .footer__tagline {
   font-size: 0.875rem;
   color: var(--color-text-muted);
-  max-width: 32ch;
+  max-width: 48ch;
 }
 
 .footer__nav {

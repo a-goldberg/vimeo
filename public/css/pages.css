@@ -86,7 +86,7 @@
 }
 
 .page-hero__desc {
-  max-width: 56ch;
+  max-width: 70ch;
   color: var(--color-text-muted);
 }
 
