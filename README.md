@@ -13,16 +13,24 @@ vimeo-home/
   server.js              — Express app entry point
   ecosystem.config.js    — PM2 config
   .env.example           — Environment variable template
+  CLAUDE.md              — Developer guide (naming conventions, component vocab, tool architecture)
 
-  src/
-    data/
-      projects.js        — All project metadata lives here
-      updates.js         — Recent site updates for the home page feed
-    routes/
-      pages.js           — HTML page routes (/, /tools, /projects/:slug, etc.)
-      api.js             — JSON API routes (/api/projects)
-    utils/
-      helpers.js         — Shared view helpers (formatDate, statusClass, etc.)
+  data/
+    projects.js          — All project metadata (edit this to add/update projects)
+    updates.js           — Recent site updates for the home page feed
+    vimeo-spec.json      — Cached Vimeo OpenAPI spec (drop a new file here to update)
+
+  routes/
+    pages.js             — HTML page routes (/, /tools, /projects/:slug, etc.)
+    api.js               — JSON API routes (/api/projects)
+    vimeo-proxy.js       — Catch-all authenticated proxy → api.vimeo.com
+    vimeo-reference.js   — Serves the cached OpenAPI spec
+    smart-card.js        — API routes for the SmartCard CMS Embed tool
+    webinar-registration.js  — API routes for the Webinar Registration tool
+
+  utils/
+    helpers.js           — Shared view helpers (formatDate, statusClass)
+    vimeo.js             — Shared Vimeo API client (always import this; never call Vimeo directly)
 
   views/
     layouts/
@@ -31,19 +39,10 @@ vimeo-home/
     partials/            — Reusable EJS snippets (cards, pills, tags, etc.)
 
   public/
-    css/
-      reset.css          — Element reset
-      tokens.css         — Design tokens (CSS variables)
-      base.css           — Base element styles
-      layout.css         — Structural layout (nav, footer, grids)
-      components.css     — Reusable UI components
-      pages.css          — Page-specific styles
-    js/
-      main.js            — Site-wide vanilla JS (nav toggle, copy buttons)
-    img/
+    css/                 — Six ordered layers: reset → tokens → base → layout → components → pages
+    js/                  — One file per page; no build step
 
-  projects/              — Self-contained static tools/demos
-    example-static-tool/ — Working JSON formatter example
+  projects/              — Self-contained static tools/demos (served at /projects-static/)
 ```
 
 ---
@@ -87,7 +86,7 @@ Check status: `pm2 status` / `pm2 logs vimeo-home`
 
 ## How to add a new project
 
-1. Open `src/data/projects.js`
+1. Open `data/projects.js`
 2. Add a new object to the array:
 
 ```js
@@ -114,9 +113,11 @@ and get a detail page at `/projects/my-new-tool`.
 
 ## How to add a new route
 
-1. Add the route handler in `src/routes/pages.js` (HTML pages) or `src/routes/api.js` (JSON endpoints)
+1. Add the route handler in `routes/pages.js` (HTML pages) or `routes/api.js` (JSON endpoints)
 2. Create a matching EJS template in `views/pages/` if needed
-3. No other wiring required — routes are imported in `server.js` already
+3. No other wiring required — routes are already imported in `server.js`
+
+See `CLAUDE.md` for the full step-by-step guide to adding a new tool page, including how to handle tool-specific API routes and full-height layouts.
 
 ---
 

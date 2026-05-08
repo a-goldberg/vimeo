@@ -23,12 +23,12 @@ PM2 runs it in watch mode — **no manual restarts needed**; just save a file an
 server.js                  Express entry point; mounts all routers
 data/projects.js           THE file to edit to add/update projects
 data/updates.js            Recent activity feed for home page
-data/vimeo-spec.json       Cached Vimeo OpenAPI spec (3 MB) — see "Vimeo API Reference" below
-data/vimeo-private-endpoints.json  Manual annotation of private/internal endpoints
+data/vimeo-spec.json       Cached Vimeo OpenAPI spec — drop a new copy here to update it
+data/vimeo-private-endpoints.json  Legacy supplement; x-mill-visibility-private in the spec is now the primary source
 routes/pages.js            All HTML page routes
 routes/api.js              JSON API — GET /api/projects, /api/projects/:slug
 routes/vimeo-proxy.js      Catch-all authenticated proxy → api.vimeo.com
-routes/vimeo-reference.js  Serves the cached spec + refresh endpoint
+routes/vimeo-reference.js  Serves the cached spec from disk (no auto-fetch until OAuth is added)
 utils/vimeo.js             Shared Vimeo API client (always use this; never call Vimeo directly)
 utils/helpers.js           formatDate(), statusClass() — attached to app.locals in server.js
 views/layouts/main.ejs     Outer HTML shell; uses <%- body %> from express-ejs-layouts
@@ -224,53 +224,49 @@ sends — so always use the correct Vimeo content type from the spec, not just `
 
 ## Vimeo API Reference tool
 
-`/vimeo-api-reference` — documentation browser for all 380 Vimeo API endpoints.
+`/vimeo-api-reference` — documentation browser for all Vimeo API endpoints.
 
 ### How it works
 The page is a minimal EJS shell (`views/pages/vimeo-api-reference.ejs`). On load, the client JS
 (`public/js/vimeo-api-reference.js`) fetches the cached OpenAPI spec and renders everything:
 
-1. **Spec** is fetched from `GET /api/vimeo-reference/spec` → served from `data/vimeo-spec.json`
-2. **Private list** is fetched from `GET /api/vimeo-reference/private` → from `data/vimeo-private-endpoints.json`
-3. Spec operations are flattened and grouped by the `"Category\Subtag"` tag format
-4. Sidebar renders as collapsible groups with prettified `operationId` labels
-5. Clicking an endpoint renders its docs: URL block, scope banner, param tables, response section
+1. **Spec** fetched from `GET /api/vimeo-reference/spec` → served from `data/vimeo-spec.json`
+2. Operations flattened and grouped by the `"Category\Subtag"` tag format; `Essentials` subtag always sorts first
+3. Sidebar renders as collapsible groups with prettified `operationId` labels and a "Hide private" filter toggle
+4. Clicking an endpoint renders its docs: breadcrumb, URL block, banners, param tables, response section
+
+### Spec extension fields (read automatically from the spec)
+| Field | Location | Effect in UI |
+|-------|----------|--------------|
+| `x-mill-visibility-private: true` | operation | Red **PRIVATE** banner on doc page; red dot in sidebar; hidden when filter is on |
+| `x-mill-visibility-private: true` | parameter | Red `PRIVATE` badge next to the param name in the table |
+| `x-mill-vendor-tags: ["capability:NAME"]` | operation | Amber **Required capability** banner listing the capability name |
+| `security.oauth2: ["scope"]` | operation | Blue **Required scope** banner (already present for all scoped endpoints) |
 
 ### Updating the spec
-```bash
-curl -X POST http://localhost:3000/api/vimeo-reference/refresh-spec
-# Returns: { "ok": true, "paths": 273 }
-```
-This re-fetches from `api.vimeo.com/?openapi=true` and overwrites `data/vimeo-spec.json`.
-Only needed when Vimeo releases API updates (infrequent).
+The `refresh-spec` endpoint is disabled until OAuth auth is implemented. To update the spec,
+drop a new `vimeo-spec.json` directly into `data/`. The full spec (with `x-mill-*` extension
+fields) requires an OAuth-authenticated request — a personal access token returns a filtered
+version without those fields.
 
-### Adding private endpoint annotations
-After reviewing Vimeo's internal docs (e.g. via Gemini), populate `data/vimeo-private-endpoints.json`:
-```json
-[
-  { "method": "GET", "path": "/videos/{video_id}/fragments" },
-  { "path": "/lead_capture/{resource_type}/{resource_id}/registrants", "param": "send_email" }
-]
-```
-- Omit `"param"` to flag the whole endpoint as private/internal
-- Include `"param"` to flag only that specific parameter within an endpoint
-
-No server restart needed — the file is read on every request.
+### Parameter description rendering
+Param descriptions in the reference are rendered as Markdown (inline `code`, `**bold**`,
+`[links](url)`, and ` * bullet` lists). The renderer is a small inline function in
+`vimeo-api-reference.js` — no external library.
 
 ---
 
 ## Vimeo API Playground tool
 
-`/vimeo-api-playground` — live request sandbox. Same sidebar and spec loading as the Reference,
-but the detail panel is a request builder instead of documentation.
+`/vimeo-api-playground` — live request sandbox. Same sidebar, spec loading, and privacy filter
+as the Reference, but the detail panel is a request builder instead of documentation.
 
-- Select an endpoint → fill path params, query params, and an optional JSON body
-- Click **Send request** → the request goes through `/api/vimeo/*` (server adds auth)
-- Response status, timing, and JSON appear inline
+- Select an endpoint → fill path params, query params (private params labelled in red), and an optional JSON body
+- Click **Send request** → request goes through `/api/vimeo/*` (server adds auth)
+- Response status, timing, and JSON appear inline; PRIVATE and capability banners shown when applicable
 
-**Linking from Reference to Playground:** The "Try it out →" button passes `?op=<operationId>`
-in the URL. The Playground reads this on load and auto-selects the matching endpoint.
-The reverse link ("View documentation") on each Playground panel does the same back to the Reference.
+**Linking between tools:** "Try it out →" in the Reference passes `?op=<operationId>` to the
+Playground; "View documentation" does the reverse. Both pages auto-select the matching endpoint on load.
 
 ---
 
