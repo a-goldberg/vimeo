@@ -34,3 +34,4 @@ The polished version of this project should look modern on the surface, but unde
 3. Find places where this codebase violates its own conventions.
 
 4. Look for duplicate CSS patterns, inconsistent route naming, unused dependencies, hard-coded project data, and anything that would make future project additions harder.
+

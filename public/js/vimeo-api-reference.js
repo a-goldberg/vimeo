@@ -4,9 +4,9 @@ const state = {
   spec: null,
   ops: [],
   groups: {},
-  privateList: [],
   activeOp: null,
   searchQuery: '',
+  hidePrivate: false,
 };
 
 const dom = {
@@ -14,6 +14,7 @@ const dom = {
   doc: document.getElementById('api-doc'),
   empty: document.getElementById('api-empty'),
   search: document.getElementById('api-search'),
+  hidePrivateToggle: document.getElementById('api-hide-private'),
   toast: document.getElementById('toast'),
 };
 
@@ -25,16 +26,21 @@ function resolveRef(schemaOrRef, spec) {
   return spec.components?.schemas?.[name] ?? schemaOrRef;
 }
 
-function flattenSpec(spec, privateList) {
+function flattenSpec(spec) {
   const ops = [];
   for (const [path, pathItem] of Object.entries(spec.paths)) {
     for (const method of ['get', 'post', 'patch', 'put', 'delete']) {
       const op = pathItem[method];
       if (!op) continue;
       const scopes = op.security?.[0]?.oauth2 ?? [];
-      const isPrivate = privateList.some(
-        p => p.method.toLowerCase() === method && p.path === path
-      );
+      const isPrivate = op['x-mill-visibility-private'] === true;
+      const capabilities = (op['x-mill-vendor-tags'] || [])
+        .filter(t => t.startsWith('capability:'))
+        .map(t => t.slice('capability:'.length));
+      const parameters = (op.parameters || []).map(p => ({
+        ...p,
+        isPrivate: p['x-mill-visibility-private'] === true,
+      }));
       ops.push({
         method,
         path,
@@ -42,11 +48,12 @@ function flattenSpec(spec, privateList) {
         summary: op.summary || '',
         description: op.description || '',
         tags: op.tags || [],
-        parameters: op.parameters || [],
+        parameters,
         requestBody: op.requestBody || null,
         responses: op.responses || {},
         scopes,
         isPrivate,
+        capabilities,
       });
     }
   }
@@ -65,6 +72,18 @@ function groupByTag(ops) {
     groups[cat][sub].push(op);
   }
   return groups;
+}
+
+function visibleOps() {
+  const q = state.searchQuery.toLowerCase().trim();
+  let filtered = q ? state.ops.filter(op =>
+    op.path.toLowerCase().includes(q) ||
+    op.summary.toLowerCase().includes(q) ||
+    prettifyId(op.operationId).toLowerCase().includes(q) ||
+    op.tags.some(t => t.toLowerCase().includes(q))
+  ) : state.ops;
+  if (state.hidePrivate) filtered = filtered.filter(op => !op.isPrivate);
+  return filtered;
 }
 
 function prettifyId(id) {
@@ -100,7 +119,11 @@ function renderSidebar(groups, activeOp) {
     const inner = document.createElement('div');
     inner.className = 'collapsible__content';
 
-    const subKeys = Object.keys(subs).sort();
+    const subKeys = Object.keys(subs).sort((a, b) => {
+      if (a === 'Essentials') return -1;
+      if (b === 'Essentials') return 1;
+      return a.localeCompare(b);
+    });
     for (const sub of subKeys) {
       if (sub) {
         const label = document.createElement('div');
@@ -116,6 +139,7 @@ function renderSidebar(groups, activeOp) {
         row.innerHTML = `
           <span class="method-badge method-badge--${op.method}">${op.method.toUpperCase()}</span>
           <span class="api-nav__name">${escHtml(prettifyId(op.operationId))}</span>
+          ${op.isPrivate ? '<span class="api-nav__priv-dot" title="Private endpoint"></span>' : ''}
         `;
         row.addEventListener('click', () => selectEndpoint(op));
         inner.appendChild(row);
@@ -126,7 +150,6 @@ function renderSidebar(groups, activeOp) {
     group.appendChild(toggle);
     group.appendChild(body);
 
-    // Auto-open group containing the active op
     if (activeOp && allOps.some(o => o.operationId === activeOp.operationId)) {
       group.classList.add('collapsible--open');
     }
@@ -135,33 +158,92 @@ function renderSidebar(groups, activeOp) {
   }
 }
 
-// ── Documentation panel rendering ─────────────────────────────────────────────
+// ── Minimal Markdown renderer (for param descriptions) ───────────────────────
+// Handles: `code`, **bold**, [text](url), \n\n paragraphs, \n * bullets
 
-function getCapLabel(op) {
-  if (op.isPrivate) return { label: 'Private', cls: 'cap-badge--private' };
-  if (op.scopes.length === 0) return null;
-  return { label: 'Public', cls: 'cap-badge--public' };
+function renderDesc(raw) {
+  if (!raw) return '';
+
+  // Process inline tokens character-by-character to avoid regex order issues
+  function inline(text) {
+    let out = '';
+    let i = 0;
+    while (i < text.length) {
+      const ch = text[i];
+      if (ch === '`') {
+        const end = text.indexOf('`', i + 1);
+        if (end !== -1) { out += `<code>${escHtml(text.slice(i + 1, end))}</code>`; i = end + 1; continue; }
+      }
+      if (ch === '*' && text[i + 1] === '*') {
+        const end = text.indexOf('**', i + 2);
+        if (end !== -1) { out += `<strong>${escHtml(text.slice(i + 2, end))}</strong>`; i = end + 2; continue; }
+      }
+      if (ch === '[') {
+        const cb = text.indexOf(']', i + 1);
+        if (cb !== -1 && text[cb + 1] === '(') {
+          const cp = text.indexOf(')', cb + 2);
+          if (cp !== -1) {
+            const linkText = text.slice(i + 1, cb);
+            const url = text.slice(cb + 2, cp);
+            if (/^https?:\/\//.test(url)) {
+              out += `<a href="${escHtml(url)}" target="_blank" rel="noopener noreferrer">${escHtml(linkText)}</a>`;
+            } else {
+              out += escHtml(text.slice(i, cp + 1));
+            }
+            i = cp + 1; continue;
+          }
+        }
+      }
+      out += escHtml(ch); i++;
+    }
+    return out;
+  }
+
+  const parts = [];
+  for (const block of raw.split(/\n\n+/)) {
+    if (!block.trim()) continue;
+    const lines = block.split('\n').filter(l => l.trim());
+    if (lines.some(l => /^ *\* /.test(l))) {
+      let html = '';
+      let inList = false;
+      for (const line of lines) {
+        if (/^ *\* /.test(line)) {
+          if (!inList) { html += '<ul class="param-md-list">'; inList = true; }
+          html += `<li>${inline(line.replace(/^ *\* /, ''))}</li>`;
+        } else {
+          if (inList) { html += '</ul>'; inList = false; }
+          html += inline(line);
+        }
+      }
+      if (inList) html += '</ul>';
+      parts.push(html);
+    } else {
+      parts.push(inline(lines.join(' ')));
+    }
+  }
+  return parts.join('<br>');
 }
+
+// ── Documentation panel rendering ─────────────────────────────────────────────
 
 function buildPathHtml(path) {
   return escHtml(path).replace(/\{([^}]+)\}/g, '<span class="url-block__param">{$1}</span>');
 }
 
-function buildParamTable(params, spec, privateList, path) {
+function buildParamTable(params, spec, path) {
   if (params.length === 0) return '';
   const rows = params.map(p => {
     const schema = resolveRef(p.schema, spec) || {};
-    const isPriv = privateList.some(
-      e => e.path === path && e.param === p.name
-    );
     const typeStr = schema.type || (schema.$ref ? schema.$ref.split('/').pop() : '—');
-    const enumVals = schema.enum ? `<div class="param-enum">Values: ${schema.enum.map(v => `<code>${escHtml(String(v))}</code>`).join(' ')}</div>` : '';
-    const privBadge = isPriv ? ' <span class="priv-tag">PRIVATE</span>' : '';
+    const enumVals = schema.enum
+      ? `<div class="param-enum">Values: ${schema.enum.map(v => `<code>${escHtml(String(v))}</code>`).join(' ')}</div>`
+      : '';
+    const privBadge = p.isPrivate ? ' <span class="priv-tag">PRIVATE</span>' : '';
     const reqDot = p.required ? '<span class="req-dot" title="Required"></span>' : '';
     return `<tr>
       <td><div class="param-name">${reqDot}<span>${escHtml(p.name)}</span>${privBadge}</div></td>
       <td><span class="param-type">${escHtml(typeStr)}</span></td>
-      <td class="param-desc">${escHtml(p.description || '')}${enumVals}</td>
+      <td class="param-desc">${renderDesc(p.description || '')}${enumVals}</td>
     </tr>`;
   }).join('');
   return `<table class="param-table">
@@ -183,12 +265,14 @@ function buildBodyTable(requestBody, spec) {
   const rows = Object.entries(props).map(([name, rawSchema]) => {
     const propSchema = resolveRef(rawSchema, spec) || {};
     const typeStr = propSchema.type || (propSchema.$ref ? propSchema.$ref.split('/').pop() : '—');
-    const enumVals = propSchema.enum ? `<div class="param-enum">Values: ${propSchema.enum.map(v => `<code>${escHtml(String(v))}</code>`).join(' ')}</div>` : '';
+    const enumVals = propSchema.enum
+      ? `<div class="param-enum">Values: ${propSchema.enum.map(v => `<code>${escHtml(String(v))}</code>`).join(' ')}</div>`
+      : '';
     const reqDot = required.includes(name) ? '<span class="req-dot" title="Required"></span>' : '';
     return `<tr>
       <td><div class="param-name">${reqDot}<span>${escHtml(name)}</span></div></td>
       <td><span class="param-type">${escHtml(typeStr)}</span></td>
-      <td class="param-desc">${escHtml(propSchema.description || '')}${enumVals}</td>
+      <td class="param-desc">${renderDesc(propSchema.description || '')}${enumVals}</td>
     </tr>`;
   }).join('');
 
@@ -208,7 +292,6 @@ function buildResponseSection(responses, spec) {
     </tr>`;
   }).join('');
 
-  // Build JSON example from first 2xx response schema
   let exampleHtml = '';
   for (const [code, resp] of Object.entries(responses)) {
     if (!code.startsWith('2')) continue;
@@ -263,17 +346,9 @@ function buildExampleFromSchema(schema, spec, depth) {
 function selectEndpoint(op) {
   state.activeOp = op;
 
-  // Update sidebar active state
   document.querySelectorAll('.api-nav__row').forEach(r => {
     r.classList.toggle('is-active', r.dataset.opId === op.operationId);
   });
-
-  const cap = getCapLabel(op);
-  const capBadge = cap ? `<span class="cap-badge ${cap.cls}">${cap.label}</span>` : '';
-
-  const pathParams = op.parameters.filter(p => p.in === 'path');
-  const queryParams = op.parameters.filter(p => p.in === 'query');
-  const hasBody = !!op.requestBody;
 
   const [cat, sub] = (op.tags[0] || 'Other').split('\\');
   const breadcrumb = [cat, sub, prettifyId(op.operationId)].filter(Boolean)
@@ -281,6 +356,25 @@ function selectEndpoint(op) {
       ? `<span>${escHtml(s)}</span><span class="breadcrumb__sep">›</span>`
       : `<span>${escHtml(s)}</span>`)
     .join('');
+
+  const privBanner = op.isPrivate ? `
+    <div class="api-priv-banner">
+      <span class="priv-tag">PRIVATE</span>
+      <span>Not available to external API applications. Visible here because your account has staff access.</span>
+    </div>` : '';
+
+  const capBanner = op.capabilities.length > 0 ? `
+    <div class="cap-banner">
+      <svg class="cap-banner__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <div>
+        <div class="cap-banner__label">Required capability</div>
+        <div class="scope-tags">${op.capabilities.map(c => `<span class="cap-badge cap-badge--internal">${escHtml(c)}</span>`).join('')}</div>
+        <div class="cap-banner__note">This endpoint requires a capability assigned to your API app by Vimeo Support.</div>
+      </div>
+    </div>` : '';
 
   const scopeSection = op.scopes.length > 0 ? `
     <div class="scope-banner">
@@ -294,12 +388,16 @@ function selectEndpoint(op) {
       </div>
     </div>` : '';
 
+  const pathParams = op.parameters.filter(p => p.in === 'path');
+  const queryParams = op.parameters.filter(p => p.in === 'query');
+  const hasBody = !!op.requestBody;
+
   dom.doc.innerHTML = `
     <nav class="breadcrumb">${breadcrumb}</nav>
 
     <div class="api-ep-header">
       <div>
-        <h1 class="api-ep-title">${escHtml(prettifyId(op.operationId))} ${capBadge}</h1>
+        <h1 class="api-ep-title">${escHtml(prettifyId(op.operationId))}</h1>
         <p class="api-ep-summary">${escHtml(op.summary)}</p>
       </div>
       <a href="/vimeo-api-playground?op=${encodeURIComponent(op.operationId)}" class="btn btn--primary api-try-btn">
@@ -319,10 +417,12 @@ function selectEndpoint(op) {
       <span class="url-block__path">${buildPathHtml(op.path)}</span>
     </div>
 
+    ${privBanner}
+    ${capBanner}
     ${scopeSection}
 
-    ${pathParams.length > 0 ? `<h3 class="api-section-heading">Path parameters</h3>${buildParamTable(pathParams, state.spec, state.privateList, op.path)}` : ''}
-    ${queryParams.length > 0 ? `<h3 class="api-section-heading">Query parameters</h3>${buildParamTable(queryParams, state.spec, state.privateList, op.path)}` : ''}
+    ${pathParams.length > 0 ? `<h3 class="api-section-heading">Path parameters</h3>${buildParamTable(pathParams, state.spec, op.path)}` : ''}
+    ${queryParams.length > 0 ? `<h3 class="api-section-heading">Query parameters</h3>${buildParamTable(queryParams, state.spec, op.path)}` : ''}
     ${hasBody ? `<h3 class="api-section-heading">Body parameters</h3>${buildBodyTable(op.requestBody, state.spec)}` : ''}
 
     <hr class="api-divider">
@@ -330,24 +430,10 @@ function selectEndpoint(op) {
     ${buildResponseSection(op.responses, state.spec)}
   `;
 
-  dom.empty.hidden = true;
-  dom.doc.hidden = false;
+  dom.empty.classList.add('hidden');
+  dom.doc.classList.remove('hidden');
   dom.doc.scrollTop = 0;
   dom.doc.parentElement.scrollTop = 0;
-}
-
-// ── Search ────────────────────────────────────────────────────────────────────
-
-function applySearch(query) {
-  state.searchQuery = query;
-  const q = query.toLowerCase().trim();
-  const filtered = q ? state.ops.filter(op =>
-    op.path.toLowerCase().includes(q) ||
-    op.summary.toLowerCase().includes(q) ||
-    prettifyId(op.operationId).toLowerCase().includes(q) ||
-    op.tags.some(t => t.toLowerCase().includes(q))
-  ) : state.ops;
-  renderSidebar(groupByTag(filtered), state.activeOp);
 }
 
 // ── Tab switching (for response section) ─────────────────────────────────────
@@ -383,22 +469,32 @@ function escHtml(str) {
 
 async function init() {
   try {
-    const [specRes, privateRes] = await Promise.all([
-      fetch('/api/vimeo-reference/spec'),
-      fetch('/api/vimeo-reference/private'),
-    ]);
+    const specRes = await fetch('/api/vimeo-reference/spec');
     if (!specRes.ok) throw new Error(`Spec fetch failed: ${specRes.status}`);
     state.spec = await specRes.json();
-    state.privateList = await privateRes.json();
-    state.ops = flattenSpec(state.spec, state.privateList);
-    state.groups = groupByTag(state.ops);
-    renderSidebar(state.groups, null);
+    state.ops = flattenSpec(state.spec);
+    renderSidebar(groupByTag(visibleOps()), null);
   } catch (e) {
     showToast('Failed to load API spec. Check the server logs.', 'error');
     console.error(e);
   }
 
-  dom.search.addEventListener('input', e => applySearch(e.target.value));
+  dom.search.addEventListener('input', e => {
+    state.searchQuery = e.target.value;
+    renderSidebar(groupByTag(visibleOps()), state.activeOp);
+  });
+
+  dom.hidePrivateToggle.addEventListener('change', e => {
+    state.hidePrivate = e.target.checked;
+    // If the active op is now hidden, clear the doc panel
+    if (state.hidePrivate && state.activeOp?.isPrivate) {
+      state.activeOp = null;
+      dom.doc.classList.add('hidden');
+      dom.doc.innerHTML = '';
+      dom.empty.classList.remove('hidden');
+    }
+    renderSidebar(groupByTag(visibleOps()), state.activeOp);
+  });
 
   // Support deep-linking: /vimeo-api-reference?op=<operationId>
   const params = new URLSearchParams(window.location.search);

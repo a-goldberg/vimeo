@@ -8,6 +8,11 @@
 
 const updates = [
   {
+    date: "2026-05-07",
+    text: "Added a new API Reference page with categorized endpoint listings, search, and filtering.  This is the first step toward a more comprehensive API documentation experience that will include interactive testing and OAuth integration.",
+    projectSlug: "vimeo-api-reference",
+  },
+  {
     date: "2026-05-05",
     text: "Added Webinar Registration demo and refactored CSS to fit a more standardized BEM structure.",
     projectSlug: "webinar-registration",

@@ -282,6 +282,7 @@ The reverse link ("View documentation") on each Playground panel does the same b
 | `VIMEO_EVENT_ID` | Default webinar event ID |
 | `PORT` | Express listen port |
 | `FIRST_NAME` / `LAST_NAME` | Displayed in nav/footer |
+| `ADMIN_SECRET` | Used to authenticate destructive API requests using my API token until I can properly implement OAuth for multiple users
 
 The token is read at call time (not at startup), so updating `.env` takes effect on the next
 request without restarting PM2.

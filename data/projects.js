@@ -29,10 +29,10 @@ const projects = [
     title: "Vimeo API Reference",
     slug: "vimeo-api-reference",
     category: "API Docs",
-    status: "In Progress",
+    status: "Live",
     description:
       "Browse and search all 380 Vimeo API endpoints organized by category, with full parameter tables, required scopes, and example responses.",
-    tags: ["API", "Documentation", "Vimeo", "OpenAPI"],
+    tags: ["API", "Developer", "Documentation"],
     externalUrl: "/vimeo-api-reference",
     repoUrl: "",
     featured: true,
@@ -44,11 +44,11 @@ const projects = [
   {
     title: "Vimeo API Playground",
     slug: "vimeo-api-playground",
-    category: "Testing",
-    status: "In Progress",
+    category: "API Docs",
+    status: "Live",
     description:
       "A sandbox for sending authenticated Vimeo API requests and inspecting responses in real time.",
-    tags: ["Node", "Express", "API", "Vimeo"],
+    tags: ["API", "Developer"],
     externalUrl: "/vimeo-api-playground",
     repoUrl: "",
     featured: true,
@@ -63,7 +63,7 @@ const projects = [
     category: "Customer Projects", // Tools | Customer Projects | API Docs | Testing
     status: "Live", // Live | In Progress | Planned | Archived
     description: "Remote registration of Vimeo webinar attendees.", // short text shown on the card
-    tags: ["Live Events", "Registration", "Vimeo API"], // short labels shown on the card
+    tags: ["Live Events", "Registration", "API"], // short labels shown on the card
     externalUrl: "/webinar-registration", // optional: link to a live version
     repoUrl: "", // optional: GitHub link
     featured: true,
@@ -79,7 +79,7 @@ const projects = [
     status: "Live", // Live | In Progress | Planned | Archived
     description:
       "Demonstrating dynamic player embed plus CMS/DAM functionality using the Vimeo API.", // short text shown on the card
-    tags: ["Player", "Metadata", "Vimeo API"], // short labels shown on the card
+    tags: ["Player", "Metadata", "Videos", "API"], // short labels shown on the card
     externalUrl: "/smart-card", // optional: link to a live version
     repoUrl: "", // optional: GitHub link
     featured: true,
@@ -108,7 +108,7 @@ const projects = [
     title: "JSON Formatter",
     slug: "json-formatter",
     category: "Tools",
-    status: "Live",
+    status: "Planned",
     description:
       "Paste raw JSON and get it back cleanly formatted, validated, and syntax-highlighted.",
     tags: ["Utility", "JSON", "Formatting"],

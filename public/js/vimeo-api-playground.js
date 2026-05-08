@@ -4,9 +4,9 @@ const state = {
   spec: null,
   ops: [],
   groups: {},
-  privateList: [],
   activeOp: null,
   searchQuery: '',
+  hidePrivate: false,
 };
 
 const dom = {
@@ -14,10 +14,11 @@ const dom = {
   doc: document.getElementById('api-doc'),
   empty: document.getElementById('api-empty'),
   search: document.getElementById('api-search'),
+  hidePrivateToggle: document.getElementById('api-hide-private'),
   toast: document.getElementById('toast'),
 };
 
-// ── Spec helpers (shared with reference — keep in sync) ───────────────────────
+// ── Spec helpers (keep in sync with vimeo-api-reference.js) ──────────────────
 
 function resolveRef(schemaOrRef, spec) {
   if (!schemaOrRef || !schemaOrRef.$ref) return schemaOrRef;
@@ -25,27 +26,33 @@ function resolveRef(schemaOrRef, spec) {
   return spec.components?.schemas?.[name] ?? schemaOrRef;
 }
 
-function flattenSpec(spec, privateList) {
+function flattenSpec(spec) {
   const ops = [];
   for (const [path, pathItem] of Object.entries(spec.paths)) {
     for (const method of ['get', 'post', 'patch', 'put', 'delete']) {
       const op = pathItem[method];
       if (!op) continue;
       const scopes = op.security?.[0]?.oauth2 ?? [];
-      const isPrivate = privateList.some(
-        p => p.method.toLowerCase() === method && p.path === path
-      );
+      const isPrivate = op['x-mill-visibility-private'] === true;
+      const capabilities = (op['x-mill-vendor-tags'] || [])
+        .filter(t => t.startsWith('capability:'))
+        .map(t => t.slice('capability:'.length));
+      const parameters = (op.parameters || []).map(p => ({
+        ...p,
+        isPrivate: p['x-mill-visibility-private'] === true,
+      }));
       ops.push({
         method,
         path,
         operationId: op.operationId || `${method}_${path}`,
         summary: op.summary || '',
         tags: op.tags || [],
-        parameters: op.parameters || [],
+        parameters,
         requestBody: op.requestBody || null,
         responses: op.responses || {},
         scopes,
         isPrivate,
+        capabilities,
       });
     }
   }
@@ -64,6 +71,18 @@ function groupByTag(ops) {
     groups[cat][sub].push(op);
   }
   return groups;
+}
+
+function visibleOps() {
+  const q = state.searchQuery.toLowerCase().trim();
+  let filtered = q ? state.ops.filter(op =>
+    op.path.toLowerCase().includes(q) ||
+    op.summary.toLowerCase().includes(q) ||
+    prettifyId(op.operationId).toLowerCase().includes(q) ||
+    op.tags.some(t => t.toLowerCase().includes(q))
+  ) : state.ops;
+  if (state.hidePrivate) filtered = filtered.filter(op => !op.isPrivate);
+  return filtered;
 }
 
 function prettifyId(id) {
@@ -107,7 +126,11 @@ function renderSidebar(groups, activeOp) {
     const inner = document.createElement('div');
     inner.className = 'collapsible__content';
 
-    const subKeys = Object.keys(subs).sort();
+    const subKeys = Object.keys(subs).sort((a, b) => {
+      if (a === 'Essentials') return -1;
+      if (b === 'Essentials') return 1;
+      return a.localeCompare(b);
+    });
     for (const sub of subKeys) {
       if (sub) {
         const label = document.createElement('div');
@@ -123,6 +146,7 @@ function renderSidebar(groups, activeOp) {
         row.innerHTML = `
           <span class="method-badge method-badge--${op.method}">${op.method.toUpperCase()}</span>
           <span class="api-nav__name">${escHtml(prettifyId(op.operationId))}</span>
+          ${op.isPrivate ? '<span class="api-nav__priv-dot" title="Private endpoint"></span>' : ''}
         `;
         row.addEventListener('click', () => selectEndpoint(op));
         inner.appendChild(row);
@@ -174,6 +198,25 @@ function selectEndpoint(op) {
   const bodyInfo = buildBodySkeleton(op.requestBody, state.spec);
   const hasBody = !!bodyInfo;
 
+  const privBanner = op.isPrivate ? `
+    <div class="api-priv-banner">
+      <span class="priv-tag">PRIVATE</span>
+      <span>Not available to external API applications. Visible here because your account has staff access.</span>
+    </div>` : '';
+
+  const capBanner = op.capabilities.length > 0 ? `
+    <div class="cap-banner">
+      <svg class="cap-banner__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <div>
+        <div class="cap-banner__label">Required capability</div>
+        <div class="scope-tags">${op.capabilities.map(c => `<span class="cap-badge cap-badge--internal">${escHtml(c)}</span>`).join('')}</div>
+        <div class="cap-banner__note">This endpoint requires a capability assigned to your API app by Vimeo Support.</div>
+      </div>
+    </div>` : '';
+
   const scopeHtml = op.scopes.length > 0
     ? `<div class="scope-tags" style="margin-bottom:1rem">${op.scopes.map(s => `<span class="scope-badge">${escHtml(s)}</span>`).join('')}</div>`
     : '';
@@ -186,15 +229,16 @@ function selectEndpoint(op) {
 
   const queryParamFields = queryParams.map(p => {
     const schema = resolveRef(p.schema, state.spec) || {};
+    const privNote = p.isPrivate ? ' <span class="form-group__optional" style="color:#f85149">private</span>' : '';
     if (schema.enum) {
       const opts = ['', ...schema.enum].map(v => `<option value="${escHtml(String(v))}">${escHtml(String(v)) || '(none)'}</option>`).join('');
       return `<div class="form-group">
-        <label class="form-group__label" for="qp-${escHtml(p.name)}">${escHtml(p.name)}${p.required ? '' : ' <span class="form-group__optional">optional</span>'}</label>
+        <label class="form-group__label" for="qp-${escHtml(p.name)}">${escHtml(p.name)}${p.required ? '' : ' <span class="form-group__optional">optional</span>'}${privNote}</label>
         <select class="form-group__input" id="qp-${escHtml(p.name)}" data-param="${escHtml(p.name)}" data-param-in="query">${opts}</select>
       </div>`;
     }
     return `<div class="form-group">
-      <label class="form-group__label" for="qp-${escHtml(p.name)}">${escHtml(p.name)}${p.required ? '' : ' <span class="form-group__optional">optional</span>'}</label>
+      <label class="form-group__label" for="qp-${escHtml(p.name)}">${escHtml(p.name)}${p.required ? '' : ' <span class="form-group__optional">optional</span>'}${privNote}</label>
       <input class="form-group__input" id="qp-${escHtml(p.name)}" data-param="${escHtml(p.name)}" data-param-in="query" placeholder="${escHtml(p.description || '')}" />
     </div>`;
   }).join('');
@@ -208,6 +252,9 @@ function selectEndpoint(op) {
   dom.doc.innerHTML = `
     <h1 class="api-ep-title">${escHtml(prettifyId(op.operationId))}</h1>
     <p class="api-ep-summary">${escHtml(op.summary)}</p>
+
+    ${privBanner}
+    ${capBanner}
     ${scopeHtml}
 
     <div class="url-block" style="margin:1rem 0 1.5rem">
@@ -236,8 +283,8 @@ function selectEndpoint(op) {
     </div>
   `;
 
-  dom.empty.hidden = true;
-  dom.doc.hidden = false;
+  dom.empty.classList.add('hidden');
+  dom.doc.classList.remove('hidden');
   dom.doc.parentElement.scrollTop = 0;
 
   document.getElementById('pg-send').addEventListener('click', () => sendRequest(op, hasBody ? bodyInfo.contentType : null));
@@ -256,13 +303,11 @@ async function sendRequest(op, contentType) {
   sendBtn.textContent = 'Sending…';
   responseEl.hidden = true;
 
-  // Build path by substituting {params}
   let resolvedPath = op.path;
   document.querySelectorAll('[data-param-in="path"]').forEach(input => {
     resolvedPath = resolvedPath.replace(`{${input.dataset.param}}`, encodeURIComponent(input.value));
   });
 
-  // Build query string
   const qs = new URLSearchParams();
   document.querySelectorAll('[data-param-in="query"]').forEach(input => {
     if (input.value) qs.set(input.dataset.param, input.value);
@@ -293,7 +338,6 @@ async function sendRequest(op, contentType) {
     responseBody.textContent = pretty;
     responseEl.hidden = false;
 
-    // Update the displayed resolved path
     const pathDisplay = document.getElementById('pg-resolved-path');
     if (pathDisplay) pathDisplay.textContent = resolvedPath;
   } catch (e) {
@@ -303,20 +347,6 @@ async function sendRequest(op, contentType) {
     sendBtn.disabled = false;
     sendBtn.textContent = 'Send request';
   }
-}
-
-// ── Search ────────────────────────────────────────────────────────────────────
-
-function applySearch(query) {
-  state.searchQuery = query;
-  const q = query.toLowerCase().trim();
-  const filtered = q ? state.ops.filter(op =>
-    op.path.toLowerCase().includes(q) ||
-    op.summary.toLowerCase().includes(q) ||
-    prettifyId(op.operationId).toLowerCase().includes(q) ||
-    op.tags.some(t => t.toLowerCase().includes(q))
-  ) : state.ops;
-  renderSidebar(groupByTag(filtered), state.activeOp);
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
@@ -331,22 +361,31 @@ function showToast(msg, type = 'error') {
 
 async function init() {
   try {
-    const [specRes, privateRes] = await Promise.all([
-      fetch('/api/vimeo-reference/spec'),
-      fetch('/api/vimeo-reference/private'),
-    ]);
+    const specRes = await fetch('/api/vimeo-reference/spec');
     if (!specRes.ok) throw new Error(`Spec fetch failed: ${specRes.status}`);
     state.spec = await specRes.json();
-    state.privateList = await privateRes.json();
-    state.ops = flattenSpec(state.spec, state.privateList);
-    state.groups = groupByTag(state.ops);
-    renderSidebar(state.groups, null);
+    state.ops = flattenSpec(state.spec);
+    renderSidebar(groupByTag(visibleOps()), null);
   } catch (e) {
     showToast('Failed to load API spec. Check the server logs.', 'error');
     console.error(e);
   }
 
-  dom.search.addEventListener('input', e => applySearch(e.target.value));
+  dom.search.addEventListener('input', e => {
+    state.searchQuery = e.target.value;
+    renderSidebar(groupByTag(visibleOps()), state.activeOp);
+  });
+
+  dom.hidePrivateToggle.addEventListener('change', e => {
+    state.hidePrivate = e.target.checked;
+    if (state.hidePrivate && state.activeOp?.isPrivate) {
+      state.activeOp = null;
+      dom.doc.classList.add('hidden');
+      dom.doc.innerHTML = '';
+      dom.empty.classList.remove('hidden');
+    }
+    renderSidebar(groupByTag(visibleOps()), state.activeOp);
+  });
 
   // Support incoming link from reference: /vimeo-api-playground?op=<operationId>
   const params = new URLSearchParams(window.location.search);

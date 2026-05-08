@@ -303,7 +303,7 @@
 .page--vimeo-api-playground .api-shell {
   display: grid;
   grid-template-columns: 272px 1fr;
-  margin-top: var(--nav-height);       /* push below the fixed nav */
+  margin-top: 0px;
   height: calc(100vh - var(--nav-height));
   overflow: hidden;
 }
@@ -342,6 +342,9 @@
   text-transform: uppercase;
   color: var(--color-text-muted);
   gap: 0.375rem;
+  padding: 0.2rem 0.75rem 0.2rem 1rem;
+  border-width: thin;
+  margin: var(--space-1) auto;
 }
 .api-nav__group-toggle:hover { color: var(--color-accent); }
 
@@ -388,6 +391,49 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+}
+
+.api-nav__priv-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f85149;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* Sidebar filter toggle */
+.api-sidebar__filter {
+  padding: 0.4rem 1rem 0.5rem;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.api-filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+.api-filter-label:hover { color: var(--color-text-soft); }
+
+.api-filter-checkbox {
+  accent-color: var(--color-accent);
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Remove inner scroll on collapsible groups inside the nav — the sidebar scrolls */
+.api-nav .collapsible__body {
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border-top: none;
 }
 
 /* Main content panel */
@@ -471,6 +517,36 @@
 .scope-banner__note { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.4rem; }
 .scope-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
 
+/* Private endpoint banner — red, shown when x-mill-visibility-private: true */
+.api-priv-banner {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  background: rgba(248, 81, 73, 0.08);
+  border: 1px solid rgba(248, 81, 73, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.9375rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-soft);
+  line-height: 1.5;
+}
+
+/* Capability banner — amber, shown when x-mill-vendor-tags lists a capability */
+.cap-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6875rem;
+  background: rgba(227, 179, 65, 0.08);
+  border: 1px solid rgba(227, 179, 65, 0.28);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.9375rem;
+  margin-bottom: 1.25rem;
+}
+.cap-banner__icon { color: #e3b341; flex-shrink: 0; margin-top: 2px; }
+.cap-banner__label { font-size: 0.8rem; color: #e3b341; font-weight: 600; margin-bottom: 0.3rem; }
+.cap-banner__note { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.4rem; }
+
 /* Param table (reference + playground) */
 .param-table {
   width: 100%;
@@ -508,7 +584,12 @@
   flex-wrap: wrap;
 }
 .param-type { font-family: var(--font-mono); font-size: 0.73rem; color: var(--color-text-muted); }
-.param-desc { color: var(--color-text-muted); line-height: 1.55; }
+.param-desc { color: var(--color-text-muted); line-height: 1.55; font-size: 0.8125rem; }
+.param-desc a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
+.param-desc a:hover { color: var(--color-accent-strong); }
+.param-desc code { font-family: var(--font-mono); font-size: 0.75em; background: var(--color-surface-2); padding: 0.1em 0.35em; border-radius: 3px; }
+.param-md-list { margin: 0.3rem 0 0 1rem; padding: 0; list-style: disc; }
+.param-md-list li { margin-bottom: 0.15rem; }
 .param-enum { margin-top: 0.2rem; font-size: 0.73rem; color: var(--color-text-soft); }
 .param-enum code {
   font-family: var(--font-mono);

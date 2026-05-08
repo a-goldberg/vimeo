@@ -8,6 +8,12 @@
         </div>
       </div>
       <nav id="api-nav" class="api-nav"></nav>
+      <div class="api-sidebar__filter">
+        <label class="api-filter-label">
+          <input type="checkbox" id="api-hide-private" class="api-filter-checkbox" />
+          <span>Hide private endpoints</span>
+        </label>
+      </div>
     </aside>
 
     <main class="api-main" id="api-main">
@@ -20,7 +26,7 @@
         <p class="empty-state__heading">Select an endpoint to try</p>
         <p class="empty-state__body">Fill in the parameters and send a real authenticated request to the Vimeo API.</p>
       </div>
-      <div id="api-doc" class="api-doc-inner" hidden></div>
+      <div id="api-doc" class="api-doc-inner hidden"></div>
     </main>
 
   </div>
