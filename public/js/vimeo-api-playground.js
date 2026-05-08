@@ -189,22 +189,26 @@ function buildBodySkeleton(requestBody, spec) {
 function selectEndpoint(op) {
   state.activeOp = op;
 
-  document.querySelectorAll('.api-nav__row').forEach(r => {
-    r.classList.toggle('is-active', r.dataset.opId === op.operationId);
+  document.querySelectorAll(".api-nav__row").forEach((r) => {
+    r.classList.toggle("is-active", r.dataset.opId === op.operationId);
   });
 
-  const pathParams = op.parameters.filter(p => p.in === 'path');
-  const queryParams = op.parameters.filter(p => p.in === 'query');
+  const pathParams = op.parameters.filter((p) => p.in === "path");
+  const queryParams = op.parameters.filter((p) => p.in === "query");
   const bodyInfo = buildBodySkeleton(op.requestBody, state.spec);
   const hasBody = !!bodyInfo;
 
-  const privBanner = op.isPrivate ? `
+  const privBanner = op.isPrivate
+    ? `
     <div class="api-priv-banner">
       <span class="priv-tag">PRIVATE</span>
       <span>Not available to external API applications. Visible here because your account has staff access.</span>
-    </div>` : '';
+    </div>`
+    : "";
 
-  const capBanner = op.capabilities.length > 0 ? `
+  const capBanner =
+    op.capabilities.length > 0
+      ? `
     <div class="cap-banner">
       <svg class="cap-banner__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -212,42 +216,59 @@ function selectEndpoint(op) {
       </svg>
       <div>
         <div class="cap-banner__label">Required capability</div>
-        <div class="scope-tags">${op.capabilities.map(c => `<span class="cap-badge cap-badge--internal">${escHtml(c)}</span>`).join('')}</div>
+        <div class="scope-tags">${op.capabilities.map((c) => `<span class="cap-badge cap-badge--internal">${escHtml(c)}</span>`).join("")}</div>
         <div class="cap-banner__note">This endpoint requires a capability assigned to your API app by Vimeo Support.</div>
       </div>
-    </div>` : '';
+    </div>`
+      : "";
 
-  const scopeHtml = op.scopes.length > 0
-    ? `<div class="scope-tags" style="margin-bottom:1rem">${op.scopes.map(s => `<span class="scope-badge">${escHtml(s)}</span>`).join('')}</div>`
-    : '';
+  const scopeHtml =
+    op.scopes.length > 0
+      ? `<div class="scope-tags" style="margin-bottom:1rem">${op.scopes.map((s) => `<span class="scope-badge">${escHtml(s)}</span>`).join("")}</div>`
+      : "";
 
-  const pathParamFields = pathParams.map(p => `
+  const pathParamFields = pathParams
+    .map(
+      (p) => `
     <div class="form-group">
       <label class="form-group__label" for="pp-${escHtml(p.name)}">{${escHtml(p.name)}} <span class="form-group__optional">path · required</span></label>
       <input class="form-group__input" id="pp-${escHtml(p.name)}" data-param="${escHtml(p.name)}" data-param-in="path" placeholder="${escHtml(p.description || p.name)}" />
-    </div>`).join('');
+    </div>`,
+    )
+    .join("");
 
-  const queryParamFields = queryParams.map(p => {
-    const schema = resolveRef(p.schema, state.spec) || {};
-    const privNote = p.isPrivate ? ' <span class="form-group__optional" style="color:#f85149">private</span>' : '';
-    if (schema.enum) {
-      const opts = ['', ...schema.enum].map(v => `<option value="${escHtml(String(v))}">${escHtml(String(v)) || '(none)'}</option>`).join('');
-      return `<div class="form-group">
-        <label class="form-group__label" for="qp-${escHtml(p.name)}">${escHtml(p.name)}${p.required ? '' : ' <span class="form-group__optional">optional</span>'}${privNote}</label>
+  const queryParamFields = queryParams
+    .map((p) => {
+      const schema = resolveRef(p.schema, state.spec) || {};
+      const privNote = p.isPrivate
+        ? ' <span class="form-group__optional" style="color:#f85149">private</span>'
+        : "";
+      if (schema.enum) {
+        const opts = ["", ...schema.enum]
+          .map(
+            (v) =>
+              `<option value="${escHtml(String(v))}">${escHtml(String(v)) || "(none)"}</option>`,
+          )
+          .join("");
+        return `<div class="form-group">
+        <label class="form-group__label" for="qp-${escHtml(p.name)}">${escHtml(p.name)}${p.required ? "" : ' <span class="form-group__optional">optional</span>'}${privNote}</label>
         <select class="form-group__input" id="qp-${escHtml(p.name)}" data-param="${escHtml(p.name)}" data-param-in="query">${opts}</select>
       </div>`;
-    }
-    return `<div class="form-group">
-      <label class="form-group__label" for="qp-${escHtml(p.name)}">${escHtml(p.name)}${p.required ? '' : ' <span class="form-group__optional">optional</span>'}${privNote}</label>
-      <input class="form-group__input" id="qp-${escHtml(p.name)}" data-param="${escHtml(p.name)}" data-param-in="query" placeholder="${escHtml(p.description || '')}" />
+      }
+      return `<div class="form-group">
+      <label class="form-group__label" for="qp-${escHtml(p.name)}">${escHtml(p.name)}${p.required ? "" : ' <span class="form-group__optional">optional</span>'}${privNote}</label>
+      <input class="form-group__input" id="qp-${escHtml(p.name)}" data-param="${escHtml(p.name)}" data-param-in="query" placeholder="${escHtml(p.description || "")}" />
     </div>`;
-  }).join('');
+    })
+    .join("");
 
-  const bodyField = hasBody ? `
+  const bodyField = hasBody
+    ? `
     <div class="form-group">
       <label class="form-group__label">Request body <span class="form-group__optional">${escHtml(bodyInfo.contentType)}</span></label>
       <textarea class="form-group__textarea" id="pg-body" rows="10" spellcheck="false">${escHtml(JSON.stringify(bodyInfo.skeleton, null, 2))}</textarea>
-    </div>` : '';
+    </div>`
+    : "";
 
   dom.doc.innerHTML = `
     <h1 class="api-ep-title">${escHtml(prettifyId(op.operationId))}</h1>
@@ -268,9 +289,9 @@ function selectEndpoint(op) {
       View documentation
     </a>
 
-    ${pathParamFields ? `<h3 class="api-section-heading">Path parameters</h3>${pathParamFields}` : ''}
-    ${queryParamFields ? `<h3 class="api-section-heading">Query parameters</h3>${queryParamFields}` : ''}
-    ${bodyField ? `<h3 class="api-section-heading">Body</h3>${bodyField}` : ''}
+    ${pathParamFields ? `<h3 class="api-section-heading">Path parameters</h3>${pathParamFields}` : ""}
+    ${queryParamFields ? `<h3 class="api-section-heading">Query parameters</h3>${queryParamFields}` : ""}
+    ${bodyField ? `<h3 class="api-section-heading">Body</h3>${bodyField}` : ""}
 
     <button class="btn btn--primary" id="pg-send" style="margin-top:0.5rem">Send request</button>
 
@@ -283,11 +304,19 @@ function selectEndpoint(op) {
     </div>
   `;
 
-  dom.empty.classList.add('hidden');
-  dom.doc.classList.remove('hidden');
+  dom.empty.classList.add("hidden");
+  dom.doc.classList.remove("hidden");
   dom.doc.parentElement.scrollTop = 0;
 
-  document.getElementById('pg-send').addEventListener('click', () => sendRequest(op, hasBody ? bodyInfo.contentType : null));
+  // Don't allow destructive operations until I can hook up the OAuth bit, so users can play with their own data
+
+  if (["post", "put", "get"].includes(op.method)) {
+    document
+      .getElementById("pg-send")
+      .addEventListener("click", () =>
+        sendRequest(op, hasBody ? bodyInfo.contentType : null),
+      );
+  } else document.getElementById("pg-send").disabled = true;
 }
 
 // ── Request execution ─────────────────────────────────────────────────────────
