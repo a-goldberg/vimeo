@@ -11,12 +11,15 @@ const smartCardRouter = require('./routes/smart-card');
 const webinarRouter = require('./routes/webinar-registration');
 const vimeoProxyRouter = require('./routes/vimeo-proxy');
 const vimeoReferenceRouter = require('./routes/vimeo-reference');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security headers
-app.use(helmet({ contentSecurityPolicy: false }));
+// referrerPolicy: same-origin sends the Referer header on same-origin requests
+// (needed for API request logging) while suppressing it for cross-origin ones.
+app.use(helmet({ contentSecurityPolicy: false, referrerPolicy: { policy: 'same-origin' } }));
 
 // Parse request bodies (conservative size limit)
 app.use(express.json({ limit: '100kb' }));
@@ -46,6 +49,7 @@ app.use('/', pagesRouter);
 // prevent the /api prefix-match from intercepting these more-specific paths.
 app.use('/api/vimeo', vimeoProxyRouter);
 app.use('/api/vimeo-reference', vimeoReferenceRouter);
+app.use('/api/admin', adminRouter);
 
 // Data routes (JSON) — hub project metadata
 app.use('/api', apiRouter);

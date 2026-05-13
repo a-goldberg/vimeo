@@ -7,6 +7,8 @@
 // VIMEO_TOKEN is read from process.env at call time, so it's always
 // up-to-date with whatever is in .env without needing a server restart.
 
+const requestLog = require('./request-log');
+
 const VIMEO_API = 'https://api.vimeo.com';
 const VIMEO_VERSION = '3.4';
 
@@ -24,9 +26,10 @@ function requireToken(res) {
 
 // Builds the standard Vimeo auth + version headers.
 // Pass extra = { 'Content-Type': 'application/json' } etc. when needed.
-function vimeoHeaders(extra = {}) {
+// Pass token to override the default VIMEO_TOKEN env var.
+function vimeoHeaders(extra = {}, token) {
   return {
-    Authorization: `Bearer ${process.env.VIMEO_TOKEN}`,
+    Authorization: `Bearer ${token || process.env.VIMEO_TOKEN}`,
     Accept: `application/vnd.vimeo.*+json;version=${VIMEO_VERSION}`,
     ...extra,
   };
@@ -36,16 +39,25 @@ function vimeoHeaders(extra = {}) {
 //
 //   method   — 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
 //   endpoint — path starting with '/', e.g. '/videos/123456'
-//   options  — { headers, body } both optional
+//   options  — {
+//     headers  — extra request headers (optional)
+//     body     — request body (optional)
+//     token    — override the default VIMEO_TOKEN (optional)
+//     _meta    — { referer, ip, userAgent } for request logging (optional)
+//   }
 //
 // Returns the raw fetch Response so callers can inspect status and parse JSON
 // however they need to. Does not throw on non-2xx — callers handle that.
-async function vimeo(method, endpoint, { headers = {}, body } = {}) {
-  return fetch(`${VIMEO_API}${endpoint}`, {
+// Every call is automatically logged to utils/request-log.js.
+async function vimeo(method, endpoint, { headers = {}, body, token, _meta = {} } = {}) {
+  const startTime = Date.now();
+  const r = await fetch(`${VIMEO_API}${endpoint}`, {
     method,
-    headers: vimeoHeaders(headers),
+    headers: vimeoHeaders(headers, token),
     body,
   });
+  requestLog.logCall(method, endpoint, r, startTime, _meta);
+  return r;
 }
 
 // Standard error handler for route catch blocks.

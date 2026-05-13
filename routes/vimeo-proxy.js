@@ -12,7 +12,13 @@ router.use(express.raw({ type: '*/*', limit: '100kb' }));
 router.all('*', async (req, res) => {
   if (!requireToken(res)) return;
   try {
-    const opts = {};
+    const opts = {
+      _meta: {
+        referer: req.headers.referer || req.headers.origin || null,
+        ip: (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress,
+        userAgent: req.headers['user-agent'] || null,
+      },
+    };
     if (req.body && req.body.length) {
       opts.body = req.body;
       if (req.headers['content-type']) {

@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { VIMEO_API } = require('../utils/vimeo');
-
-const VIMEO_VERSION = '3.4';
+const { vimeo, VIMEO_API } = require('../utils/vimeo');
 
 // Token from Authorization header; eventId from query string. Both fall back to env.
 function resolveCredentials(req) {
@@ -12,11 +10,11 @@ function resolveCredentials(req) {
   return { token, eventId };
 }
 
-function vimeoHeaders(token) {
+function meta(req) {
   return {
-    Authorization: `Bearer ${token}`,
-    Accept: `application/vnd.vimeo.*+json;version=${VIMEO_VERSION}`,
-    'Content-Type': 'application/json',
+    referer: req.headers.referer || null,
+    ip: (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress,
+    userAgent: req.headers['user-agent'] || null,
   };
 }
 
@@ -35,11 +33,11 @@ router.post('/check-registered', async (req, res) => {
   if (!eventId) return res.status(500).json({ error: 'No event ID configured. Add VIMEO_EVENT_ID to .env or enter one above.' });
 
   const normalizedEmail = email.trim().toLowerCase();
-  let nextUrl = `${VIMEO_API}/lead_capture/live_events/${eventId}/registrants?fields=email&per_page=100`;
+  let endpoint = `/lead_capture/live_events/${eventId}/registrants?fields=email&per_page=100`;
 
   try {
-    while (nextUrl) {
-      const vimeoRes = await fetch(nextUrl, { headers: vimeoHeaders(token) });
+    while (endpoint) {
+      const vimeoRes = await vimeo('GET', endpoint, { token, _meta: meta(req) });
       const text = await vimeoRes.text();
       let body = {};
       try { body = JSON.parse(text); } catch (_) {}
@@ -49,11 +47,11 @@ router.post('/check-registered', async (req, res) => {
         return res.status(vimeoRes.status).json({ error: body.error || `Vimeo API returned ${vimeoRes.status}.` });
       }
 
-      const found = (body.data || []).some(r => (r.email || '').toLowerCase() === normalizedEmail);
+      const found = (body.data || []).some((r) => (r.email || '').toLowerCase() === normalizedEmail);
       if (found) return res.json({ registered: true });
 
-      // Vimeo returns a relative path in paging.next; prepend the base URL.
-      nextUrl = body.paging?.next ? `${VIMEO_API}${body.paging.next}` : null;
+      // paging.next is already a relative path — use it directly as the next endpoint
+      endpoint = body.paging?.next || null;
     }
   } catch (err) {
     console.error('[webinar] network error:', err.message);
@@ -79,14 +77,12 @@ router.post('/register', async (req, res) => {
 
   let vimeoRes;
   try {
-    vimeoRes = await fetch(
-      `${VIMEO_API}/lead_capture/live_events/${eventId}/registrants`,
-      {
-        method: 'PUT',
-        headers: vimeoHeaders(token),
-        body: JSON.stringify({ first_name, last_name, email }),
-      }
-    );
+    vimeoRes = await vimeo('PUT', `/lead_capture/live_events/${eventId}/registrants`, {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ first_name, last_name, email }),
+      token,
+      _meta: meta(req),
+    });
   } catch (err) {
     console.error('[webinar] network error:', err.message);
     return res.status(502).json({ error: 'Could not reach Vimeo API.' });
@@ -115,17 +111,17 @@ router.post('/register', async (req, res) => {
 // Returns: { attendees: [] }
 // Pages through all registrants (up to 100 per request) to return the full list.
 router.post('/get-attendees', async (req, res) => {
-    const { token, eventId } = resolveCredentials(req);
+  const { token, eventId } = resolveCredentials(req);
 
   if (!token) return res.status(500).json({ error: 'No Vimeo token configured. Add VIMEO_TOKEN to .env or enter one above.' });
   if (!eventId) return res.status(500).json({ error: 'No event ID configured. Add VIMEO_EVENT_ID to .env or enter one above.' });
 
-  let nextUrl = `${VIMEO_API}/lead_capture/live_events/${eventId}/registrants?fields=email,first_name,last_name&per_page=100`;
+  let endpoint = `/lead_capture/live_events/${eventId}/registrants?fields=email,first_name,last_name&per_page=100`;
   const attendees = [];
 
   try {
-    while (nextUrl) {
-      const vimeoRes = await fetch(nextUrl, { headers: vimeoHeaders(token) });
+    while (endpoint) {
+      const vimeoRes = await vimeo('GET', endpoint, { token, _meta: meta(req) });
       const text = await vimeoRes.text();
       let body = {};
       try { body = JSON.parse(text); } catch (_) {}
@@ -136,7 +132,7 @@ router.post('/get-attendees', async (req, res) => {
       }
 
       attendees.push(...(body.data || []));
-      nextUrl = body.paging?.next ? `${VIMEO_API}${body.paging.next}` : null;
+      endpoint = body.paging?.next || null;
     }
   } catch (err) {
     console.error('[webinar] network error:', err.message);

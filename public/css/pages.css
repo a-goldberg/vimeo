@@ -212,6 +212,156 @@
 
 
 
+/* ── Admin — API Request Monitor ──────────────────────────────
+   Diagnostic dashboard for Vimeo proxy request logging.
+   ──────────────────────────────────────────────────────────── */
+
+.page--admin .container {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-16);
+  max-width: 1100px;
+}
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.admin-toolbar__status {
+  font-family: var(--font-mono);
+}
+
+.admin-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.admin-stat {
+  padding: var(--space-5);
+}
+
+.admin-stat__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.admin-stat__value {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--color-text);
+  line-height: 1.1;
+}
+
+.admin-stat__sub {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+.admin-chart-labels {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--space-1);
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+
+.admin-chart-empty {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.admin-referer-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 36px;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  font-size: 0.8rem;
+}
+
+.admin-referer-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-referer-bar-wrap {
+  background: var(--color-surface-2);
+  border-radius: 2px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.admin-referer-bar {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.admin-referer-count {
+  text-align: right;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+/* Log table cell styles */
+.admin-td-time {
+  white-space: nowrap;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+}
+
+.admin-td-path {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-td-ref {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.admin-td-dur {
+  font-size: 0.82rem;
+  text-align: right;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.admin-td-rem {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .admin-stat-row { grid-template-columns: 1fr; }
+  .admin-referer-row { grid-template-columns: 120px 1fr 30px; }
+}
+
 /* ── Smart Card tool ───────────────────────────────────────────
    Elements unique to /smart-card.
    Reusable layout: .col-2, .stack, .panel, .embed--16-9,

@@ -74,6 +74,14 @@ router.get('/vimeo-api-playground', (req, res) => {
   });
 });
 
+// Admin — API request monitor
+router.get('/admin', (req, res) => {
+  res.render('pages/admin', {
+    title: 'API Request Monitor',
+    extraScripts: '<script src="/js/admin.js"></script>',
+  });
+});
+
 // Project detail — driven entirely by data/projects.js
 router.get('/projects/:slug', (req, res, next) => {
   const project = projects.find((p) => p.slug === req.params.slug);
