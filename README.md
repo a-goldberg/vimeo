@@ -21,6 +21,7 @@ vimeo-home/
     vimeo-spec.json      — Cached Vimeo OpenAPI spec (drop a new file here to update)
 
   routes/
+    admin.js             - Displays realtime logs related to Vimeo API calls, to track usage & rate limits
     pages.js             — HTML page routes (/, /tools, /projects/:slug, etc.)
     api.js               — JSON API routes (/api/projects)
     vimeo-proxy.js       — Catch-all authenticated proxy → api.vimeo.com
