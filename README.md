@@ -21,13 +21,17 @@ vimeo-home/
     vimeo-spec.json      — Cached Vimeo OpenAPI spec (drop a new file here to update)
 
   routes/
-    admin.js             - Displays realtime logs related to Vimeo API calls, to track usage & rate limits
+    admin.js             — Realtime API call logs (usage & rate limits)
+    auth-vimeo.js        — Per-user Vimeo OAuth routes (/auth/vimeo/*)
     pages.js             — HTML page routes (/, /tools, /projects/:slug, etc.)
     api.js               — JSON API routes (/api/projects)
     vimeo-proxy.js       — Catch-all authenticated proxy → api.vimeo.com
     vimeo-reference.js   — Serves the cached OpenAPI spec
     smart-card.js        — API routes for the SmartCard CMS Embed tool
     webinar-registration.js  — API routes for the Webinar Registration tool
+
+  middleware/
+    require-vimeo-auth.js  — Middleware: 401 if no user Vimeo session token
 
   utils/
     helpers.js           — Shared view helpers (formatDate, statusClass)
@@ -170,14 +174,62 @@ Browser → GET /api/my-tool/results
 
 ---
 
-## Adding authentication later
+## Vimeo OAuth — per-user session auth
 
-Authentication is not included in this scaffold. When you're ready to add it:
+Visitors can connect their own Vimeo account. The access token is stored server-side in their Express session — it never touches the browser.
 
-- Consider `express-session` + a simple username/password for internal tools
-- Consider Vimeo OAuth for customer-facing demos
-- Add auth middleware in `src/routes/pages.js` before protected routes
-- Store session secrets in `.env`, never in source code
+### Setup
+
+1. Create a Vimeo app at [developer.vimeo.com/apps](https://developer.vimeo.com/apps).
+2. Add a redirect URI in the app settings:
+   - **Local dev:** `http://localhost:3000/auth/vimeo/callback`
+   - **Production:** `https://yourdomain.com/auth/vimeo/callback`
+3. Fill in `.env`:
+
+```env
+SESSION_SECRET=<long random string>
+VIMEO_CLIENT_ID=your_client_id
+VIMEO_CLIENT_SECRET=your_client_secret
+VIMEO_REDIRECT_URI=http://localhost:3000/auth/vimeo/callback
+VIMEO_SCOPES=public private
+```
+
+Generate a secret: `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"`
+
+### OAuth routes
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/auth/vimeo/start` | GET | Redirects to Vimeo's authorization page |
+| `/auth/vimeo/callback` | GET | Exchanges auth code for token; stores in session |
+| `/auth/vimeo/logout` | POST | Removes Vimeo token from session |
+| `/auth/vimeo/status` | GET | Returns `{ connected, userName, userUri }` — never the token |
+
+### How it works
+
+- After connecting, `req.session.vimeoAuth` holds `{ accessToken, userUri, userName, userProfileLink }`.
+- All EJS templates get `vimeoAuth` (minus the token) via `res.locals`.
+- The Vimeo proxy at `/api/vimeo/*` prefers the session token when present, falls back to `VIMEO_TOKEN` otherwise.
+- Sessions expire after 8 hours. A PM2 restart clears all sessions (memorystore is in-process).
+
+### Adding a Vimeo-authenticated tool page
+
+Show the connect prompt when the user hasn't authenticated:
+
+```ejs
+<% if (!vimeoAuth) { %>
+  <%- include('../partials/vimeo-auth-required') %>
+<% } else { %>
+  <!-- tool UI here -->
+<% } %>
+```
+
+For API routes that must have a user token (no admin fallback):
+
+```js
+const requireVimeoAuth = require('../middleware/require-vimeo-auth');
+router.get('/my-endpoint', requireVimeoAuth, handler);
+```
 
 ---
 
@@ -185,10 +237,12 @@ Authentication is not included in this scaffold. When you're ready to add it:
 
 - Never commit `.env` to GitHub — it's in `.gitignore`
 - Never put API tokens, passwords, or customer data in front-end JS files
-- Anything customer-specific should stay behind server-side routes in `src/routes/api.js`
+- Vimeo access tokens are stored server-side only; the browser only sees a session cookie
+- Logout uses POST (not GET) to prevent CSRF; the `returnTo` redirect param is validated to block open redirects
+- Session IDs are regenerated after OAuth login to prevent session fixation
+- OAuth state includes an expiry timestamp; stale or tampered states are rejected with a 400
 - Files in `projects/` are publicly accessible — don't store anything sensitive there
-- The `/api/projects` endpoint returns project metadata — keep `repoUrl` and `externalUrl`
-  fields clean before sharing the site publicly
+- The `/api/admin/log` endpoint is unprotected — keep the hub on a private network or behind access controls
 
 ---
 

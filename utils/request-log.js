@@ -112,6 +112,7 @@ function logCall(method, endpoint, response, startTime, meta = {}) {
       ip: meta.ip || null,
       userAgent: meta.userAgent || null,
     },
+    vimeoUserUri: meta.vimeoUserUri || null,
   });
 }
 

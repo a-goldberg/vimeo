@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const ejsLayouts = require('express-ejs-layouts');
 const helmet = require('helmet');
+const session = require('express-session');
+const MemoryStore = require('memorystore')(session);
 const path = require('path');
 
 const { formatDate, statusClass } = require('./utils/helpers');
@@ -12,14 +14,34 @@ const webinarRouter = require('./routes/webinar-registration');
 const vimeoProxyRouter = require('./routes/vimeo-proxy');
 const vimeoReferenceRouter = require('./routes/vimeo-reference');
 const adminRouter = require('./routes/admin');
+const vimeoAuthRouter = require('./routes/auth-vimeo');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Trust the first proxy hop (OpenLiteSpeed) so req.secure is correct and
+// the secure cookie flag works in production.
+app.set('trust proxy', 1);
 
 // Security headers
 // referrerPolicy: same-origin sends the Referer header on same-origin requests
 // (needed for API request logging) while suppressing it for cross-origin ones.
 app.use(helmet({ contentSecurityPolicy: false, referrerPolicy: { policy: 'same-origin' } }));
+
+// Session middleware — must come after trust proxy, before routes.
+// memorystore prunes expired entries daily; avoids the MemoryStore leak warning.
+app.use(session({
+  secret: process.env.SESSION_SECRET || (() => { throw new Error('SESSION_SECRET is required'); })(),
+  resave: false,
+  saveUninitialized: false,
+  store: new MemoryStore({ checkPeriod: 86400000 }),
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 8 * 60 * 60 * 1000,
+  },
+}));
 
 // Parse request bodies (conservative size limit)
 app.use(express.json({ limit: '100kb' }));
@@ -41,6 +63,18 @@ app.set('layout', 'layouts/main');
 // To add a new helper: define it in utils/helpers.js, import it here, add it below.
 app.locals.formatDate = formatDate;
 app.locals.statusClass = statusClass;
+
+// Expose safe session auth info and current path to all EJS templates via res.locals.
+// Templates read vimeoAuth.userName etc. — never contains the access token.
+// currentPath is used by the auth widget to set the returnTo URL.
+app.use((req, res, next) => {
+  res.locals.vimeoAuth = req.session?.vimeoAuth || null;
+  res.locals.currentPath = req.path;
+  next();
+});
+
+// Auth routes — before page routes so /auth/* is never intercepted by the catch-all.
+app.use('/auth', vimeoAuthRouter);
 
 // Page routes (HTML)
 app.use('/', pagesRouter);
