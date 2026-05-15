@@ -1138,3 +1138,61 @@
   color: var(--color-text-muted);
   max-width: 32ch;
 }
+
+/* ── Vimeo auth widget ───────────────────────────────────────
+   Nav-level Vimeo connect / connected indicator.
+   ──────────────────────────────────────────────────────────── */
+.vimeo-auth-widget {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.vimeo-auth-widget__connected {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.vimeo-auth-widget__name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vimeo-auth-widget__logout-form { margin: 0; }
+
+.vimeo-auth-widget__disconnect {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--color-text-soft);
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+.vimeo-auth-widget__disconnect:hover { color: var(--color-text); }
+
+/* On mobile, hide the connected state (the name truncates poorly) and
+   collapse the connect button into the hamburger menu area. */
+@media (max-width: 640px) {
+  .vimeo-auth-widget { display: none; }
+}
+
+/* ── Auth-required empty state ───────────────────────────────
+   Modifier for the empty-state block used on pages that need
+   the user to connect their Vimeo account before proceeding.
+   ──────────────────────────────────────────────────────────── */
+.vimeo-auth-required {
+  min-height: 200px;
+  padding: var(--space-10) var(--space-6);
+}
+.vimeo-auth-required .empty-state__body {
+  max-width: 44ch;
+  margin-bottom: var(--space-5);
+}
