@@ -1,13 +1,13 @@
 ---
 name: project-onboarding
-description: Assists with onboarding new projects to the Project Hub, including setting up project structure, templates, routes, and documentation. Includes references to CSS guidelines, design mockups, and more examples to ensure consitency.  Use when creating a new project or adding a new tool to an existing project.
+description: Assists with onboarding new projects to the Project Hub, including setting up project structure, templates, routes, and documentation. Includes references to CSS guidelines, design mockups, and more examples to ensure consistency.  Use when creating a new project page, adding a new tool to an existing project, or making changes that could impact the user interface or introduce new design elements.
 ---
 
-When beginning a new project or tool in the Project Hub, use this skill to set the context regarding templates, reusable CSS components, design patterns, and code standards that should be followed to ensure consistency across the project. This skill should be used in conjunction with the `code-standards` skill, which provides more detailed guidance on code quality and maintainability.
+When beginning a new project or tool in the Project Hub, use this skill to set the context regarding templates, reusable CSS components, design patterns, and code standards that should be followed to ensure consistency across the project. Unless the task is purely design-focused, this skill should be used in conjunction with the `code-standards` skill, which provides more detailed guidance on code quality and maintainability.
 
 ## Maintain Consistent Look and Feel
 
-When needed, refer to design references to maintain consistent colors, layouts, components, proportions, and typography across the project. This includes adhering to any established design systems or style guides that the project follows. When adding new features or components, if there is any question of design language (that justifies loading additional data into the context window), see the following resources for guidance:
+When needed, refer to design references to maintain consistent colors, layouts, components, proportions, and typography across the project. This includes adhering to any established design systems or style guides that the project follows. When adding new features or components, if there is any question of design language (and the uncertainty justifies loading additional data into the context window), see the following resources for guidance:
 
 - [Original Design Mockup](assets/design_mock_02.png)
 - [Original CSS Color Scheme](references/chatgpt-color-scheme.css)

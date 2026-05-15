@@ -13,7 +13,7 @@ This is not a commercial product serving the needs of a diverse install base. It
 
 2. It almost certainly does not need modern frameworks and complications such as microservices, Docker, React, Next.js, TypeScript, serverless deployment, animation libraries, charting libraries (without relevant chart data), or similar technologies that would look good on a resume but would have no meaningful impact on the project beyond adding complication.
 
-3. What it does need are clean routes, clean data model, reusable templates, reusable CSS, secure handling of secrets, clear README documentation, simple deployment notes, and a predictable way to add the next tool.
+3. What it does need are clean routes, clean data model, reusable templates, reusable CSS, secure handling of secrets, clear README documentation and code comments, simple deployment notes, and a predictable way to add the next tool.
 
 4. Before introducing new third-party libraries or dependencies, always review the impact of such a "complexity" with the user, weigh the cost of complexity against the value of the problem it solves, and compare it to alternative solutions using vanilla JS, existing functionality, or foregoing the capability entirely. It's okay to add new features if the value proposition is there and the user agrees with your reasoning.
 
