@@ -10,6 +10,14 @@ router.get('/', (req, res) => {
   res.render('pages/home', { title: 'Project Hub', featured, recent, projects });
 });
 
+// Customer Projects index
+router.get('/all', (req, res) => {
+  res.render('pages/all-projects', {
+    title: 'All Projects',
+    projects: projects,
+  });
+});
+
 // Tools index
 router.get('/tools', (req, res) => {
   res.render('pages/tools', {

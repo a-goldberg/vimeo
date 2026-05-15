@@ -104,6 +104,7 @@ const projects = [
     updatedAt: "2026-04-20",
     notes: "",
   },
+  /*
   {
     title: "JSON Formatter",
     slug: "json-formatter",
@@ -119,7 +120,13 @@ const projects = [
     updatedAt: "2026-04-15",
     notes: "",
   },
+  */
 ];
+
+// order projects alphabetically by title for easier browsing
+projects.sort((a, b) => a.title.localeCompare(b.title));
+
+
 
 // Maps each category to its index page URL.
 // Used by the breadcrumb on detail pages — no need to edit this.
