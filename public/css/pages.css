@@ -824,6 +824,117 @@
   margin-bottom: 0.625rem;
 }
 
+/* ── Vimeo Embeds ──────────────────────────────────────────────
+   SEO/AEO structured metadata + Player SDK event demo.
+   ──────────────────────────────────────────────────────────── */
+
+.page--vimeo-embeds .container {
+  max-width: 1100px;
+}
+
+.page--vimeo-embeds #contentSection {
+  margin-top: var(--space-6);
+}
+
+/* Section headings inside the metadata panel */
+.metadata-section__heading {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+.metadata-section__heading:first-child {
+  margin-top: 0;
+}
+
+.metadata-section__desc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+  line-height: 1.55;
+}
+
+/* Value cells — truncate long URLs gracefully */
+.metadata-value {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.78rem;
+}
+
+.metadata-note {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+/* Raw JSON-LD expandable block */
+.jsonld-details {
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.jsonld-details summary {
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  cursor: pointer;
+  user-select: none;
+  padding: var(--space-1) 0;
+}
+
+.jsonld-code {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  line-height: 1.65;
+  overflow-x: auto;
+  white-space: pre;
+  margin-top: var(--space-2);
+  color: var(--color-text);
+}
+
+/* Player event log */
+.event-log {
+  height: 220px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+  padding: var(--space-2) var(--space-3);
+}
+
+.event-log__entry {
+  padding: 3px 0;
+  border-bottom: 1px solid var(--color-border-soft);
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+
+.event-log__entry:last-child {
+  border-bottom: none;
+}
+
+.event-log__time {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  font-size: 0.72rem;
+}
+
+.event-log__icon {
+  flex-shrink: 0;
+}
+
 @media (max-width: 860px) {
   .page--vimeo-api-reference .api-shell,
   .page--vimeo-api-playground .api-shell {

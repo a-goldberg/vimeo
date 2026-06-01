@@ -90,6 +90,23 @@ const projects = [
   },
 
   {
+    title: "The Power of Vimeo Embeds",
+    slug: "vimeo-embeds",
+    category: "Tools",
+    status: "Live",
+    description:
+      "Explore the SEO and AEO value of Vimeo embeds. Load any video via the Player SDK and see the structured metadata and live player events that help search engines and AI answer engines understand your content.",
+    tags: ["Vimeo", "SEO", "Schema", "Player SDK"],
+    externalUrl: "/vimeo-embeds",
+    repoUrl: "",
+    featured: true,
+    visibility: "Internal",
+    updatedAt: "2026-06-01",
+    notes:
+      "Demonstrates how embedding a Vimeo video generates rich VideoObject JSON-LD schema and Open Graph metadata that search engines and generative answer engines can index. Also shows live Player SDK events as they fire during playback.",
+  },
+
+  {
     title: "Webhook Tester",
     slug: "webhook-tester",
     category: "Testing",
