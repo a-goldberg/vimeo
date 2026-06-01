@@ -74,6 +74,17 @@ router.get('/vimeo-api-playground', (req, res) => {
   });
 });
 
+// Vimeo Embeds — structured metadata + Player SDK event demo
+router.get('/vimeo-embeds', (req, res) => {
+  res.render('pages/vimeo-embeds', {
+    title: 'The Power of Vimeo Embeds',
+    extraScripts: `
+      <script src="https://player.vimeo.com/api/player.js"></script>
+      <script src="/js/vimeo-embeds.js"></script>
+    `,
+  });
+});
+
 // Admin — API request monitor
 router.get('/admin', (req, res) => {
   res.render('pages/admin', {
