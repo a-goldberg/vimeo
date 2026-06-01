@@ -1,6 +1,6 @@
 ---
 name: code-standards
-description: Reviews code changes for potential deviation from the standards that keep this Project Hub codebase clean and tidy.  Use when planning, proposing, or reviewing new features or significant changes to existing code.
+description: Reviews code changes for potential deviation from the standards that keep this Project Hub codebase clean and tidy.  Use when planning, proposing, or reviewing new projects, pages, demos, features, or significant changes to existing code.
 ---
 
 When planning or proposing changes to the Project Hub codebase that new pages, new templates, new components, new routes, or signficant refactoring of existing code:
