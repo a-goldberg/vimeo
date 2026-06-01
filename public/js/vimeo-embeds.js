@@ -170,17 +170,37 @@ const EVENT_DEFS = [
   { name: 'error',              icon: '✗',  fmt: (d) => `Error: ${d.message || JSON.stringify(d)}` },
 ];
 
+// Debug: monitor every raw postMessage from the Vimeo iframe so we can see
+// what the player is actually emitting, independent of the SDK's dispatch layer.
+// Remove or guard with DEBUG once events are confirmed working.
+if (DEBUG) {
+  window.addEventListener('message', (e) => {
+    if (!e.origin.includes('vimeo.com')) return;
+    try {
+      const msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+      if (msg && (msg.event || msg.method)) {
+        dbg('raw postMessage from player iframe:', msg);
+      }
+    } catch (_) {}
+  });
+  dbg('raw postMessage debug listener installed');
+}
+
 function attachPlayerEvents(player) {
-  dbg('attachPlayerEvents called — attaching', EVENT_DEFS.length, 'listeners');
+  dbg(
+    "attachPlayerEvents called — attaching",
+    EVENT_DEFS.length + 1,
+    "listeners",
+  );
 
   EVENT_DEFS.forEach(({ name, icon, fmt }) => {
-    dbg('  attaching listener for:', name);
+    dbg("  attaching:", name);
     player.on(name, (data) => {
       dbg(`event fired: "${name}"`, data);
       try {
         logEvent(icon, fmt(data));
       } catch (err) {
-        console.error('[vimeo-embeds] error in handler for event', name, err);
+        console.error("[vimeo-embeds] handler error for event", name, err);
       }
     });
   });
@@ -199,42 +219,47 @@ function attachPlayerEvents(player) {
 
 // ── Load player ───────────────────────────────────────────────────────────────
 async function loadPlayer(videoId) {
-  dbg('loadPlayer called with videoId:', videoId);
+  dbg("loadPlayer called with videoId:", videoId);
 
   if (state.player) {
-    dbg('destroying previous player');
-    try { await state.player.destroy(); } catch (e) { dbg('destroy error (ignored):', e); }
+    dbg("destroying previous player");
+    try {
+      await state.player.destroy();
+    } catch (e) {
+      dbg("destroy error (ignored):", e);
+    }
     state.player = null;
   }
-  playerContainer.innerHTML = '';
+  playerContainer.innerHTML = "";
   state.lastTimeupdateLog = 0;
 
-  dbg('creating new Vimeo.Player');
+  dbg("creating new Vimeo.Player");
   const player = new Vimeo.Player(playerContainer, {
     id: parseInt(videoId, 10),
     responsive: true,
   });
   state.player = player;
-  dbg('Vimeo.Player instance created:', player);
+  dbg("Vimeo.Player instance created:", player);
 
-  // Attach all event listeners immediately — the SDK queues them internally
-  // until the player iframe is ready.
-  attachPlayerEvents(player);
-
-  // player.ready() resolves when the iframe has fully initialized and is
-  // accepting commands. This is the correct hook for the initial load signal
-  // (not the 'loaded' event, which fires only on subsequent loadVideo() calls).
-  dbg('awaiting player.ready()');
+  // player.ready() resolves when the iframe has fully initialized and the
+  // two-way postMessage channel is open. Event listeners MUST be attached
+  // after this point — calling player.on() before ready() sends addEventListener
+  // commands to the iframe before it can receive them; the SDK's internal
+  // .catch(() => {}) silently swallows those failures and the events are never
+  // registered.
+  dbg("awaiting player.ready()");
   try {
     await player.ready();
-    dbg('player.ready() resolved — player is operational');
-    logEvent('✓', `Player ready — video ID ${videoId}`);
+    dbg("player.ready() resolved — attaching event listeners now");
   } catch (err) {
-    dbg('player.ready() rejected:', err);
-    console.error('[vimeo-embeds] player.ready() failed:', err);
-    logEvent('✗', `Player failed to initialize: ${err.message}`);
+    dbg("player.ready() rejected:", err);
+    console.error("[vimeo-embeds] player.ready() failed:", err);
+    logEvent("✗", `Player failed to initialize: ${err.message}`);
     throw err;
   }
+
+  attachPlayerEvents(player);
+  logEvent("✓", `Player ready — video ID ${videoId}`);
 }
 
 // ── JSON-LD generation + head injection ───────────────────────────────────────
@@ -437,24 +462,24 @@ loadForm.addEventListener('submit', async (e) => {
   resetContent();
 
   try {
-    dbg('fetching video metadata for', videoId);
+    dbg("fetching video metadata for", videoId);
     const res = await fetch(`/api/vimeo/videos/${videoId}`);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || `Vimeo API returned ${res.status}`);
     }
     const data = await res.json();
-    dbg('metadata fetched successfully:', data.name);
+    dbg("metadata fetched successfully:", data.name);
 
     await loadPlayer(videoId);
     populateMetadata(data);
 
     // Auto-open the metadata panels so the structured data is immediately visible
-    jsonldCollapsible.open();
-    ogCollapsible.open();
+    // jsonldCollapsible.open();
+    // ogCollapsible.open();
 
-    contentSection.classList.remove('hidden');
-    contentSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    contentSection.classList.remove("hidden");
+    contentSection.scrollIntoView({ behavior: "smooth", block: "start" });
   } catch (err) {
     dbg('load failed:', err);
     showToast(`Failed to load video: ${err.message}`, 'error', 6000);
