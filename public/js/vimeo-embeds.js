@@ -45,6 +45,7 @@ const eventsToggle    = document.getElementById('eventsToggle');
 const eventLog        = document.getElementById('eventLog');
 const eventLogEmpty   = document.getElementById('eventLogEmpty');
 const toastContainer  = document.getElementById('toastContainer');
+const pageEl          = document.querySelector('.page--vimeo-embeds');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function extractVimeoId(input) {
@@ -353,6 +354,14 @@ function renderOgTable(data, jsonld) {
   `).join('');
 }
 
+function applyAccentBackground(embedColor) {
+  // embedColor arrives as a 6-char hex without '#' (e.g. "1ab7ea"); may be absent
+  if (!embedColor) return;
+  const hex = `#${embedColor.replace(/^#/, '')}`;
+  pageEl.style.background = `linear-gradient(to bottom, ${hex} 0%, var(--color-bg) 60%)`;
+  dbg('accent background applied:', hex);
+}
+
 function populateMetadata(data) {
   dbg('populateMetadata called');
   const jsonld = buildJsonLd(data);
@@ -368,6 +377,7 @@ function populateMetadata(data) {
   jsonldDetails.removeAttribute('open');
 
   injectJsonLd(jsonld);
+  applyAccentBackground(data.embed?.color);
 }
 
 // ── Collapsible helpers ───────────────────────────────────────────────────────
@@ -396,6 +406,8 @@ function resetContent() {
   ogTableBody.innerHTML = '';
   jsonldOutput.textContent = '';
   clearEventLog();
+
+  pageEl.style.background = '';
 
   const existing = document.getElementById('vimeo-jsonld');
   if (existing) existing.remove();
