@@ -1,9 +1,8 @@
-// Sent with every API call; if blank, the server falls back to its .env values.
-const config = { token: "", eventId: "" };
+// eventId can be overridden via the config form; falls back to server .env default.
+const config = { eventId: "" };
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const configForm = document.getElementById("configForm");
-const tokenInput = document.getElementById("tokenInput");
 const eventIdInput = document.getElementById("eventIdInput");
 const configError = document.getElementById("configError");
 const configStatus = document.getElementById("configStatus");
@@ -43,11 +42,9 @@ function showToast(message, type = "info", duration = 4000) {
 async function api(path, body) {
   const url = new URL(path, window.location.origin);
   if (config.eventId) url.searchParams.set("eventId", config.eventId);
-  const headers = { "Content-Type": "application/json" };
-  if (config.token) headers["Authorization"] = `Bearer ${config.token}`;
   const res = await fetch(url.toString(), {
     method: "POST",
-    headers,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
@@ -57,13 +54,12 @@ async function api(path, body) {
 // ── Config form ───────────────────────────────────────────────────────────────
 configForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  config.token = tokenInput.value.trim();
   config.eventId = eventIdInput.value.trim();
   configError.textContent = "";
   configError.classList.add("hidden");
   configStatus.textContent = config.eventId
-    ? `Event ID set: ${config.eventId}. ${config.token ? "Custom token active." : "Using default token from server."}`
-    : "Using server defaults.";
+    ? `Event ID set: ${config.eventId}.`
+    : "Using server default event ID.";
   configStatus.classList.remove("hidden");
   showToast("Config saved.", "success", 2500);
 });
@@ -148,7 +144,6 @@ getAttendeesBtn.addEventListener("click", async () => {
 
   try {
     const res = await api("/api/webinar-registration/get-attendees", {});
-    // console.log("Attendees response:", res);
     if (!res.ok) {
       throw new Error(res.data.error || `Server error ${res.status}.`);
     }

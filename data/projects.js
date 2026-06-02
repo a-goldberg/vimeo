@@ -12,7 +12,7 @@
 // Field reference:
 //   title       — Display name shown on cards and detail pages
 //   slug        — URL-safe ID, no spaces (becomes /projects/<slug>)
-//   category    — Must be one of: "Tools" | "Customer Projects" | "API Docs" | "Testing"
+//   category    — Must be one of: "Tools" | "Demos" | "API Docs" | "Testing"
 //   status      — Must be one of: "Live" | "In Progress" | "Planned" | "Archived"
 //   description — One or two sentences shown on the card
 //   tags        — Short labels, e.g. ["Node", "API", "Vimeo"]
@@ -60,7 +60,7 @@ const projects = [
   {
     title: "Webinar Registration", // displayed on the card and detail page
     slug: "webinar-registration", // used in /projects/my-new-tool URL
-    category: "Customer Projects", // Tools | Customer Projects | API Docs | Testing
+    category: "Demos", // Tools | Demos | API Docs | Testing
     status: "Live", // Live | In Progress | Planned | Archived
     description: "Remote registration of Vimeo webinar attendees.", // short text shown on the card
     tags: ["Live Events", "Registration", "API"], // short labels shown on the card
@@ -75,7 +75,7 @@ const projects = [
   {
     title: "SmartCard CMS Embed", // displayed on the card and detail page
     slug: "smart-card", // used in /projects/my-new-tool URL
-    category: "Customer Projects", // Tools | Customer Projects | API Docs | Testing
+    category: "Demos", // Tools | Demos | API Docs | Testing
     status: "Live", // Live | In Progress | Planned | Archived
     description:
       "Demonstrating dynamic player embed plus CMS/DAM functionality using the Vimeo API.", // short text shown on the card
@@ -92,7 +92,7 @@ const projects = [
   {
     title: "The Power of Vimeo Embeds",
     slug: "vimeo-embeds",
-    category: "Tools",
+    category: "Demos",
     status: "Live",
     description:
       "Explore the SEO and AEO value of Vimeo embeds. Load any video via the Player SDK and see the structured metadata and live player events that help search engines and AI answer engines understand your content.",
@@ -109,7 +109,7 @@ const projects = [
   {
     title: "Webhook Tester",
     slug: "webhook-tester",
-    category: "Testing",
+    category: "Tools",
     status: "Planned",
     description:
       "Accepts inbound webhook payloads and displays a live log of received events for debugging integrations.",
@@ -141,10 +141,10 @@ const projects = [
 // Maps each category to its index page URL.
 // Used by the breadcrumb on detail pages — no need to edit this.
 const categoryUrls = {
-  Tools: "/tools",
-  "Customer Projects": "/customer-projects",
+  "Tools": "/tools",
+  "Demos": "/demos",
   "API Docs": "/api-docs",
-  Testing: "/testing",
+  "Testing": "/testing",
 };
 
 // Auto-derive href and categoryUrl so templates don't have to construct them.

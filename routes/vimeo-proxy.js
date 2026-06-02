@@ -10,13 +10,14 @@ router.use(express.raw({ type: '*/*', limit: '100kb' }));
 // Forwards any METHOD /api/vimeo/<path>?<qs> → METHOD https://api.vimeo.com/<path>?<qs>
 // req.url inside this router is already relative to the mount point and includes the query string.
 //
-// Token priority: session token (user connected their own Vimeo account) > VIMEO_TOKEN env var.
-// Routes that explicitly require user auth should apply the requireVimeoAuth middleware from
-// middleware/require-vimeo-auth.js — those routes will 401 rather than fall back to the admin token.
+// Requires an active user OAuth session — no fallback to the server admin token.
 router.all('*', async (req, res) => {
-  const token = req.session?.vimeoAuth?.accessToken || process.env.VIMEO_TOKEN;
+  const token = req.session?.vimeoAuth?.accessToken;
   if (!token) {
-    return res.status(500).json({ error: 'No Vimeo token available. Configure VIMEO_TOKEN or connect a Vimeo account.' });
+    return res.status(401).json({
+      error: 'Vimeo account not connected. Connect your Vimeo account to use this feature.',
+      authUrl: '/auth/vimeo/start',
+    });
   }
   try {
     const opts = {

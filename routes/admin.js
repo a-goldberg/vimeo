@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const requestLog = require('../utils/request-log');
+const requireVimeoAuth = require('../middleware/require-vimeo-auth');
+
+router.use(requireVimeoAuth);
 
 router.get('/log', (req, res) => {
   res.json(requestLog.getEntries());

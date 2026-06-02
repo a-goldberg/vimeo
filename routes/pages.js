@@ -18,11 +18,11 @@ router.get('/tools', (req, res) => {
   });
 });
 
-// Customer Projects index
-router.get('/customer-projects', (req, res) => {
-  res.render('pages/customer-projects', {
-    title: 'Customer Projects',
-    projects: projects.filter((p) => p.category === 'Customer Projects'),
+// Demos index
+router.get('/demos', (req, res) => {
+  res.render('pages/demos', {
+    title: 'Demos',
+    projects: projects.filter((p) => p.category === 'Demos'),
   });
 });
 
@@ -66,8 +66,11 @@ router.get('/vimeo-api-reference', (req, res) => {
   });
 });
 
-// Vimeo API Playground — live request sandbox
+// Vimeo API Playground — live request sandbox (requires connected Vimeo account)
 router.get('/vimeo-api-playground', (req, res) => {
+  if (!req.session?.vimeoAuth?.accessToken) {
+    return res.redirect(`/auth/vimeo/start?returnTo=${encodeURIComponent('/vimeo-api-playground')}`);
+  }
   res.render('pages/vimeo-api-playground', {
     title: 'Vimeo API Playground',
     extraScripts: '<script src="/js/vimeo-api-playground.js"></script>',
@@ -85,8 +88,11 @@ router.get('/vimeo-embeds', (req, res) => {
   });
 });
 
-// Admin — API request monitor
+// Admin — API request monitor (requires connected Vimeo account)
 router.get('/admin', (req, res) => {
+  if (!req.session?.vimeoAuth?.accessToken) {
+    return res.redirect(`/auth/vimeo/start?returnTo=${encodeURIComponent('/admin')}`);
+  }
   res.render('pages/admin', {
     title: 'API Request Monitor',
     extraScripts: '<script src="/js/admin.js"></script>',

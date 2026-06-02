@@ -1,12 +1,12 @@
 {
     "openapi": "3.0.2",
     "info": {
-        "title": "Vimeo API",
-        "description": "Build something great. Vimeo's API supports flexible, high-quality video integration with your custom apps.",
-        "version": "3.4",
-        "contact": {
-            "url": "https://developer.vimeo.com/help"
-        }
+      "title": "Vimeo API",
+      "description": "Build something great. Vimeo's API supports flexible, high-quality video integration with your custom apps.",
+      "version": "3.4",
+      "contact": {
+        "url": "https://developer.vimeo.com/help"
+      }
     },
     "tags": [
         {
