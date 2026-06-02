@@ -98,7 +98,7 @@ Check status: `pm2 status` / `pm2 logs vimeo-home`
 {
   title: "My New Tool",
   slug: "my-new-tool",           // used in /projects/my-new-tool URL
-  category: "Tools",             // Tools | Customer Projects | API Docs | Testing
+  category: "Tools",             // Tools | Demos | API Docs | Testing
   status: "In Progress",         // Live | In Progress | Planned | Archived
   description: "One or two sentences.",
   tags: ["Node", "Express"],

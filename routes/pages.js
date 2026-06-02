@@ -18,11 +18,11 @@ router.get('/tools', (req, res) => {
   });
 });
 
-// Customer Projects index
-router.get('/customer-projects', (req, res) => {
-  res.render('pages/customer-projects', {
-    title: 'Customer Projects',
-    projects: projects.filter((p) => p.category === 'Customer Projects'),
+// Demos index
+router.get('/demos', (req, res) => {
+  res.render('pages/demos', {
+    title: 'Demos',
+    projects: projects.filter((p) => p.category === 'Demos'),
   });
 });
 

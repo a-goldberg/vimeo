@@ -7,7 +7,7 @@
       <h1 class="hero__heading">My Projects</h1>
       <p class="hero__sub">A collection of internal utilities, demos, prototypes, and notes built to improve workflows and support customers.</p>
       <div class="hero__actions">
-        <a href="/customer-projects" class="btn btn--primary">View All Projects</a>
+        <a href="/demos" class="btn btn--primary">View All Projects</a>
         <a href="/tools" class="btn btn--ghost">Browse Tools</a>
 
       </div>
@@ -22,18 +22,18 @@
     <%- include('../partials/section-header', { label: 'Explore', heading: 'What\'s here' }) %>
     <div class="category-grid">
 
+      <a href="/demos" class="category-card">
+        <span class="category-card__icon">◈</span>
+        <h3 class="category-card__title">Demos</h3>
+        <p class="category-card__desc">Demos, proof-of-concepts, and client-facing prototypes.</p>
+        <span class="category-card__count"><%= projects.filter(p => p.category === 'Demos').length %> projects</span>
+      </a>
+
       <a href="/tools" class="category-card">
         <span class="category-card__icon">⚙</span>
         <h3 class="category-card__title">Tools</h3>
         <p class="category-card__desc">Internal utilities, workflow helpers, and data transformers.</p>
         <span class="category-card__count"><%= projects.filter(p => p.category === 'Tools').length %> tools</span>
-      </a>
-
-      <a href="/customer-projects" class="category-card">
-        <span class="category-card__icon">◈</span>
-        <h3 class="category-card__title">Customer Projects</h3>
-        <p class="category-card__desc">Demos, proof-of-concepts, and client-facing prototypes.</p>
-        <span class="category-card__count"><%= projects.filter(p => p.category === 'Customer Projects').length %> projects</span>
       </a>
 
       <a href="/api-docs" class="category-card">
