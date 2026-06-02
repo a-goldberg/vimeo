@@ -47,14 +47,59 @@ const eventLogEmpty   = document.getElementById('eventLogEmpty');
 const toastContainer  = document.getElementById('toastContainer');
 const pageEl          = document.querySelector('.page--vimeo-embeds');
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-function extractVimeoId(input) {
-  const trimmed = input.trim();
-  if (/^\d+$/.test(trimmed)) return trimmed;
-  const p1 = /\/videos?\/(\d+)(?:\/|\?|$)/;
-  const p2 = /vimeo\.com\/(\d+)(?:\/|\?|$)/;
-  const m = p1.exec(trimmed) || p2.exec(trimmed);
-  return m ? m[1] : null;
+// ── Input parsing ─────────────────────────────────────────────────────────────
+// Returns { id: string } or { error: string }.
+// id is always "NUMERIC" for standard videos or "NUMERIC:HASH" for unlisted.
+function parseVimeoInput(input) {
+  const raw = input.trim();
+
+  // Bare numeric ID: "1197587769"
+  if (/^\d+$/.test(raw)) return { id: raw };
+
+  // Bare ID with hash, colon or slash: "1197587769:ea8bef44e4" / "1197587769/ea8bef44e4"
+  const bareHash = /^(\d+)[:/]([a-zA-Z0-9]+)$/.exec(raw);
+  if (bareHash) return { id: `${bareHash[1]}:${bareHash[2]}` };
+
+  // URL-based: extract pathname, stripping query string and fragment
+  let pathname = raw;
+  const isVimeoUrl = raw.includes('vimeo.com');
+  if (isVimeoUrl) {
+    try {
+      const url = new URL(raw.startsWith('http') ? raw : `https://${raw}`);
+      pathname = url.pathname;
+    } catch (_) {
+      pathname = raw.replace(/[?#].*$/, '').replace(/.*vimeo\.com/, '');
+    }
+  }
+
+  const segs = pathname.replace(/^\//, '').split('/').filter(Boolean);
+  if (segs.length === 0) {
+    return { error: 'Could not find a Vimeo video ID in that input. Try a URL like https://vimeo.com/123456789.' };
+  }
+
+  // /manage/videos/ID[/HASH]
+  if (segs[0] === 'manage' && segs[1] === 'videos' && segs[2]) {
+    if (/^\d+$/.test(segs[2])) {
+      return segs[3] ? { id: `${segs[2]}:${segs[3]}` } : { id: segs[2] };
+    }
+  }
+
+  // /video/ID or /videos/ID (API-style paths)
+  if ((segs[0] === 'video' || segs[0] === 'videos') && segs[1] && /^\d+$/.test(segs[1])) {
+    return segs[2] ? { id: `${segs[1]}:${segs[2]}` } : { id: segs[1] };
+  }
+
+  // /ID[/HASH] — standard vimeo.com URL
+  if (/^\d+$/.test(segs[0])) {
+    return segs[1] ? { id: `${segs[0]}:${segs[1]}` } : { id: segs[0] };
+  }
+
+  // Non-numeric first segment + second segment on vimeo.com → custom URL
+  if (segs.length >= 2 && isVimeoUrl) {
+    return { error: 'Videos with Custom URLs cannot be embedded. Please use a direct link (e.g. vimeo.com/123456789) or the numeric video ID.' };
+  }
+
+  return { error: 'Could not find a Vimeo video ID in that input. Try a URL like https://vimeo.com/123456789 or just the numeric ID.' };
 }
 
 function isoDuration(totalSeconds) {
@@ -233,11 +278,16 @@ async function loadPlayer(videoId) {
   playerContainer.innerHTML = "";
   state.lastTimeupdateLog = 0;
 
-  dbg("creating new Vimeo.Player");
-  const player = new Vimeo.Player(playerContainer, {
-    id: parseInt(videoId, 10),
-    responsive: true,
-  });
+  // For unlisted videos the SDK requires the `url` option (with hash in the
+  // path) instead of a bare numeric `id`, which would resolve to the public
+  // video and fail the privacy check.
+  const [numericId, hashToken] = videoId.split(':');
+  const playerOptions = hashToken
+    ? { url: `https://vimeo.com/${numericId}/${hashToken}`, responsive: true }
+    : { id: parseInt(numericId, 10), responsive: true };
+
+  dbg('creating new Vimeo.Player with options:', playerOptions);
+  const player = new Vimeo.Player(playerContainer, playerOptions);
   state.player = player;
   dbg("Vimeo.Player instance created:", player);
 
@@ -448,22 +498,25 @@ loadForm.addEventListener('submit', async (e) => {
   inputError.classList.add('hidden');
 
   const raw = videoInput.value;
-  const videoId = extractVimeoId(raw);
-  dbg('form submitted — raw input:', raw, '— parsed videoId:', videoId);
+  const parsed = parseVimeoInput(raw);
+  dbg('form submitted — raw:', raw, '— parsed:', parsed);
 
-  if (!videoId) {
-    inputError.textContent = 'Could not find a Vimeo video ID. Try a URL like https://vimeo.com/76979871 or just the numeric ID.';
+  if (parsed.error) {
+    inputError.textContent = parsed.error;
     inputError.classList.remove('hidden');
     return;
   }
+
+  const videoId = parsed.id;                  // "ID" or "ID:HASH"
+  const numericId = videoId.split(':')[0];     // just the numeric part for API calls
 
   state.videoId = videoId;
   setLoading(true);
   resetContent();
 
   try {
-    dbg("fetching video metadata for", videoId);
-    const res = await fetch(`/api/vimeo/videos/${videoId}`);
+    dbg('fetching video metadata for', numericId);
+    const res = await fetch(`/api/vimeo/videos/${numericId}`);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error || `Vimeo API returned ${res.status}`);
