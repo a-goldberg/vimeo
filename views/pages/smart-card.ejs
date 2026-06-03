@@ -8,6 +8,8 @@
       <p class="page-hero__desc">Enter a Vimeo video URL to preview its smart card, edit metadata, and manage tags and thumbnails.</p>
     </div>
 
+<% if (locals.vimeoAuth) { %>
+
     <!-- URL input -->
     <div class="card">
       <form id="urlForm" class="url-bar" novalidate>
@@ -119,6 +121,10 @@
       </div><!-- /.metadata card -->
 
     </section><!-- /#videoSection -->
+
+<% } else { %>
+    <%- include('../partials/vimeo-auth-required') %>
+<% } %>
 
   </div><!-- /.container -->
 </div><!-- /.page -->

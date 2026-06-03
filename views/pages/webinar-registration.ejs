@@ -11,24 +11,11 @@
       </p>
     </div>
 
-    <!-- API / event config -->
+<% if (locals.vimeoAuth) { %>
+
+    <!-- Event config (optional override) -->
     <div class="card">
       <form id="configForm" novalidate>
-        <div class="form-group">
-          <label class="form-group__label" for="tokenInput">
-            Personal Access Token
-            <span class="form-group__optional"
-              >(optional — overrides server default)</span
-            >
-          </label>
-          <input
-            type="text"
-            id="tokenInput"
-            class="form-group__input"
-            placeholder="Your Token must have the CAPABILITY_ACCESS_LEADS capability."
-            autocomplete="off"
-            spellcheck="false" />
-        </div>
         <div class="form-group">
           <label class="form-group__label" for="eventIdInput">
             Webinar Event ID
@@ -138,11 +125,15 @@
   </div>
   <!-- /.col-2 -->
 
+<% } else { %>
+    <%- include('../partials/vimeo-auth-required') %>
+<% } %>
+
 </div>
 <!-- /.container -->
 </div>
 <!-- /.page -->
- 
+
 <!-- Toast container lives outside the main flow so it can be fixed-position -->
 <div
   id="toastContainer"

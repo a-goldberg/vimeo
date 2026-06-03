@@ -8,6 +8,8 @@
       <p class="page-hero__desc">Load any Vimeo video to explore the structured metadata it generates — the VideoObject schema and Open Graph tags that help search engines and AI answer engines understand your content. Watch Player SDK events stream in live as you interact with the video.</p>
     </div>
 
+<% if (locals.vimeoAuth) { %>
+
     <!-- Video ID input -->
     <div class="card">
       <form id="loadForm" class="url-bar" novalidate>
@@ -113,6 +115,10 @@
 
       </div><!-- /.stack -->
     </section><!-- /#contentSection -->
+
+<% } else { %>
+    <%- include('../partials/vimeo-auth-required') %>
+<% } %>
 
   </div><!-- /.container -->
 </div><!-- /.page -->

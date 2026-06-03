@@ -157,19 +157,29 @@ These are good for:
 
 ## How future API-backed tools should be structured
 
-If a tool needs to call an external API (e.g. Vimeo API):
+If a tool needs to call the Vimeo API:
 
-1. Add a server-side route in `src/routes/api.js`
-2. Store credentials in `.env` only (never in front-end JS)
-3. Have the browser call your local Express endpoint, not the external API directly
-4. The Express route fetches from the external API using the secret from `process.env`
+1. Add a server-side route file in `routes/` and mount it in `server.js`
+2. Apply `requireVimeoAuth` middleware — all Vimeo-touching routes require a user session
+3. Use `req.session.vimeoAuth.accessToken` as the token in each `vimeo()` call
+4. Have the browser call your local Express endpoint; the token never touches the browser
 
 Example pattern:
 ```
-Browser → GET /api/my-tool/results
-       → server.js reads VIMEO_ACCESS_TOKEN from process.env
-       → fetches from api.vimeo.com with the token
+Browser → GET /api/my-tool/results  (session cookie sent automatically)
+       → requireVimeoAuth checks session, rejects with 401 if not connected
+       → handler calls vimeo('GET', '/endpoint', { token: req.session.vimeoAuth.accessToken })
        → returns JSON to browser
+```
+
+Show the connect prompt on the EJS page template when not authenticated:
+
+```ejs
+<% if (locals.vimeoAuth) { %>
+  <!-- tool UI here -->
+<% } else { %>
+  <%- include('../partials/vimeo-auth-required') %>
+<% } %>
 ```
 
 ---
@@ -209,7 +219,7 @@ Generate a secret: `node -e "console.log(require('crypto').randomBytes(48).toStr
 
 - After connecting, `req.session.vimeoAuth` holds `{ accessToken, userUri, userName, userProfileLink }`.
 - All EJS templates get `vimeoAuth` (minus the token) via `res.locals`.
-- The Vimeo proxy at `/api/vimeo/*` prefers the session token when present, falls back to `VIMEO_TOKEN` otherwise.
+- All Vimeo API routes require an active session — there is no server-side admin token fallback.
 - Sessions expire after 8 hours. A PM2 restart clears all sessions (memorystore is in-process).
 
 ### Adding a Vimeo-authenticated tool page
@@ -238,11 +248,11 @@ router.get('/my-endpoint', requireVimeoAuth, handler);
 - Never commit `.env` to GitHub — it's in `.gitignore`
 - Never put API tokens, passwords, or customer data in front-end JS files
 - Vimeo access tokens are stored server-side only; the browser only sees a session cookie
+- All Vimeo API routes (`/api/vimeo/*`, `/api/smart-card/*`, `/api/webinar-registration/*`, `/api/admin/*`) require an active OAuth session — no anonymous access, no server-side admin token fallback
 - Logout uses POST (not GET) to prevent CSRF; the `returnTo` redirect param is validated to block open redirects
 - Session IDs are regenerated after OAuth login to prevent session fixation
 - OAuth state includes an expiry timestamp; stale or tampered states are rejected with a 400
 - Files in `projects/` are publicly accessible — don't store anything sensitive there
-- The `/api/admin/log` endpoint is unprotected — keep the hub on a private network or behind access controls
 
 ---
 

@@ -2,34 +2,22 @@
 // Import this in any route file that needs to talk to the Vimeo API.
 //
 // Usage:
-//   const { vimeo, requireToken, handleVimeoError } = require('./utils/vimeo');
+//   const { vimeo, handleVimeoError } = require('./utils/vimeo');
 //
-// VIMEO_TOKEN is read from process.env at call time, so it's always
-// up-to-date with whatever is in .env without needing a server restart.
+// Always pass a token explicitly — every call requires a user OAuth session token
+// obtained via the /auth/vimeo/* flow. There is no server-side admin token fallback.
 
 const requestLog = require('./request-log');
 
 const VIMEO_API = 'https://api.vimeo.com';
 const VIMEO_VERSION = '3.4';
 
-// Returns true if VIMEO_TOKEN is present; otherwise sends a 500 and returns false.
-// Call this at the top of any route handler that requires authentication.
-function requireToken(res) {
-  if (!process.env.VIMEO_TOKEN) {
-    res.status(500).json({
-      error: 'VIMEO_TOKEN is not configured. Add it to your .env file.',
-    });
-    return false;
-  }
-  return true;
-}
-
 // Builds the standard Vimeo auth + version headers.
 // Pass extra = { 'Content-Type': 'application/json' } etc. when needed.
-// Pass token to override the default VIMEO_TOKEN env var.
+// token is required — callers must supply it explicitly from req.session.vimeoAuth.accessToken.
 function vimeoHeaders(extra = {}, token) {
   return {
-    Authorization: `Bearer ${token || process.env.VIMEO_TOKEN}`,
+    Authorization: `Bearer ${token}`,
     Accept: `application/vnd.vimeo.*+json;version=${VIMEO_VERSION}`,
     ...extra,
   };
@@ -42,8 +30,8 @@ function vimeoHeaders(extra = {}, token) {
 //   options  — {
 //     headers  — extra request headers (optional)
 //     body     — request body (optional)
-//     token    — override the default VIMEO_TOKEN (optional)
-//     _meta    — { referer, ip, userAgent } for request logging (optional)
+//     token    — user OAuth session token (required)
+//     _meta    — { referer, ip, userAgent, vimeoUserUri } for request logging (optional)
 //   }
 //
 // Returns the raw fetch Response so callers can inspect status and parse JSON
@@ -67,4 +55,4 @@ function handleVimeoError(res, err) {
   res.status(500).json({ error: err.message });
 }
 
-module.exports = { vimeo, requireToken, handleVimeoError, VIMEO_API };
+module.exports = { vimeo, handleVimeoError, VIMEO_API };

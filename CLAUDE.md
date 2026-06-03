@@ -27,16 +27,17 @@ data/vimeo-spec.json       Cached Vimeo OpenAPI spec — drop a new copy here to
 data/vimeo-private-endpoints.json  Legacy supplement; x-mill-visibility-private in the spec is now the primary source
 routes/pages.js            All HTML page routes
 routes/api.js              JSON API — GET /api/projects, /api/projects/:slug
-routes/vimeo-proxy.js      Catch-all authenticated proxy → api.vimeo.com
-routes/vimeo-reference.js  Serves the cached spec from disk (no auto-fetch until OAuth is added)
-utils/vimeo.js             Shared Vimeo API client (always use this; never call Vimeo directly)
+routes/vimeo-proxy.js      Catch-all proxy → api.vimeo.com; requires user OAuth session (no admin fallback)
+routes/vimeo-reference.js  Serves the cached spec from disk (no live fetch)
+middleware/require-vimeo-auth.js  Returns 401 if no user OAuth session; apply to any Vimeo-touching route
+utils/vimeo.js             Shared Vimeo API client; always pass token explicitly from req.session.vimeoAuth.accessToken
 utils/helpers.js           formatDate(), statusClass() — attached to app.locals in server.js
 views/layouts/main.ejs     Outer HTML shell; uses <%- body %> from express-ejs-layouts
 views/pages/               One EJS file per page
-views/partials/            Shared includes (nav, footer, section-header, project-card, etc.)
+views/partials/            Shared includes (nav, footer, section-header, project-card, vimeo-auth-required, etc.)
 public/css/                CSS load order: reset → tokens → base → layout → components → pages
 public/js/                 Page-specific JavaScript (no build step)
-.env                       VIMEO_TOKEN, VIMEO_EVENT_ID, PORT, FIRST_NAME, LAST_NAME
+.env                       SESSION_SECRET, VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_REDIRECT_URI, VIMEO_EVENT_ID, PORT, FIRST_NAME, LAST_NAME
 ```
 
 ---
@@ -202,7 +203,8 @@ const { vimeo, requireToken, handleVimeoError, VIMEO_API } = require('../utils/v
 ### Catch-all proxy
 
 `routes/vimeo-proxy.js` is mounted at `/api/vimeo` and forwards any request to `api.vimeo.com`,
-adding auth headers server-side. Client JS can call it without knowing the token:
+adding auth headers server-side. **Requires an active user OAuth session** — returns 401 if the
+user has not connected their Vimeo account. Client JS can call it without knowing the token:
 
 ```js
 // Example: fetch the authenticated user
@@ -258,15 +260,17 @@ Param descriptions in the reference are rendered as Markdown (inline `code`, `**
 
 ## Vimeo API Playground tool
 
-`/vimeo-api-playground` — live request sandbox. Same sidebar, spec loading, and privacy filter
-as the Reference, but the detail panel is a request builder instead of documentation.
+`/vimeo-api-playground` — live request sandbox. **Requires an active user OAuth session** — the
+page route redirects to `/auth/vimeo/start` if not connected. Same sidebar, spec loading, and
+privacy filter as the Reference, but the detail panel is a request builder instead of documentation.
 
 - Select an endpoint → fill path params, query params (private params labelled in red), and an optional JSON body
-- Click **Send request** → request goes through `/api/vimeo/*` (server adds auth)
+- Click **Send request** → request goes through `/api/vimeo/*` (server adds auth from session)
 - Response status, timing, and JSON appear inline; PRIVATE and capability banners shown when applicable
 
 **Linking between tools:** "Try it out →" in the Reference passes `?op=<operationId>` to the
-Playground; "View documentation" does the reverse. Both pages auto-select the matching endpoint on load.
+Playground (shown as "Connect to try it out" when not authenticated); "View documentation" does
+the reverse. Both pages auto-select the matching endpoint on load.
 
 ---
 
@@ -274,11 +278,19 @@ Playground; "View documentation" does the reverse. Both pages auto-select the ma
 
 | Variable | Purpose |
 |----------|---------|
-| `VIMEO_TOKEN` | Default Vimeo personal access token |
-| `VIMEO_EVENT_ID` | Default webinar event ID |
+| `SESSION_SECRET` | Required — long random string for Express session signing |
+| `VIMEO_CLIENT_ID` | Vimeo OAuth app client ID |
+| `VIMEO_CLIENT_SECRET` | Vimeo OAuth app client secret |
+| `VIMEO_REDIRECT_URI` | OAuth callback URL (e.g. `http://localhost:3000/auth/vimeo/callback`) |
+| `VIMEO_SCOPES` | OAuth scopes to request (e.g. `public private`) |
+| `VIMEO_EVENT_ID` | Default webinar event ID (used if no override is entered in the UI) |
 | `PORT` | Express listen port |
 | `FIRST_NAME` / `LAST_NAME` | Displayed in nav/footer |
-| `ADMIN_SECRET` | Used to authenticate destructive API requests using my API token until I can properly implement OAuth for multiple users
 
-The token is read at call time (not at startup), so updating `.env` takes effect on the next
+All Vimeo API calls use the token from the user's OAuth session — there is no server-side
+default token. Env vars are read at call time, so changes to `.env` take effect on the next
 request without restarting PM2.
+
+## Operational Details 
+
+Before initiating a new planning session or, if no planning was requested by the user and the skill hasn't yet been applied to the task at hand, implementing or proposing any significant code changes, assess the available Claude skills for potential relevance or guidance.  Specifically, consider the code-standards skill for maintaining a clean, concise codebase, and always employ the project-onboarding skill when the user wants to add a new project, tool, demo, component, or page to the current "Project Hub" web site.
