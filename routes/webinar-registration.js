@@ -5,9 +5,11 @@ const requireVimeoAuth = require('../middleware/require-vimeo-auth');
 
 router.use(requireVimeoAuth);
 
-// Token from OAuth session; eventId from query string, falls back to env.
+// Lead capture endpoints require CAPABILITY_ACCESS_LEADS — a Vimeo account-level capability
+// not automatically granted to standard OAuth user tokens. Use VIMEO_TOKEN (a privileged
+// server-side PAT that has the capability) when available; fall back to the session token.
 function resolveCredentials(req) {
-  const token = req.session.vimeoAuth.accessToken;
+  const token = process.env.VIMEO_TOKEN || req.session.vimeoAuth.accessToken;
   const eventId = (req.query.eventId || '').trim() || process.env.VIMEO_EVENT_ID;
   return { token, eventId };
 }
