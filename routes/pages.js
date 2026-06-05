@@ -77,6 +77,14 @@ router.get('/vimeo-api-playground', (req, res) => {
   });
 });
 
+// LMS Integration Demo — SCORM runtime simulation
+router.get('/lms-demo', (req, res) => {
+  res.render('pages/lms-demo', {
+    title: 'LMS Integration Demo',
+    extraScripts: '<script src="/js/lms-demo.js"></script>',
+  });
+});
+
 // Vimeo Embeds — structured metadata + Player SDK event demo
 router.get('/vimeo-embeds', (req, res) => {
   res.render('pages/vimeo-embeds', {

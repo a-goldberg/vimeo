@@ -90,6 +90,23 @@ const projects = [
   },
 
   {
+    title: "LMS Integration Demo",
+    slug: "lms-demo",
+    category: "Demos",
+    status: "In Progress",
+    description:
+      "Simulate a corporate LMS experience powered by a Vimeo SCORM export. Upload a SCORM package, watch an interactive video with quiz questions, and see the live gradebook update in real time.",
+    tags: ["SCORM", "LMS", "Interactive", "E-Learning"],
+    externalUrl: "/lms-demo",
+    repoUrl: "",
+    featured: true,
+    visibility: "Customer",
+    updatedAt: "2026-06-04",
+    notes:
+      "Demonstrates Vimeo's SCORM export capability in a simulated LMS shell (fictional company: Meridian Learning). Upload any Vimeo-generated SCORM 1.2 ZIP to load a course. The page acts as the LMS runtime — exposes the SCORM API, captures quiz scores and completion data, and displays them in a live gradebook. Requires Enterprise plan + New Interactive tool to export SCORM from Vimeo.",
+  },
+
+  {
     title: "The Power of Vimeo Embeds",
     slug: "vimeo-embeds",
     category: "Demos",

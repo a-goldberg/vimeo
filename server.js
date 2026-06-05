@@ -14,6 +14,7 @@ const webinarRouter = require('./routes/webinar-registration');
 const vimeoProxyRouter = require('./routes/vimeo-proxy');
 const vimeoReferenceRouter = require('./routes/vimeo-reference');
 const adminRouter = require('./routes/admin');
+const lmsDemoRouter = require('./routes/lms-demo');
 const vimeoAuthRouter = require('./routes/auth-vimeo');
 
 const app = express();
@@ -91,6 +92,7 @@ app.use('/api', apiRouter);
 // Tool-specific API routes — each tool gets its own sub-path
 app.use('/api/smart-card', smartCardRouter);
 app.use('/api/webinar-registration', webinarRouter);
+app.use('/api/lms-demo', lmsDemoRouter);
 
 // Health check — returns JSON; useful for uptime monitors and confirming deploys
 app.get('/health', (req, res) => {
