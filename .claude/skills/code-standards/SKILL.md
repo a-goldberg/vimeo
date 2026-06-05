@@ -35,3 +35,15 @@ The polished version of this project should look modern on the surface, but unde
 
 4. Look for duplicate CSS patterns, inconsistent route naming, unused dependencies, hard-coded project data, and anything that would make future project additions harder.
 
+## Don't make big code changes on the main branch without review
+
+For new projects & pages, changes that will impact global or shared components, templates, or JS files, and any significant refactoring of existing code, create a new branch with a logical name, and make your changes there.  
+
+1. Create and checkout a new branch with a logical name that reflects the purpose of the changes (e.g., `add-new-project`, `refactor-routing`, `update-css-classes`).
+
+2. Make your changes in that branch, ensuring that you follow the code standards outlined above (and in the project-onboarding skill, where applicable).
+
+3. Break up large changes into smaller, logical commits with descriptive commit messages that explain the purpose of each change. This makes it easier for reviewers to understand the changes and provide feedback.
+
+4. Once your changes are complete and you have tested them locally for errors in functionality and performance (and security gaps), push your branch to the remote repository and notify the user that the changes are ready for review in the local dev environment.  Do not merge your branch to main until it has been reviewed and approved by the user, and only upon request.  In most cases, the user will merge branches and push to remote for production deployment manually.
+

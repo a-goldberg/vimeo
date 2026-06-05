@@ -18,3 +18,5 @@ When needed, refer to design references to maintain consistent colors, layouts, 
 ## Basic Project Structure & Templates
 
 The home page and navigation header provide links to all project pages, which are organized by category or purpose. You can find references to the overall file structure, data schemas, and naming conventions in the site's CLAUDE.md file. The EJS templating system and BEM hierarchy are discussed there, and should be used for all new pages and components to ensure consistency and maintainability. When adding a new project or tool, use the existing templates and components as much as possible, and refer to the CLAUDE.md and README.md files for step-by-step instructions on how to add new routes, pages, and project entries.
+
+When adding a new project or tool page, add the appropriate entry to to the projects.js file.
