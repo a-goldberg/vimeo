@@ -55,7 +55,7 @@ router.post('/upload', upload.single('scorm'), (req, res) => {
     }
 
     const titleMatch = manifestXml.match(/<title>([^<]+)<\/title>/i);
-    const title = titleMatch ? titleMatch[1].trim() : 'Untitled Course';
+    const title = titleMatch ? titleMatch[1].trim() : "Sample Course";
 
     res.json({ launchPath, title });
   } catch (err) {

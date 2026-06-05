@@ -2,11 +2,20 @@
 // Exposes window.API so the SCORM iframe content can call LMSSetValue() etc.
 // Because we serve the SCORM content from our own domain, the iframe can access
 // window.parent.API directly — no cross-origin postMessage needed.
+// Learner identity values that the SCORM package (specifically Vimeo's RxD
+// runtime) reads on launch via LMSGetValue('cmi.core.student_id').
+// Without these, RxD halts with "empty learner id" before the video loads.
+const LEARNER = {
+  'cmi.core.student_id':   'alex.chen.001',
+  'cmi.core.student_name': 'Chen, Alex',
+};
+
 window.API = {
-  _data: {},
+  _data: { ...LEARNER },
 
   LMSInitialize() {
-    this._data = {};
+    // Reset tracking data but keep learner identity so RxD can always read it.
+    this._data = { ...LEARNER };
     updateGradebook();
     return 'true';
   },
