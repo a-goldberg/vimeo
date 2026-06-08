@@ -14,8 +14,9 @@ window.API = {
   _data: { ...LEARNER },
 
   LMSInitialize() {
-    // Reset tracking data but keep learner identity so RxD can always read it.
-    this._data = { ...LEARNER };
+    // Reset tracking data; set lesson_status to incomplete so the gradebook
+    // immediately shows "In Progress" as soon as the content initializes.
+    this._data = { ...LEARNER, 'cmi.core.lesson_status': 'incomplete' };
     updateGradebook();
     return 'true';
   },
@@ -41,6 +42,9 @@ window.API = {
   LMSGetDiagnostic() { return ''; },
 };
 
+// ── State ─────────────────────────────────────────────────────────────────────
+let currentLaunchPath = null;
+
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const dropZone       = document.getElementById('lms-drop-zone');
 const dropOverlay    = document.getElementById('lms-drop-overlay');
@@ -59,11 +63,14 @@ const timeEl         = document.getElementById('lms-time');
 const noInteractions = document.getElementById('lms-no-interactions');
 const interactionsTable = document.getElementById('lms-interactions-table');
 const interactionsBody  = document.getElementById('lms-interactions-body');
+const retakeArea     = document.getElementById('lms-retake-area');
+const retakeBtn      = document.getElementById('lms-retake-btn');
 const toast          = document.getElementById('toast');
 
 // ── Upload & course loading ───────────────────────────────────────────────────
 fileInputTop.addEventListener('change', () => handleFileSelect(fileInputTop.files[0]));
 fileInputCenter.addEventListener('change', () => handleFileSelect(fileInputCenter.files[0]));
+retakeBtn.addEventListener('click', retakeCourse);
 
 // Drag-and-drop on the center drop zone
 dropZone.addEventListener('dragover', (e) => {
@@ -127,21 +134,32 @@ async function uploadScorm(file) {
 }
 
 function loadCourse(launchPath, title) {
+  currentLaunchPath = launchPath;
+
   // Update topbar and sidebar
   courseTitle.textContent = title;
   courseItemTitle.textContent = title;
-  courseItemStatus.textContent = 'In Progress';
+  courseItemStatus.textContent = 'Not Started';
   noCourseEl.classList.add('hidden');
   courseItemEl.classList.remove('hidden');
 
-  // Reset SCORM data store and gradebook
-  window.API._data = {};
+  // Reset SCORM data store (preserve learner identity) and refresh gradebook
+  window.API._data = { ...LEARNER };
   updateGradebook();
 
   // Show iframe, hide drop zone
   dropZone.classList.add('hidden');
   iframe.classList.remove('hidden');
   iframe.src = `/api/lms-demo/content/${launchPath}`;
+}
+
+function retakeCourse() {
+  if (!currentLaunchPath) return;
+  window.API._data = { ...LEARNER };
+  updateGradebook();
+  updateInteractions();
+  iframe.src = `/api/lms-demo/content/${currentLaunchPath}`;
+  showToast('Course restarted — good luck!', 'info');
 }
 
 // ── SCORM data → Gradebook ────────────────────────────────────────────────────
@@ -177,6 +195,9 @@ function updateGradebook() {
   // Session time (SCORM format: HH:MM:SS.SS)
   const sessionTime = data['cmi.core.session_time'];
   timeEl.textContent = sessionTime ? formatScormTime(sessionTime) : '—';
+
+  // Show retake button only on failure
+  retakeArea.classList.toggle('hidden', rawStatus !== 'failed');
 }
 
 function updateInteractions() {
@@ -250,6 +271,46 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
+
+// ── Sample courses ────────────────────────────────────────────────────────────
+async function loadSamples() {
+  try {
+    const res = await fetch('/api/lms-demo/samples');
+    const samples = await res.json();
+    if (!samples.length) return;
+
+    const container = document.getElementById('lms-samples');
+    if (!container) return;
+
+    container.innerHTML = `
+      <div class="lms-samples__divider">— or load a sample —</div>
+      <div class="lms-samples__list">
+        ${samples.map(s => `<button class="btn btn--sm lms-samples__btn" data-file="${escapeHtml(s.file)}">${escapeHtml(s.name)}</button>`).join('')}
+      </div>
+    `;
+
+    container.querySelectorAll('.lms-samples__btn').forEach(btn => {
+      btn.addEventListener('click', () => loadSampleCourse(btn.dataset.file));
+    });
+  } catch {
+    // samples are optional — silently skip if unavailable
+  }
+}
+
+async function loadSampleCourse(filename) {
+  showToast(`Loading "${filename.replace(/\.zip$/i, '')}"…`, 'info');
+  try {
+    const res = await fetch(`/scorm-examples/${encodeURIComponent(filename)}`);
+    if (!res.ok) throw new Error('Sample file not found.');
+    const blob = await res.blob();
+    const file = new File([blob], filename, { type: 'application/zip' });
+    uploadScorm(file);
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+loadSamples();
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
 let toastTimer;

@@ -1297,6 +1297,34 @@
   line-height: 1.5;
 }
 
+/* Sample course picker — shown inside the drop zone empty state */
+.lms-samples {
+  margin-top: var(--space-5);
+  text-align: center;
+}
+
+.lms-samples__divider {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.lms-samples__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+}
+
+/* Retake button — shown in gradebook when lesson_status is failed */
+.lms-retake-area {
+  padding: var(--space-3) var(--space-4) 0;
+}
+
+.lms-retake-btn {
+  width: 100%;
+}
+
 /* Responsive — collapse to single column on smaller viewports */
 @media (max-width: 860px) {
   .page--lms-demo .lms-shell {
