@@ -5,7 +5,8 @@ const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
 
-const CONTENT_DIR = path.join('/tmp', 'lms-demo-content');
+const CONTENT_DIR  = path.join('/tmp', 'lms-demo-content');
+const SAMPLES_DIR  = path.join(__dirname, '../public/scorm-examples');
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -61,6 +62,21 @@ router.post('/upload', upload.single('scorm'), (req, res) => {
   } catch (err) {
     console.error('[lms-demo] upload error:', err);
     res.status(500).json({ error: 'Failed to process the SCORM package.' });
+  }
+});
+
+// List available sample SCORM packages from public/scorm-examples/.
+router.get('/samples', (req, res) => {
+  try {
+    const files = fs.readdirSync(SAMPLES_DIR)
+      .filter(f => f.toLowerCase().endsWith('.zip'))
+      .map(f => ({
+        name: f.replace(/\.zip$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        file: f,
+      }));
+    res.json(files);
+  } catch {
+    res.json([]);
   }
 });
 
