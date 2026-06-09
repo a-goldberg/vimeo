@@ -10,33 +10,43 @@ const LEARNER = {
   'cmi.core.student_name': 'Chen, Alex',
 };
 
+// Set to true in the browser console to log every SCORM API call:
+//   window.SCORM_DEBUG = true
+window.SCORM_DEBUG = false;
+
 window.API = {
   _data: { ...LEARNER },
 
   LMSInitialize() {
-    // Reset learner tracking but preserve LMS-seeded config (mastery_score etc.)
-    // so the player reads the correct passing threshold after initialization.
     this._data = { ...LEARNER, ...courseData, 'cmi.core.lesson_status': 'incomplete' };
+    if (window.SCORM_DEBUG) console.log('[SCORM] LMSInitialize | data seeded:', { ...this._data });
     updateGradebook();
     return 'true';
   },
 
   LMSFinish() {
+    if (window.SCORM_DEBUG) console.log('[SCORM] LMSFinish | final data:', { ...this._data });
     updateGradebook();
     return 'true';
   },
 
   LMSGetValue(el) {
-    return this._data[el] !== undefined ? String(this._data[el]) : '';
+    const val = this._data[el] !== undefined ? String(this._data[el]) : '';
+    if (window.SCORM_DEBUG) console.log(`[SCORM] GET ${el} →`, JSON.stringify(val));
+    return val;
   },
 
   LMSSetValue(el, val) {
     this._data[el] = val;
+    if (window.SCORM_DEBUG) console.log(`[SCORM] SET ${el} =`, JSON.stringify(val));
     document.dispatchEvent(new CustomEvent('scorm:set', { detail: { el, val } }));
     return 'true';
   },
 
-  LMSCommit() { return 'true'; },
+  LMSCommit() {
+    if (window.SCORM_DEBUG) console.log('[SCORM] LMSCommit');
+    return 'true';
+  },
   LMSGetLastError() { return '0'; },
   LMSGetErrorString() { return ''; },
   LMSGetDiagnostic() { return ''; },
