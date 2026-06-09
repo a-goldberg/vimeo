@@ -93,7 +93,7 @@ const projects = [
     title: "LMS Integration Demo",
     slug: "lms-demo",
     category: "Demos",
-    status: "In Progress",
+    status: "Live",
     description:
       "Simulate a corporate LMS experience powered by a Vimeo SCORM export. Upload a SCORM package, watch an interactive video with quiz questions, and see the live gradebook update in real time.",
     tags: ["SCORM", "LMS", "Interactive", "E-Learning"],
