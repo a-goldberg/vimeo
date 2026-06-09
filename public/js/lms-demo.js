@@ -14,9 +14,9 @@ window.API = {
   _data: { ...LEARNER },
 
   LMSInitialize() {
-    // Reset tracking data; set lesson_status to incomplete so the gradebook
-    // immediately shows "In Progress" as soon as the content initializes.
-    this._data = { ...LEARNER, 'cmi.core.lesson_status': 'incomplete' };
+    // Reset learner tracking but preserve LMS-seeded config (mastery_score etc.)
+    // so the player reads the correct passing threshold after initialization.
+    this._data = { ...LEARNER, ...courseData, 'cmi.core.lesson_status': 'incomplete' };
     updateGradebook();
     return 'true';
   },
@@ -44,6 +44,7 @@ window.API = {
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let currentLaunchPath = null;
+let courseData = {}; // LMS-seeded config (mastery_score etc.) — survives LMSInitialize resets
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const dropZone       = document.getElementById('lms-drop-zone');
@@ -143,13 +144,12 @@ function loadCourse(launchPath, title, masteryScore) {
   noCourseEl.classList.add('hidden');
   courseItemEl.classList.remove('hidden');
 
-  // Reset SCORM data store (preserve learner identity) and refresh gradebook.
-  // Seed mastery_score so the player knows the passing threshold; without it,
-  // quiz-based courses require 100% correct before showing the Complete button.
-  window.API._data = { ...LEARNER };
+  // Build course-level config so it survives LMSInitialize() resets.
+  courseData = {};
   if (masteryScore != null) {
-    window.API._data['cmi.student_data.mastery_score'] = String(masteryScore);
+    courseData['cmi.student_data.mastery_score'] = String(masteryScore);
   }
+  window.API._data = { ...LEARNER, ...courseData };
   updateGradebook();
 
   // Show iframe, hide drop zone
@@ -160,7 +160,7 @@ function loadCourse(launchPath, title, masteryScore) {
 
 function retakeCourse() {
   if (!currentLaunchPath) return;
-  window.API._data = { ...LEARNER };
+  window.API._data = { ...LEARNER, ...courseData };
   updateGradebook();
   updateInteractions();
   iframe.src = `/api/lms-demo/content/${currentLaunchPath}`;
