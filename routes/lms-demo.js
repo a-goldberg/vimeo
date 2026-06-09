@@ -58,7 +58,14 @@ router.post('/upload', upload.single('scorm'), (req, res) => {
     const titleMatch = manifestXml.match(/<title>([^<]+)<\/title>/i);
     const title = titleMatch ? titleMatch[1].trim() : "Sample Course";
 
-    res.json({ launchPath, title });
+    // Extract mastery score so the client can seed cmi.student_data.mastery_score.
+    // Without this, quiz-based courses default to requiring 100% correct to "pass".
+    const masteryMatch =
+      manifestXml.match(/<adlcp:masteryscore>\s*([^<]+?)\s*<\/adlcp:masteryscore>/i) ||
+      manifestXml.match(/adlcp:masteryscore=["']\s*([^"']+?)\s*["']/i);
+    const masteryScore = masteryMatch ? masteryMatch[1].trim() : null;
+
+    res.json({ launchPath, title, masteryScore });
   } catch (err) {
     console.error('[lms-demo] upload error:', err);
     res.status(500).json({ error: 'Failed to process the SCORM package.' });

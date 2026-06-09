@@ -121,7 +121,7 @@ async function uploadScorm(file) {
 
     if (!res.ok) throw new Error(data.error || 'Upload failed.');
 
-    loadCourse(data.launchPath, data.title);
+    loadCourse(data.launchPath, data.title, data.masteryScore);
     showToast(`"${data.title}" loaded successfully.`, 'success');
   } catch (err) {
     courseTitle.textContent = 'No course loaded';
@@ -133,7 +133,7 @@ async function uploadScorm(file) {
   fileInputCenter.value = '';
 }
 
-function loadCourse(launchPath, title) {
+function loadCourse(launchPath, title, masteryScore) {
   currentLaunchPath = launchPath;
 
   // Update topbar and sidebar
@@ -143,8 +143,13 @@ function loadCourse(launchPath, title) {
   noCourseEl.classList.add('hidden');
   courseItemEl.classList.remove('hidden');
 
-  // Reset SCORM data store (preserve learner identity) and refresh gradebook
+  // Reset SCORM data store (preserve learner identity) and refresh gradebook.
+  // Seed mastery_score so the player knows the passing threshold; without it,
+  // quiz-based courses require 100% correct before showing the Complete button.
   window.API._data = { ...LEARNER };
+  if (masteryScore != null) {
+    window.API._data['cmi.student_data.mastery_score'] = String(masteryScore);
+  }
   updateGradebook();
 
   // Show iframe, hide drop zone
