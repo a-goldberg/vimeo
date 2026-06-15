@@ -1,0 +1,79 @@
+<%
+  const _page = typeof currentPage !== 'undefined' ? currentPage : '';
+  const _moduleNum = typeof currentModuleNumber !== 'undefined' ? currentModuleNumber : 0;
+%>
+<nav class="course-nav" id="courseNav" aria-label="Course navigation">
+
+  <div class="course-nav__brand">
+    <img
+      src="/projects-static/mcp-training-course/assets/images/vandermere_logo_full_light.png"
+      alt="Vandermere Applied Dynamics"
+      class="course-nav__logo"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+    >
+    <div class="course-nav__logo-fallback" style="display:none">
+      <span class="course-nav__logo-text">VANDERMERE</span>
+      <span class="course-nav__logo-sub">APPLIED DYNAMICS</span>
+    </div>
+    <div class="course-nav__course-label">STS-1000 Sales Readiness</div>
+  </div>
+
+  <div class="course-nav__progress-wrap">
+    <div class="course-nav__progress-meta">
+      <span id="navProgressText">0 of <%= course.modules.length %> lessons complete</span>
+    </div>
+    <div class="course-nav__progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="<%= course.modules.length %>" aria-valuenow="0" id="navProgressBar">
+      <div class="course-nav__progress-fill" id="navProgressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="course-nav__section-label">Required Lessons</div>
+  <ul class="course-nav__list" role="list">
+    <% course.modules.forEach(function(mod) { %>
+    <li class="course-nav__item" data-module-id="<%= mod.id %>">
+      <a href="/vandermere/lesson/<%= mod.number %>"
+         class="course-nav__link<%= (_page === 'lesson' && _moduleNum === mod.number) ? ' is-active' : '' %>">
+        <span class="course-nav__step-num" aria-hidden="true"><%= mod.number %></span>
+        <span class="course-nav__step-check is-hidden" aria-hidden="true">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="course-nav__step-title"><%= mod.title %></span>
+        <span class="course-nav__step-duration"><%= mod.duration %></span>
+      </a>
+    </li>
+    <% }); %>
+  </ul>
+
+  <div class="course-nav__section-label course-nav__section-label--spaced">Resources</div>
+  <ul class="course-nav__list" role="list">
+    <li>
+      <a href="/vandermere/resources" class="course-nav__link course-nav__link--resource<%= _page === 'resources' ? ' is-active' : '' %>">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Resource Library
+        <span class="course-nav__resource-count"><%= course.resources.length %></span>
+      </a>
+    </li>
+    <li>
+      <a href="/vandermere/glossary" class="course-nav__link course-nav__link--resource<%= _page === 'glossary' ? ' is-active' : '' %>">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Glossary
+        <span class="course-nav__resource-count"><%= course.glossary.length %></span>
+      </a>
+    </li>
+    <li>
+      <a href="/vandermere/readiness" class="course-nav__link course-nav__link--resource<%= _page === 'readiness' ? ' is-active' : '' %>">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Readiness Check
+      </a>
+    </li>
+  </ul>
+
+  <div class="course-nav__footer">
+    <a href="/demos" class="course-nav__back">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Hub
+    </a>
+    <span class="course-nav__system-label">NODE ARRAY: STABLE</span>
+  </div>
+
+</nav>

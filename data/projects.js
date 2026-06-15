@@ -153,6 +153,22 @@ const projects = [
     updatedAt: "2026-04-15",
     notes: "",
   },
+  {
+    title: "STS-1000 Sales Readiness",
+    slug: "sts-1000-course",
+    category: "Demos",
+    status: "In Progress",
+    description:
+      "Immersive e-learning course for the fictional Vandermere Applied Dynamics STS-1000 system. Showcases AI avatar videos, interactive knowledge checks, enterprise search hooks, and a dark 'Severe Industrial Elegance' brand theme.",
+    tags: ["E-Learning", "Video", "AI", "HeyGen", "Search"],
+    externalUrl: "/vandermere",
+    repoUrl: "",
+    featured: true,
+    visibility: "Customer",
+    updatedAt: "2026-06-11",
+    notes:
+      "Scaffold demo showing a 6-module video-based course with a resource library, technical glossary, and final readiness assessment. Built on the hub's EJS/BEM stack with Vandermere brand theming. Future phases: live Vimeo federated search, AI chatbot Q&A across course content.",
+  },
 ];
 
 // Maps each category to its index page URL.

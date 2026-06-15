@@ -1,0 +1,180 @@
+<div class="page page--vandermere">
+  <div class="course-shell">
+
+    <%- include('../../partials/vandermere-nav', { course, currentPage: 'lesson', currentModuleNumber: module.number }) %>
+
+    <main class="course-main course-main--lesson" id="courseMain">
+
+      <!-- Lesson header -->
+      <div class="lesson-header">
+        <div class="lesson-header__eyebrow">
+          <span class="lesson-header__num">LESSON <%= module.number %> OF <%= course.modules.length %></span>
+          <span class="lesson-header__sep">·</span>
+          <span class="lesson-header__duration"><%= module.duration %></span>
+        </div>
+        <h1 class="lesson-header__title"><%= module.title %></h1>
+        <p class="lesson-header__summary"><%= module.summary %></p>
+      </div>
+
+      <!-- Video player -->
+      <div class="lesson-video-wrap">
+        <% if (module.vimeoId) { %>
+          <div class="embed embed--16-9">
+            <iframe
+              src="https://player.vimeo.com/video/<%= module.vimeoId %>?color=4F9EB8&title=0&byline=0&portrait=0"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen
+              title="<%= module.title %>"
+            ></iframe>
+          </div>
+        <% } else if (module.localVideoPath) { %>
+          <div class="embed embed--16-9">
+            <video controls class="lesson-local-video">
+              <source src="<%= module.localVideoPath %>" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        <% } else { %>
+          <div class="lesson-video-placeholder">
+            <div class="lesson-video-placeholder__inner">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+              <div class="lesson-video-placeholder__label">Video Coming Soon</div>
+              <div class="lesson-video-placeholder__sub">Lesson <%= module.number %>: <%= module.title %></div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="lesson-body">
+
+        <!-- Learning objectives -->
+        <section class="lesson-section">
+          <h2 class="lesson-section__title">Learning Objectives</h2>
+          <ul class="lesson-objectives">
+            <% module.objectives.forEach(function(obj) { %>
+            <li class="lesson-objectives__item">
+              <span class="lesson-objectives__marker" aria-hidden="true"></span>
+              <%= obj %>
+            </li>
+            <% }); %>
+          </ul>
+        </section>
+
+        <!-- Key terms -->
+        <% if (module.keyTerms && module.keyTerms.length) { %>
+        <section class="lesson-section">
+          <h2 class="lesson-section__title">Key Terms</h2>
+          <div class="lesson-key-terms">
+            <% module.keyTerms.forEach(function(term) { %>
+            <a href="/vandermere/glossary#<%= term.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') %>" class="lesson-term-chip"><%= term %></a>
+            <% }); %>
+          </div>
+        </section>
+        <% } %>
+
+        <!-- Transcript -->
+        <section class="lesson-section">
+          <div class="transcript-panel" id="transcriptPanel">
+            <button class="transcript-panel__toggle" id="transcriptToggle" aria-expanded="false" aria-controls="transcriptBody" type="button">
+              <svg class="transcript-panel__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+              <span>Transcript</span>
+            </button>
+            <div class="transcript-panel__body" id="transcriptBody" hidden>
+              <% if (module.transcript) { %>
+                <div class="transcript-panel__content"><%= module.transcript %></div>
+              <% } else { %>
+                <p class="transcript-panel__placeholder">Transcript will be added when the video is produced.</p>
+              <% } %>
+            </div>
+          </div>
+        </section>
+
+        <!-- Knowledge check -->
+        <section class="lesson-section" id="knowledgeCheckSection">
+          <h2 class="lesson-section__title">Knowledge Check</h2>
+          <div class="knowledge-check" id="knowledgeCheck"
+               data-module-id="<%= module.id %>"
+               data-kc-id="<%= module.knowledgeCheck.id %>">
+            <p class="knowledge-check__question"><%= module.knowledgeCheck.question %></p>
+            <div class="knowledge-check__answers" role="radiogroup" aria-label="Answer choices">
+              <% module.knowledgeCheck.answers.forEach(function(ans, idx) { %>
+              <button
+                class="knowledge-check__answer"
+                data-correct="<%= ans.correct %>"
+                data-index="<%= idx %>"
+                type="button"
+                role="radio"
+                aria-checked="false"
+              >
+                <span class="knowledge-check__answer-letter" aria-hidden="true"><%= String.fromCharCode(65 + idx) %></span>
+                <span class="knowledge-check__answer-text"><%= ans.text %></span>
+              </button>
+              <% }); %>
+            </div>
+            <div class="knowledge-check__feedback" id="kcFeedback" hidden>
+              <div class="knowledge-check__feedback-result" id="kcResult"></div>
+              <p class="knowledge-check__explanation"><%= module.knowledgeCheck.explanation %></p>
+              <button class="btn btn--sm knowledge-check__retry" id="kcRetry" type="button">Try Again</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Related resources -->
+        <% if (relatedResources && relatedResources.length) { %>
+        <section class="lesson-section">
+          <h2 class="lesson-section__title">Related Resources</h2>
+          <div class="lesson-resources">
+            <% relatedResources.forEach(function(res) { %>
+            <a href="/vandermere/resources#<%= res.id %>" class="lesson-resource-item">
+              <span class="lesson-resource-item__type"><%= res.type.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }) %></span>
+              <span class="lesson-resource-item__title"><%= res.title %></span>
+            </a>
+            <% }); %>
+          </div>
+        </section>
+        <% } %>
+
+      </div><!-- /.lesson-body -->
+
+      <!-- Prev / Next navigation -->
+      <div class="lesson-nav">
+        <% if (prevModule) { %>
+        <a href="/vandermere/lesson/<%= prevModule.number %>" class="lesson-nav__btn lesson-nav__btn--prev">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          <div>
+            <div class="lesson-nav__label">Previous</div>
+            <div class="lesson-nav__title"><%= prevModule.title %></div>
+          </div>
+        </a>
+        <% } else { %>
+        <a href="/vandermere" class="lesson-nav__btn lesson-nav__btn--prev">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          <div>
+            <div class="lesson-nav__label">Back to</div>
+            <div class="lesson-nav__title">Course Overview</div>
+          </div>
+        </a>
+        <% } %>
+
+        <% if (nextModule) { %>
+        <a href="/vandermere/lesson/<%= nextModule.number %>" class="lesson-nav__btn lesson-nav__btn--next" id="nextLessonBtn">
+          <div>
+            <div class="lesson-nav__label">Next Lesson</div>
+            <div class="lesson-nav__title"><%= nextModule.title %></div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <% } else { %>
+        <a href="/vandermere/readiness" class="lesson-nav__btn lesson-nav__btn--next lesson-nav__btn--final">
+          <div>
+            <div class="lesson-nav__label">Course Complete</div>
+            <div class="lesson-nav__title">Take Readiness Check</div>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <% } %>
+      </div>
+
+    </main>
+  </div>
+</div>

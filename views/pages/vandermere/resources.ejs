@@ -1,0 +1,104 @@
+<div class="page page--vandermere">
+  <div class="course-shell">
+
+    <%- include('../../partials/vandermere-nav', { course, currentPage: 'resources', currentModuleNumber: 0 }) %>
+
+    <main class="course-main course-main--library" id="courseMain">
+
+      <div class="library-header">
+        <div class="library-header__eyebrow">KNOWLEDGE BASE</div>
+        <h1 class="library-header__title">Resource Library</h1>
+        <p class="library-header__desc"><%= resources.length %> documents across <%= categories.length %> categories. Use the search and filters below to find sales guides, subsystem references, use cases, deployment documentation, and field notices.</p>
+      </div>
+
+      <!-- Search bar with hooks for future Vimeo federated search -->
+      <div class="library-search-bar">
+        <div class="library-search-bar__input-wrap">
+          <svg class="library-search-bar__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            type="search"
+            id="resourceSearch"
+            class="library-search-bar__input"
+            placeholder="Search documents and resources…"
+            autocomplete="off"
+            aria-label="Search resources"
+          >
+          <span class="library-search-bar__spinner hidden" id="searchSpinner" aria-hidden="true"></span>
+        </div>
+        <%# Video search results will be appended here by vandermere-course.js when Vimeo federated search is wired up %>
+        <div class="library-video-results hidden" id="videoSearchResults" aria-live="polite">
+          <div class="library-video-results__label">VIDEO RESULTS</div>
+          <div id="videoResultsList"></div>
+        </div>
+      </div>
+
+      <!-- Category filter tabs -->
+      <div class="library-filters" role="tablist" aria-label="Resource categories">
+        <button class="library-filter is-active" data-category="all" role="tab" aria-selected="true" type="button">
+          All <span class="library-filter__count"><%= resources.length %></span>
+        </button>
+        <% categories.forEach(function(cat) { %>
+        <%
+          const count = resources.filter(function(r) { return r.category === cat.id; }).length;
+        %>
+        <button class="library-filter" data-category="<%= cat.id %>" role="tab" aria-selected="false" type="button">
+          <%= cat.label %> <span class="library-filter__count"><%= count %></span>
+        </button>
+        <% }); %>
+      </div>
+
+      <!-- Resource list -->
+      <div class="library-results" id="libraryResults" aria-live="polite">
+        <div class="library-empty hidden" id="libraryEmpty">
+          <div class="empty-state">
+            <div class="empty-state__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <p class="empty-state__heading">No results found</p>
+            <p class="empty-state__body">Try a different search term or select a different category.</p>
+          </div>
+        </div>
+
+        <% categories.forEach(function(cat) { %>
+        <%
+          const catResources = resources.filter(function(r) { return r.category === cat.id; });
+        %>
+        <div class="library-category-group" data-category-group="<%= cat.id %>">
+          <div class="library-category-group__header">
+            <span class="library-category-group__title"><%= cat.label %></span>
+            <span class="library-category-group__desc"><%= cat.description %></span>
+          </div>
+          <div class="library-category-group__items">
+            <% catResources.forEach(function(res) { %>
+            <div
+              class="resource-item"
+              id="<%= res.id %>"
+              data-category="<%= res.category %>"
+              data-tags="<%= res.tags.join(' ') %>"
+              data-title="<%= res.title.toLowerCase() %>"
+            >
+              <div class="resource-item__type-badge"><%= res.type.replace(/-/g, ' ') %></div>
+              <div class="resource-item__title"><%= res.title %></div>
+              <div class="resource-item__summary"><%= res.summary %></div>
+              <% if (res.relatedModules && res.relatedModules.length) { %>
+              <div class="resource-item__modules">
+                <% res.relatedModules.forEach(function(mNum) { %>
+                <span class="resource-item__module-tag">Lesson <%= mNum %></span>
+                <% }); %>
+              </div>
+              <% } %>
+              <% if (res.body) { %>
+              <div class="resource-item__body"><%= res.body %></div>
+              <% } else { %>
+              <div class="resource-item__placeholder">Full document content coming soon.</div>
+              <% } %>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+
+    </main>
+  </div>
+</div>
