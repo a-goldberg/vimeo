@@ -828,7 +828,7 @@ Knowledge check
 
 ## Related Lessons
 
-- Lesson 1: Welcome to Vandermere Applied Dynamics
+- Lesson 1: STS-1000 Market Readiness Overview
 - Lesson 3: Anatomy of the Stabilizer
 - Lesson 5: Sales Positioning and Objection Handling
 

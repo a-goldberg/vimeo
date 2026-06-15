@@ -18,10 +18,17 @@
 
       <!-- Video player -->
       <div class="lesson-video-wrap">
-        <% if (module.vimeoId) { %>
+        <% if (module.vimeoId) {
+          const _vParts = module.vimeoId.split(':');
+          const _vId    = _vParts[0];
+          const _vHash  = _vParts[1] || null;
+          const _vSrc   = 'https://player.vimeo.com/video/' + _vId
+                        + (_vHash ? '?h=' + _vHash + '&' : '?')
+                        + 'color=4F9EB8&title=0&byline=0&portrait=0';
+        %>
           <div class="embed embed--16-9">
             <iframe
-              src="https://player.vimeo.com/video/<%= module.vimeoId %>?color=4F9EB8&title=0&byline=0&portrait=0"
+              src="<%= _vSrc %>"
               allow="autoplay; fullscreen; picture-in-picture"
               allowfullscreen
               title="<%= module.title %>"

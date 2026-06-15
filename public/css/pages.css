@@ -1398,6 +1398,12 @@
   height: calc(100vh - var(--nav-height));
   overflow: hidden;
   border-top: 1px solid var(--vm-border-soft);
+  color: var(--vm-blue);
+}
+
+.course-nav__progress-wrap {
+  padding: 0 var(--space-4) var(--space-2);
+  font-size: 0.8rem;
 }
 
 /* Main scrollable content area */
@@ -1504,6 +1510,7 @@
 .course-product-banner__img {
   width: 100%;
   object-fit: cover;
+  object-position: 0 -1000px;
   display: block;
   opacity: 0.85;
 }

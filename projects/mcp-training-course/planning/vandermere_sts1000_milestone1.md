@@ -186,10 +186,10 @@ The fictional world can support a much larger training program, but the first ve
 
 ## Recommended v1 Video Topics
 
-### Video 1: Welcome to Vandermere Applied Dynamics
+### Video 1: STS-1000 Market Readiness Overview
 
 Purpose:
-Introduce Vandermere, Physicalized Workflow Architecture, and the idea that business friction has physical properties.
+Course overview, introduction to the Physicalized Workflow Architecture category, and the core premise that enterprise friction is a physical condition requiring physical solutions.
 
 Core ideas:
 

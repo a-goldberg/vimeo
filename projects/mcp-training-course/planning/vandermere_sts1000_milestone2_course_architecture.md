@@ -209,7 +209,7 @@ Each video should be approximately **90 to 180 seconds**.
 
 | Video | Title                                    | Primary Purpose                       | Approx. Length |
 | :---- | :--------------------------------------- | :------------------------------------ | :------------- |
-| 1     | Welcome to Vandermere Applied Dynamics   | Introduce the company and category    | 2:00–2:30      |
+| 1     | STS-1000 Market Readiness Overview       | Introduce the company and category    | 2:30–3:00      |
 | 2     | What Is the STS-1000?                    | Explain the product story             | 2:00–3:00      |
 | 3     | Anatomy of the Stabilizer                | Introduce core subsystems             | 2:30–3:00      |
 | 4     | Customer Pain and Use Cases              | Teach when the product is relevant    | 2:00–3:00      |
@@ -228,11 +228,11 @@ Recommendation: keep Video 7 optional for v1. The demo talk track can initially 
 
 # 9. Video Module Definitions
 
-## Video 1: Welcome to Vandermere Applied Dynamics
+## Video 1: STS-1000 Market Readiness Overview
 
 ## Purpose
 
-Introduce Vandermere Applied Dynamics, the market category, and the company's core worldview.
+Course overview, introduction to the Physicalized Workflow Architecture category, and the core premise that enterprise friction is a physical condition requiring physical solutions.
 
 ## Core Concepts
 
