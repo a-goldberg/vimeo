@@ -19,7 +19,7 @@ const course = {
       number: 1,
       status: "completed",
       title: "STS-1000 Market Readiness Overview",
-      duration: "2:30–3:00",
+      duration: "2:39",
       summary:
         "Course overview, introduction to the Physicalized Workflow Architecture category, and the core premise that enterprise friction is a physical condition requiring physical solutions.",
       objectives: [
@@ -73,7 +73,7 @@ const course = {
       number: 2,
       status: "completed",
       title: "What Is the STS-1000?",
-      duration: "2:00–3:00",
+      duration: "3:52",
       summary:
         "Provide the core product explanation and establish the STS-1000 as a kinetic enterprise ballast — physical infrastructure that stabilizes workflow pressure, decision temperature, and operational drift.",
       objectives: [
@@ -126,7 +126,7 @@ const course = {
       number: 3,
       status: "in progress",
       title: "Anatomy of the Stabilizer",
-      duration: "2:30–3:00",
+      duration: "6:30",
       summary:
         "Introduce the six primary STS-1000 subsystems and give learners a one-sentence explanation of each that can be used confidently in customer conversations.",
       objectives: [
@@ -135,7 +135,7 @@ const course = {
         "Connect each subsystem to a customer-facing value concept.",
         "Avoid introducing unnecessary technical detail in early sales conversations.",
       ],
-      vimeoId: "",
+      vimeoId: "1202249907:235a52798a",
       localVideoPath: "",
       transcript: "",
       keyTerms: [
