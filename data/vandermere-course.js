@@ -19,7 +19,7 @@ const course = {
       number: 1,
       status: "completed",
       title: "STS-1000 Market Readiness Overview",
-      duration: "2:30–3:00",
+      duration: "2:39",
       summary:
         "Course overview, introduction to the Physicalized Workflow Architecture category, and the core premise that enterprise friction is a physical condition requiring physical solutions.",
       objectives: [
@@ -73,7 +73,7 @@ const course = {
       number: 2,
       status: "completed",
       title: "What Is the STS-1000?",
-      duration: "2:00–3:00",
+      duration: "3:52",
       summary:
         "Provide the core product explanation and establish the STS-1000 as a kinetic enterprise ballast — physical infrastructure that stabilizes workflow pressure, decision temperature, and operational drift.",
       objectives: [
@@ -124,9 +124,9 @@ const course = {
     {
       id: "module-03",
       number: 3,
-      status: "in progress",
+      status: "completed",
       title: "Anatomy of the Stabilizer",
-      duration: "2:30–3:00",
+      duration: "6:51",
       summary:
         "Introduce the six primary STS-1000 subsystems and give learners a one-sentence explanation of each that can be used confidently in customer conversations.",
       objectives: [
@@ -135,9 +135,10 @@ const course = {
         "Connect each subsystem to a customer-facing value concept.",
         "Avoid introducing unnecessary technical detail in early sales conversations.",
       ],
-      vimeoId: "",
+      vimeoId: "1202249907:235a52798a",
       localVideoPath: "",
-      transcript: "",
+      transcript:
+        "In the previous lesson, we introduced the STS1000 as a physical enterprise stabilizer. Now we will examine the machine itself. The goal is not to memorize every internal process. As sales professionals, your responsibility is to understand the six primary subsystems, what each one stabilizes, and how each component connects to a customer pain your buyer already recognizes. By the end of this lesson, you should be able to look at the STS1000 and explain its anatomy clearly, confidently, and without accidentally describing it as a server rack. The STS1000 is organized around six primary stabilization subsystems. At the center is the core logic reservoir, the visual and operational heart of the unit. Above it are the dual thermal reasoning coils, which regulate decision temperature. Across the front panel are the adaptive throughput governors, which control workflow pressure. At the base is the preemptive harmonic diffuser, which dampens micro-inefficiencies before they propagate. Along the side is the inference manifold, the unit's early warning intake system. And behind the reinforced service window are the causality baffles, which contain downstream consequences before they spread. Together, these subsystems allow the STS1000 to stabilize enterprise workflow at the physical layer. The core logic reservoir is the central stabilizing element of the STS1000. During onboarding, Vandermere engineers calibrate the reservoir using the customer's historical operating patterns, approval timing, escalation behavior, ERP telemetry, handoff records, and meeting density. Once calibrated, the reservoir stores the customer's institutional logic baseline. When the organization experiences a shock, a demand spike, leadership change, compliance event, or sudden escalation cycle, the reservoir absorbs the impact before that disruption can become operational drift. For customers, the simplest explanation is this: the reservoir is where the machine gives the business a stable center. The dual thermal reasoning coils regulate decision temperature. In complex organizations, decisions often overheat when multiple departments apply pressure to the same workflow. Sales may push for speed. Legal may apply caution. Finance may require control. Compliance may require documentation. The coils draw excess heat out of these high-friction decision points, allowing approvals to continue moving through the business at a safe operating temperature. In customer conversations, the coils are best explained as the radiator for overheated business logic. The adaptive throughput governors control workflow pressure. These brass governor assemblies monitor the velocity of the customer's workflow stream and adjust when pressure becomes unsafe. Too little pressure creates stagnation. Too much pressure creates turbulence, and uneven pressure creates workflow cavitation, the condition where work appears to be moving, but no one actually owns the next step. For sales teams, this subsystem is especially relevant in quote-to-cash, procurement, invoice review, and support escalation conversations. The governors keep work from piling up in the wrong place. The preemptive harmonic diffuser is located at the base of the STS1000. Its role is preventative. The diffuser emits controlled procedural harmonics that dampen tiny inefficiency patterns before they become larger delays. This matters because most enterprise friction does not begin as a major failure. It begins as a missed handoff, an unclear owner, a meeting added to clarify another meeting, or a delay no one feels responsible for yet. The diffusers smooth those early patterns before they cascade across the organization. The inference manifold is the STS1000's early warning intake system. It samples workflow pressure, approval delay signatures, response latency, and institutional memory residue. From these inputs, the unit can detect bottleneck conditions before they fully manifest. This is not prediction for its own sake. It is preemptive stabilization. The STS1000 identifies where the business is beginning to lose pressure and gives the other subsystems time to respond. The causality baffles contain downstream consequences. When a delayed approval, policy contradiction, incomplete handoff, or bad executive decision enters the workflow stream, the baffles isolate the consequence pattern before it spreads into unrelated departments. This is especially important in compliance, finance, billing, pricing, and customer-impacting operational changes. The sales translation is simple. The baffles help keep one department's mistake from becoming everyone's problem. A practical note for customer conversations. The customer does not need a complete mechanical explanation of the STS1000 during early discovery. In fact, excessive subsystem detail can increase decision temperature before the unit has even been installed. Begin with the customer pain, then connect that pain to the relevant subsystem. If the customer is experiencing approval stalls, discuss the governors. If the customer is experiencing cross-functional friction, discuss the coils. If the customer is worried about policy change or consequence spread, discuss the baffles. Do not start with the machine. Start with the instability. The six subsystems work together, but each one gives you a different way to connect the STS1000 to customer pain. The reservoir stabilizes institutional logic. The coils cool overheated decisions. The governors control workflow pressure. The diffuser prevents small inefficiencies from cascading. The manifold detects future bottlenecks, and the baffles contain downstream consequences. When you can connect these components to the customer's actual operating problems, the STS1000 stops sounding like an unfamiliar machine and starts sounding like infrastructure for the way the enterprise already works. In the next lesson, we will apply this anatomy to real customer pain and common use cases.",
       keyTerms: [
         "Core Logic Reservoir",
         "Dual Thermal Reasoning Coils",
