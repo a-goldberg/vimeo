@@ -3,7 +3,7 @@ name: project-onboarding
 description: Assists with creating or adding new projects/pages/demos to the current Project Hub website, including setting up project structure, templates, routes, and documentation. Includes references to CSS guidelines, design mockups, and more examples to ensure consistency.  Use when creating a new project page or demo, adding a new tool to an existing project, or making changes that could impact the user interface or introduce new design elements.
 ---
 
-When beginning a new project or tool in the Project Hub, use this skill to set the context regarding templates, reusable CSS components, design patterns, and code standards that should be followed to ensure consistency across the project. Unless the task is purely design-focused, this skill should be used in conjunction with the `code-standards` skill, which provides more detailed guidance on code quality and maintainability.
+When adding a new project or tool in the Project Hub, use this skill to set the context regarding templates, reusable CSS components, design patterns, and code standards that should be followed to ensure consistency across the project. Unless the task is purely design-focused, this skill should be used in conjunction with the `code-standards` skill, which provides more detailed guidance on code quality and maintainability.
 
 ## Maintain Consistent Look and Feel
 

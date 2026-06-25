@@ -1,0 +1,79 @@
+<div class="page page--vandermere">
+  <div class="course-shell">
+
+    <%- include('../../partials/vandermere-nav', { course, currentPage: 'readiness', currentModuleNumber: 0 }) %>
+
+    <main class="course-main course-main--library" id="courseMain">
+
+      <div class="library-header">
+        <div class="library-header__eyebrow">FINAL ASSESSMENT · STS-1000</div>
+        <h1 class="library-header__title"><%= readiness.title %></h1>
+        <p class="library-header__desc"><%= readiness.description %></p>
+      </div>
+
+      <!-- Module completion summary -->
+      <section class="readiness-section">
+        <h2 class="readiness-section__title">Lesson Completion</h2>
+        <div class="readiness-progress-grid" id="readinessProgress">
+          <% course.modules.forEach(function(mod) { %>
+          <div class="readiness-lesson-row" data-module-id="<%= mod.id %>">
+            <span class="readiness-lesson-row__num"><%= mod.number %></span>
+            <span class="readiness-lesson-row__title"><%= mod.title %></span>
+            <span class="readiness-lesson-row__status" id="ready-status-<%= mod.id %>">
+              <span class="readiness-badge readiness-badge--incomplete">Incomplete</span>
+            </span>
+          </div>
+          <% }); %>
+        </div>
+        <p class="readiness-note" id="readinessNote">Complete all lessons before taking the assessment.</p>
+      </section>
+
+      <!-- Final quiz -->
+      <section class="readiness-section" id="finalQuizSection">
+        <h2 class="readiness-section__title">Final Assessment</h2>
+        <p class="readiness-section__desc">One question from each of the five course topics. Select the best answer for each.</p>
+
+        <div class="final-quiz" id="finalQuiz">
+          <% readiness.quiz.forEach(function(q, qIdx) { %>
+          <div class="final-quiz__question" data-qid="<%= q.id %>" data-correct="<%= q.answers.findIndex(function(a){ return a.correct; }) %>">
+            <div class="final-quiz__topic"><%= q.topic %></div>
+            <p class="final-quiz__text"><%= q.question %></p>
+            <div class="final-quiz__answers">
+              <% q.answers.forEach(function(ans, idx) { %>
+              <button
+                class="knowledge-check__answer"
+                data-correct="<%= ans.correct %>"
+                data-index="<%= idx %>"
+                type="button"
+              >
+                <span class="knowledge-check__answer-letter" aria-hidden="true"><%= String.fromCharCode(65 + idx) %></span>
+                <span class="knowledge-check__answer-text"><%= ans.text %></span>
+              </button>
+              <% }); %>
+            </div>
+            <div class="final-quiz__explanation hidden"><%= q.explanation %></div>
+          </div>
+          <% }); %>
+        </div>
+
+        <button class="btn btn--primary final-quiz__submit" id="finalQuizSubmit" type="button" disabled>
+          Submit Assessment
+        </button>
+      </section>
+
+      <!-- Completion / certificate (shown by JS after passing) -->
+      <div class="readiness-complete hidden" id="readinessComplete">
+        <div class="readiness-complete__badge" aria-hidden="true">✓</div>
+        <div class="readiness-complete__cert-label">VANDERMERE APPLIED DYNAMICS</div>
+        <h2 class="readiness-complete__cert-title"><%= readiness.certificateTitle %></h2>
+        <p class="readiness-complete__message"><%= readiness.completionMessage %></p>
+        <div class="readiness-complete__score" id="finalScore"></div>
+        <div class="readiness-complete__actions">
+          <a href="/vandermere" class="btn btn--primary">Return to Course</a>
+          <a href="/vandermere/resources" class="btn">Browse Resources</a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>

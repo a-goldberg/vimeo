@@ -1,0 +1,82 @@
+<div class="page page--vandermere">
+  <div class="course-shell">
+
+    <%- include('../../partials/vandermere-nav', { course, currentPage: 'glossary', currentModuleNumber: 0 }) %>
+
+    <main class="course-main course-main--library" id="courseMain">
+
+      <div class="library-header">
+        <div class="library-header__eyebrow">VANDERMERE APPLIED DYNAMICS</div>
+        <h1 class="library-header__title">Technical Glossary</h1>
+        <p class="library-header__desc">Official definitions for <%= glossary.length %> Vandermere terms. Each entry includes a technical definition and an approved sales translation for customer conversations.</p>
+      </div>
+
+      <!-- Glossary search -->
+      <div class="library-search-bar">
+        <div class="library-search-bar__input-wrap">
+          <svg class="library-search-bar__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            type="search"
+            id="glossarySearch"
+            class="library-search-bar__input"
+            placeholder="Search terms…"
+            autocomplete="off"
+            aria-label="Search glossary"
+          >
+        </div>
+      </div>
+
+      <!-- Glossary term list -->
+      <div class="glossary-list" id="glossaryList">
+        <% glossary.forEach(function(entry) { %>
+        <div
+          class="glossary-term"
+          id="<%= entry.id %>"
+          data-term="<%= entry.term.toLowerCase() %>"
+          data-definition="<%= entry.technicalDefinition.toLowerCase() %>"
+          data-translation="<%= entry.salesTranslation.toLowerCase() %>"
+        >
+          <div class="glossary-term__header">
+            <h2 class="glossary-term__term"><%= entry.term %></h2>
+            <% if (entry.relatedModules && entry.relatedModules.length) { %>
+            <div class="glossary-term__modules">
+              <% entry.relatedModules.forEach(function(mNum) { %>
+              <a href="/vandermere/lesson/<%= mNum %>" class="glossary-term__module-link">Lesson <%= mNum %></a>
+              <% }); %>
+            </div>
+            <% } %>
+          </div>
+          <div class="glossary-term__body">
+            <div class="glossary-term__block glossary-term__block--technical">
+              <div class="glossary-term__block-label">TECHNICAL DEFINITION</div>
+              <p class="glossary-term__text"><%= entry.technicalDefinition %></p>
+            </div>
+            <div class="glossary-term__block glossary-term__block--sales">
+              <div class="glossary-term__block-label">SALES TRANSLATION</div>
+              <p class="glossary-term__text glossary-term__text--sales">"<%= entry.salesTranslation %>"</p>
+            </div>
+          </div>
+          <% if (entry.relatedResourceIds && entry.relatedResourceIds.length) { %>
+          <div class="glossary-term__resources">
+            <% entry.relatedResourceIds.forEach(function(rid) { %>
+            <a href="/vandermere/resources#<%= rid %>" class="glossary-term__resource-link">Related Resource →</a>
+            <% }); %>
+          </div>
+          <% } %>
+        </div>
+        <% }); %>
+      </div>
+
+      <div class="library-empty hidden" id="glossaryEmpty">
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <p class="empty-state__heading">No terms found</p>
+          <p class="empty-state__body">Try a different search term.</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>

@@ -1,0 +1,120 @@
+<div class="page page--vandermere">
+  <div class="course-shell">
+
+    <%- include('../../partials/vandermere-nav', { course, currentPage: 'home', currentModuleNumber: 0 }) %>
+
+    <main class="course-main" id="courseMain">
+
+      <!-- Hero -->
+      <div class="course-hero">
+        <div class="course-hero__eyebrow">VANDERMERE APPLIED DYNAMICS · SALES ENABLEMENT</div>
+        <h1 class="course-hero__title">STS-1000 Sales Readiness</h1>
+        <p class="course-hero__subtitle">Stabilizing the Enterprise Workflow Stream</p>
+        <p class="course-hero__desc"><%= course.description %></p>
+        <div class="course-hero__actions">
+          <a href="/vandermere/lesson/1" class="btn btn--primary" id="courseStartBtn">Start Course</a>
+          <div class="course-hero__meta">
+            <span><%= course.modules.length %> lessons</span>
+            <span class="course-hero__sep">·</span>
+            <span>~15 minutes</span>
+            <span class="course-hero__sep">·</span>
+            <span>Knowledge checks included</span>
+          </div>
+        </div>
+        <div class="course-hero__status-line" aria-live="polite">
+          <span class="course-status-badge" id="heroStatusBadge">NOT STARTED</span>
+        </div>
+      </div>
+
+      <!-- Product image -->
+      <div class="course-product-banner">
+        <img
+          src="/projects-static/mcp-training-course/assets/images/sts-1000_panel_closeup.png"
+          alt="Synaptic Throughput Stabilizer STS-1000"
+          class="course-product-banner__img"
+          onerror="this.parentElement.style.display='none'"
+        >
+        <div class="course-product-banner__caption">
+          <span class="course-product-banner__model">MODEL STS-1000</span>
+          <span class="course-product-banner__class">PHYSICALIZED WORKFLOW STABILIZATION SYSTEM</span>
+        </div>
+      </div>
+
+      <!-- Required lessons grid -->
+      <section class="course-section">
+        <div class="course-section__hd">
+          <h2 class="course-section__title">Required Lessons</h2>
+          <p class="course-section__desc">Six short lessons. Complete them in order.</p>
+        </div>
+        <div class="course-module-grid">
+          <% course.modules.forEach(function(mod) { %>
+          <a href="/vandermere/lesson/<%= mod.number %>" class="course-module-card" data-module-id="<%= mod.id %>">
+            <div class="course-module-card__num"><%= mod.number %></div>
+            <div class="course-module-card__body">
+              <div class="course-module-card__title"><%= mod.title %></div>
+              <div class="course-module-card__summary"><%= mod.summary.substring(0, 90) %>…</div>
+              <div class="course-module-card__foot">
+                <span class="course-module-card__duration"><%= mod.duration %></span>
+                <span class="course-module-card__badge" id="mod-badge-<%= mod.id %>">Not Started</span>
+              </div>
+            </div>
+            <div class="course-module-card__check" id="mod-check-<%= mod.id %>">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </a>
+          <% }); %>
+        </div>
+      </section>
+
+      <!-- Quick resource links -->
+      <section class="course-section">
+        <div class="course-section__hd">
+          <h2 class="course-section__title">Knowledge Base</h2>
+          <p class="course-section__desc">Searchable reference materials, technical glossary, and final readiness assessment.</p>
+        </div>
+        <div class="course-kb-links">
+          <a href="/vandermere/resources" class="course-kb-card">
+            <div class="course-kb-card__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div>
+              <div class="course-kb-card__title">Resource Library</div>
+              <div class="course-kb-card__meta"><%= course.resources.length %> documents · 6 categories</div>
+            </div>
+          </a>
+          <a href="/vandermere/glossary" class="course-kb-card">
+            <div class="course-kb-card__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div>
+              <div class="course-kb-card__title">Technical Glossary</div>
+              <div class="course-kb-card__meta"><%= course.glossary.length %> official Vandermere terms</div>
+            </div>
+          </a>
+          <a href="/vandermere/readiness" class="course-kb-card">
+            <div class="course-kb-card__icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div>
+              <div class="course-kb-card__title">Readiness Check</div>
+              <div class="course-kb-card__meta">5-question final assessment</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- About this demo -->
+      <section class="course-section course-about-section">
+        <div class="course-about">
+          <div class="course-about__label">ABOUT THIS DEMO</div>
+          <p class="course-about__text">
+            This course demonstrates Vimeo's video delivery and interactive capabilities in a mixed-media enterprise e-learning context.
+            Course videos are produced with HeyGen AI avatars and hosted on Vimeo. The knowledge base is structured to support
+            enterprise search across video transcripts, static documents, and glossary entries — with hooks for Vimeo's federated search API.
+          </p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
