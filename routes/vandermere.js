@@ -4,6 +4,90 @@ const course = require('../data/vandermere-course');
 
 const EXTRA_SCRIPTS = '<script src="/js/vandermere-course.js"></script>';
 
+// ─── Federated video search ───────────────────────────────────────────────────
+
+// Map Vimeo numeric ID → lesson path, derived from course data at startup.
+const lessonByNumericId = {};
+course.modules.forEach((m) => {
+  if (m.vimeoId) {
+    const numericId = String(m.vimeoId).split(':')[0];
+    lessonByNumericId[numericId] = `/vandermere/lesson/${m.number}`;
+  }
+});
+
+// Module-level metadata cache. One Vimeo API call fetches all Vandermere
+// videos; subsequent searches are matched locally with no per-query calls.
+let metaCache = { ts: 0, videos: [] };
+const META_TTL = 60 * 60 * 1000; // 1 hour
+
+async function fetchVandermereVideos() {
+  const token = process.env.VIMEO_TOKEN;
+  if (!token) return [];
+
+  const params = new URLSearchParams({
+    query: 'vandermere',
+    filter: 'video',
+    per_page: 25,
+    fields: 'video.uri,video.name,video.description,video.tags.tag,video.pictures',
+  });
+
+  try {
+    const res = await fetch(`https://api.vimeo.com/search/189331235/items?${params}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.vimeo.*+json;version=3.4',
+      },
+    });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    // filter=video in the query guarantees only video items; no need to check item.type
+    // (the fields param strips root-level fields like type from the response)
+    return (data.data || [])
+      .filter((item) => item.video?.uri)
+      .map((item) => {
+        const numericId = item.video.uri.split('/').pop();
+        if (!lessonByNumericId[numericId]) return null;
+        const sizes = item.video.pictures?.sizes || [];
+        const thumb = (sizes.find((s) => s.width >= 200 && s.width <= 400) || sizes[0])?.link || null;
+        return {
+          name: item.video.name || '',
+          description: item.video.description || '',
+          tags: (item.video.tags || []).map((t) => (typeof t === 'string' ? t : t.tag || '')),
+          thumbnail: thumb,
+          lessonPath: lessonByNumericId[numericId],
+        };
+      })
+      .filter(Boolean);
+  } catch (_) {
+    return [];
+  }
+}
+
+router.get('/search', async (req, res) => {
+  const q = (req.query.q || '').trim().slice(0, 100).toLowerCase();
+  if (q.length < 2) return res.json({ videos: [] });
+
+  if (Date.now() - metaCache.ts > META_TTL) {
+    const fresh = await fetchVandermereVideos();
+    if (fresh.length > 0 || metaCache.videos.length === 0) {
+      metaCache.videos = fresh;
+      metaCache.ts = Date.now();
+    }
+  }
+
+  const videos = metaCache.videos
+    .filter(
+      (v) =>
+        v.name.toLowerCase().includes(q) ||
+        v.description.toLowerCase().includes(q) ||
+        v.tags.some((t) => t.toLowerCase().includes(q))
+    )
+    .map((v) => ({ title: v.name, thumbnail: v.thumbnail, lessonPath: v.lessonPath }));
+
+  res.json({ videos });
+});
+
 router.get('/', (req, res) => {
   res.render('pages/vandermere/index', {
     title: 'STS-1000 Sales Readiness — Vandermere Applied Dynamics',

@@ -309,40 +309,25 @@
     });
   }
 
-  // ─── Vimeo Federated Search Hook ─────────────────────────────────────────────
-  //
-  // Wire this up to the Vimeo federated search API when available.
-  // The search endpoint accepts a text query and returns matching videos
-  // across your Vimeo account, including transcript-matched results.
-  //
-  // To enable: replace the stub below with a real fetch to your server-side
-  // proxy (e.g. GET /api/vandermere/search?q=<query>) which calls the
-  // Vimeo API and returns { videos: [{ id, title, thumbnail, duration, uri }] }.
-  //
-  // Docs: https://developer.vimeo.com/api/reference/search
+  // ─── Vimeo Federated Search ───────────────────────────────────────────────────
+  // Metadata for all Vandermere videos is cached server-side (1-hour TTL) via a
+  // single Vimeo Federated Search API call (query=vandermere). Searches here do
+  // local text matching against that cache — no per-query API calls.
 
   function searchVimeoVideos(query) {
-    // Stub — replace with live API call when Vimeo search is wired up.
-    // Example:
-    //
-    // const spinner = document.getElementById('searchSpinner');
-    // if (spinner) spinner.classList.remove('hidden');
-    //
-    // fetch('/api/vandermere/search?q=' + encodeURIComponent(query))
-    //   .then(function(r) { return r.json(); })
-    //   .then(function(data) {
-    //     renderVideoResults(data.videos || []);
-    //   })
-    //   .catch(function() { hideVideoResults(); })
-    //   .finally(function() {
-    //     if (spinner) spinner.classList.add('hidden');
-    //   });
-    hideVideoResults(); // remove this line when API is wired up
+    var spinner = document.getElementById('searchSpinner');
+    if (spinner) spinner.classList.remove('hidden');
+
+    fetch('/vandermere/search?q=' + encodeURIComponent(query))
+      .then(function (r) { return r.json(); })
+      .then(function (data) { renderVideoResults(data.videos || []); })
+      .catch(function () { hideVideoResults(); })
+      .finally(function () { if (spinner) spinner.classList.add('hidden'); });
   }
 
   function renderVideoResults(videos) {
-    const container = document.getElementById('videoSearchResults');
-    const list      = document.getElementById('videoResultsList');
+    var container = document.getElementById('videoSearchResults');
+    var list      = document.getElementById('videoResultsList');
     if (!container || !list) return;
 
     if (!videos.length) {
@@ -351,9 +336,12 @@
     }
 
     list.innerHTML = videos.map(function (v) {
-      return '<a href="https://vimeo.com/' + v.id + '" target="_blank" rel="noopener" class="video-result-item">'
+      var img = v.thumbnail
+        ? '<img src="' + v.thumbnail + '" alt="" class="video-result-item__thumb" loading="lazy">'
+        : '';
+      return '<a href="' + (v.lessonPath || '#') + '" class="video-result-item">'
+        + img
         + '<span class="video-result-item__title">' + v.title + '</span>'
-        + '<span class="video-result-item__duration">' + (v.duration || '') + '</span>'
         + '</a>';
     }).join('');
 

@@ -1837,6 +1837,16 @@
 .video-result-item:last-child { border-bottom: none; }
 .video-result-item:hover { color: var(--vm-blue); }
 .video-result-item__duration { font-family: var(--font-mono); font-size: 0.72rem; color: var(--vm-text-muted); flex-shrink: 0; }
+.video-result-item__thumb {
+  width: 72px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 3px;
+  flex-shrink: 0;
+  background: var(--vm-surface-3);
+}
+.video-result-item__title { font-size: 0.8rem; color: var(--vm-text-soft); flex: 1; min-width: 0; }
+.video-result-item:hover .video-result-item__title { color: var(--vm-blue); }
 
 /* Category filter tabs */
 .library-filters {
