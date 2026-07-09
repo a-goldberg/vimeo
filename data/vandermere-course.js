@@ -174,9 +174,9 @@ const course = {
     {
       id: "module-04",
       number: 4,
-      status: "planned",
-      title: "Customer Pain and Use Cases",
-      duration: "2:00–3:00",
+      status: "completed",
+      title: "Diagnosing Procedural Turbulence",
+      duration: "4:19",
       summary:
         "Teach learners to recognize symptoms of procedural turbulence in customer organizations and map specific pain patterns to STS-1000 capabilities and primary use cases.",
       objectives: [
@@ -185,9 +185,10 @@ const course = {
         "Map customer pain to STS-1000 capabilities.",
         "Understand when a customer may be too small or too low-friction for the product.",
       ],
-      vimeoId: "",
+      vimeoId: "1208229917:5f0e4e9433",
       localVideoPath: "",
-      transcript: "",
+      transcript:
+        'By now, you understand what the STS1000 is and how its core stabilization systems work. But customers do not begin a conversation by saying they have elevated decision temperature or workflow cavitation. They tell you that approvals are slow, teams are frustrated, deals keep slipping, meetings multiply, no one is sure who owns the next step. Your job is to recognize the underlying pattern before you introduce the product. Start with symptoms, not components. At Vandermere, we look for five signals of procedural turbulence: friction, latency, drift, cavitation, and heat. Together, these signals reveal whether a customer has an isolated process problem or a broader instability in the way work moves through the organization. You do not need to diagnose every category in every conversation. You need to listen for recurring patterns across teams, systems, and decision points. Consider a customer who says, "Our sales team is closing deals, but the business keeps losing momentum after the customer says yes." That is not simply a sales problem. It may be approval chain congestion, decision temperature buildup, or workflow cavitation between legal, finance, and procurement. In this scenario, the STS1000 helps preserve quote-to-cash motion by regulating workflow pressure and identifying delay patterns before the deal enters a visible stall. Do not lead with the governors or the coils. Lead with the commercial consequence: revenue that should be moving but is not. Now consider a finance organization approaching quarterly close. The customer may describe late reconciliations, recurring exceptions, and executive sign-off that appears only after pressure has already built across the process. That pattern often indicates elevated decision temperature. The STS1000 does not replace the close process. It helps stabilize the decision environment around it by drawing excess cross-functional heat out of the workflow before approvals enter a lockup condition. For the customer, the value is not more complexity, it is fewer last-minute surprises. A third pattern appears when an organization is changing direction faster than its operating model can adapt. A new leadership priority is announced. Different teams interpret it differently. Existing approval paths remain in place. No one is entirely wrong, but execution begins to drift. Over time, responsibility gaps form. Work appears to move, but ownership disappears at critical handoffs. That is operational drift combined with workflow cavitation. The STS1000 helps establish a stable operating baseline and contains the downstream effects of misalignment before they spread into unrelated parts of the organization. Use the diagnostic framework to ask better questions. For friction: where does work become difficult because multiple teams need to act at once? For latency: where does a decision become slower than the business can tolerate? For drift: where do stated priorities and daily execution begin to separate? For cavitation: where does work appear to move, but ownership becomes unclear? And for heat: which decisions become difficult once particular departments enter the discussion? The best STS1000 opportunities are not isolated problems. They are recurring patterns that cross teams, systems, and leadership layers. The STS1000 is not the answer to every slow process. It is designed for organizations where friction, latency, drift, cavitation, and heat repeatedly interact across the enterprise. Your job is to recognize those patterns, connect them to business consequences, and position Vandermere as a stabilization partner rather than another software vendor. In the next lesson, we will turn that diagnosis into a clear sales position and learn how to explain the STS1000 to executives, IT, revenue operations, and compliance leaders.',
       keyTerms: [
         "Procedural Turbulence",
         "Macro-Bureaucratic Drag",
