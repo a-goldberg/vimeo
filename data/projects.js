@@ -39,7 +39,7 @@ const projects = [
     visibility: "Internal",
     updatedAt: "2026-05-06",
     notes:
-      "Procedurally generated from the cached Vimeo OpenAPI spec (data/vimeo-spec.json). Refresh the spec via POST /api/vimeo-reference/refresh-spec when Vimeo releases API updates. Private endpoint annotations can be added to data/vimeo-private-endpoints.json after reviewing Vimeo's internal documentation.",
+      "Procedurally generated from the cached Vimeo OpenAPI spec (data/vimeo-spec.json). To refresh it when Vimeo releases API updates, drop a new spec file into data/ (see CLAUDE.md — the in-app refresh-spec endpoint is disabled until OAuth-based spec fetching is implemented). Private endpoint annotations can be added to data/vimeo-private-endpoints.json after reviewing Vimeo's internal documentation.",
   },
   {
     title: "Vimeo API Playground",
@@ -70,7 +70,7 @@ const projects = [
     visibility: "Customer", // Internal | Customer | Public
     updatedAt: "2026-05-05",
     notes:
-      'Simulating a customer registration form on their own website for an upcoming Vimeo-powered webinar.  Uses the Vimeo API to check if the user is already registered and to submit new registrations.<br><br>Note:  As of 5/5/2026, the "register a new attendee" API endpoint seems to be broken.  I am investigating this with engineering today.',
+      "Simulating a customer registration form on their own website for an upcoming Vimeo-powered webinar.  Uses the Vimeo API to check if the user is already registered and to submit new registrations.",
   },
   {
     title: "SmartCard CMS Embed", // displayed on the card and detail page
@@ -167,7 +167,7 @@ const projects = [
     visibility: "Customer",
     updatedAt: "2026-06-11",
     notes:
-      "Scaffold demo showing a 6-module video-based course with a resource library, technical glossary, and final readiness assessment. Built on the hub's EJS/BEM stack with Vandermere brand theming. Future phases: live Vimeo federated search, AI chatbot Q&A across course content.",
+      "Scaffold demo showing a 6-module video-based course with a resource library, technical glossary, and final readiness assessment. Built on the hub's EJS/BEM stack with Vandermere brand theming. Modules 1-4 are produced; 5-6 are drafted/planned. Live Vimeo federated search has shipped; a course-aware chatbot Q&A layer is the main remaining future phase. See projects/mcp-training-course/README.md for the full roadmap.",
   },
 ];
 

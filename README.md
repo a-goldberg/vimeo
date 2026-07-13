@@ -29,6 +29,8 @@ vimeo-home/
     vimeo-reference.js   — Serves the cached OpenAPI spec
     smart-card.js        — API routes for the SmartCard CMS Embed tool
     webinar-registration.js  — API routes for the Webinar Registration tool
+    lms-demo.js          — SCORM 1.2 upload/runtime simulation for the LMS Integration demo
+    vandermere.js        — Routes + federated video search for the Vandermere STS-1000 course demo
 
   middleware/
     require-vimeo-auth.js  — Middleware: 401 if no user Vimeo session token
@@ -36,18 +38,21 @@ vimeo-home/
   utils/
     helpers.js           — Shared view helpers (formatDate, statusClass)
     vimeo.js             — Shared Vimeo API client (always import this; never call Vimeo directly)
+    request-log.js       — In-memory log of Vimeo API calls; powers the /admin page
 
   views/
     layouts/
       main.ejs           — Outer HTML shell (head, nav, footer)
-    pages/               — One EJS file per page route
+    pages/               — One EJS file per page route (includes a vandermere/ subfolder)
     partials/            — Reusable EJS snippets (cards, pills, tags, etc.)
 
   public/
     css/                 — Six ordered layers: reset → tokens → base → layout → components → pages
     js/                  — One file per page; no build step
 
-  projects/              — Self-contained static tools/demos (served at /projects-static/)
+  projects/              — Self-contained static tools/demos (served at /projects-static/);
+                            also holds Vandermere course planning docs and source images —
+                            see projects/mcp-training-course/README.md
 ```
 
 ---
@@ -248,7 +253,12 @@ router.get('/my-endpoint', requireVimeoAuth, handler);
 - Never commit `.env` to GitHub — it's in `.gitignore`
 - Never put API tokens, passwords, or customer data in front-end JS files
 - Vimeo access tokens are stored server-side only; the browser only sees a session cookie
-- All Vimeo API routes (`/api/vimeo/*`, `/api/smart-card/*`, `/api/webinar-registration/*`, `/api/admin/*`) require an active OAuth session — no anonymous access, no server-side admin token fallback
+- All Vimeo API routes (`/api/vimeo/*`, `/api/smart-card/*`, `/api/webinar-registration/*`, `/api/admin/*`) require an active OAuth session — no anonymous access
+- **Exception:** `routes/webinar-registration.js` and `routes/vandermere.js` use a privileged
+  server-side `VIMEO_TOKEN` (a personal access token) rather than the session token, because they
+  need an account-level capability a standard user OAuth token doesn't have (lead capture; federated
+  search). This is the one place a server-side token is intentionally used — see `CLAUDE.md` for
+  details before assuming "no server-side token" applies everywhere.
 - Logout uses POST (not GET) to prevent CSRF; the `returnTo` redirect param is validated to block open redirects
 - Session IDs are regenerated after OAuth login to prevent session fixation
 - OAuth state includes an expiry timestamp; stale or tampered states are rejected with a 400
@@ -264,3 +274,27 @@ GET /health
 ```
 
 Useful for uptime monitors and confirming a successful deploy.
+
+---
+
+## Known issues, open items & ideas
+
+There's no GitHub issue tracker in use for this repo — this section is the durable home for
+follow-up work. Update it as things get done or superseded.
+
+- **No automated tests.** `npm test` is a stub. The only safety net is manual smoke-testing —
+  click through the key pages after any change (see each tool's section in `CLAUDE.md`).
+- **Vandermere course:** modules 5–6 ("Sales Positioning and Objection Handling", "Enterprise
+  Deployment and the HTA-700 Reveal") are drafted/planned but not yet recorded — they show "Video
+  Coming Soon." A course-aware chatbot Q&A layer over transcripts/glossary/resources is the main
+  future phase after that. Full roadmap, production backlog, and brand/world reference:
+  `projects/mcp-training-course/README.md` → `planning/chatgpt_handoff/`.
+- **Vimeo Embeds demo:** planned support for a bring-your-own access token, and for standalone
+  video IDs/aliased URLs with no ID present in the URL.
+- **Tools/Demos search-filter UI** on the category index pages is a permanent "coming soon"
+  placeholder (disabled input) — not a bug, just unbuilt.
+- **`ADMIN_SECRET` and `VIMEO_USER_ID`** env vars exist in `.env.example` but aren't read anywhere
+  in the code today — either build the feature they imply, or drop them next time you're in there.
+- **`VIMEO_USER_ID` vs. hardcoded ID:** `routes/vandermere.js`'s federated search hardcodes the
+  Vimeo account ID inline rather than reading it from `VIMEO_USER_ID` — low priority, but worth
+  wiring up if this pattern gets reused elsewhere.
