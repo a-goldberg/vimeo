@@ -1,0 +1,82 @@
+{
+  "id": "module-05",
+  "number": 5,
+  "title": "Sales Positioning and Objection Handling",
+  "status": "draft",
+  "duration": "2:30-3:00",
+  "durationSeconds": 170,
+  "required": true,
+  "summary": "Learn how to position the STS-1000 after diagnosing procedural turbulence, tailor the value story by buyer role, and respond to common objections without reducing the product to software, AI, or ordinary workflow automation.",
+  "llmSummary": "This module teaches sales professionals how to position the STS-1000 as a capital infrastructure asset rather than software. It introduces the distinction 'Software observes, automation routes, the STS-1000 stabilizes,' covers buyer-specific messaging for executives, RevOps, IT, Finance, and Compliance, and provides approved responses to objections about workflow software, ERP integration, AI, ROI, capex, consulting, and facilities impact.",
+  "objectives": [
+    "Explain the STS-1000 as a capital infrastructure asset rather than a software platform.",
+    "Use the approved distinction: software observes, automation routes, the STS-1000 stabilizes.",
+    "Tailor the STS-1000 value story for executives, RevOps, IT, Finance, and Compliance.",
+    "Respond to common objections without overexplaining product mechanics.",
+    "Avoid language that weakens the product's infrastructure positioning.",
+    "Know when to escalate deployment, facilities, power, cooling, or service questions to specialists."
+  ],
+  "vimeoId": "",
+  "localVideoPath": "",
+  "thumbnail": "",
+  "transcript": "",
+  "transcriptSegments": [],
+  "keyTerms": [
+    "Sales Positioning",
+    "Objection Handling",
+    "Capital Infrastructure Asset",
+    "Physical Enterprise Stabilizer",
+    "Kinetic Enterprise Ballast",
+    "Operational Continuity Layer",
+    "Workflow Stabilization",
+    "Physicalized Workflow Architecture"
+  ],
+  "searchTags": [
+    "positioning",
+    "objection handling",
+    "workflow software objection",
+    "ERP integration",
+    "AI objection",
+    "ROI",
+    "capex",
+    "buyer messaging",
+    "executive positioning",
+    "RevOps",
+    "IT infrastructure",
+    "Finance",
+    "Compliance",
+    "language to avoid",
+    "sales enablement"
+  ],
+  "relatedResourceIds": [
+    "resource-sts1000-positioning-guide",
+    "resource-objection-handling-guide",
+    "resource-buyer-messaging-matrix",
+    "resource-language-discipline-card",
+    "resource-competitive-positioning-matrix",
+    "resource-technical-escalation-guide"
+  ],
+  "knowledgeCheck": {
+    "id": "kc-m5-01",
+    "question": "Which statement best captures the approved STS-1000 positioning distinction?",
+    "answers": [
+      {
+        "text": "Software observes, automation routes, and the STS-1000 stabilizes.",
+        "correct": true
+      },
+      {
+        "text": "Software is outdated, automation is unnecessary, and the STS-1000 replaces all enterprise systems.",
+        "correct": false
+      },
+      {
+        "text": "The STS-1000 is a dashboard with advanced mechanical styling.",
+        "correct": false
+      },
+      {
+        "text": "The STS-1000 is primarily an AI assistant for approval workflows.",
+        "correct": false
+      }
+    ],
+    "explanation": "The approved distinction is that most enterprise tools observe or route work, while the STS-1000 stabilizes the conditions that allow work to move safely."
+  }
+}
