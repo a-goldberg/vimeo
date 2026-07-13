@@ -1,6 +1,6 @@
 // ── Debug ─────────────────────────────────────────────────────────────────────
-// Set to false to silence verbose SDK tracing once events are confirmed working.
-const DEBUG = true;
+// Set to true to re-enable verbose SDK event tracing in the console while debugging.
+const DEBUG = false;
 const dbg = (...args) => DEBUG && console.debug('[vimeo-embeds]', ...args);
 
 dbg('script loaded — Vimeo SDK available:', typeof window.Vimeo !== 'undefined');

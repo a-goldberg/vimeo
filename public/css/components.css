@@ -357,34 +357,6 @@
   padding: 0;
 }
 
-/* ── Empty state ───────────────────────────────────────────── */
-.empty-state {
-  text-align: center;
-  padding: var(--space-16) var(--space-8);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-bg-elevated);
-}
-
-.empty-state__icon {
-  font-size: 2.5rem;
-  display: block;
-  margin-bottom: var(--space-4);
-  opacity: 0.5;
-}
-
-.empty-state__heading {
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-3);
-}
-
-.empty-state__desc {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  max-width: 40ch;
-  margin-inline: auto;
-}
-
 /* ── Quick links ───────────────────────────────────────────── */
 .quick-links__heading {
   font-size: 0.75rem;
@@ -1088,10 +1060,13 @@
   display: inline-block;
 }
 
-/* ── Breadcrumb ───────────────────────────────────────────────
-   Navigation trail at the top of a docs panel.
+/* ── API breadcrumb ─────────────────────────────────────────────
+   Navigation trail at the top of a docs panel (API Reference /
+   Playground only — built dynamically by vimeo-api-reference.js).
+   For the general page breadcrumb (e.g. project-detail.ejs), see
+   .breadcrumb / .breadcrumb__link / .breadcrumb__current above.
    ──────────────────────────────────────────────────────────── */
-.breadcrumb {
+.api-breadcrumb {
   display: flex;
   align-items: center;
   gap: 0.3rem;
@@ -1100,10 +1075,12 @@
   margin-bottom: 1.125rem;
   flex-wrap: wrap;
 }
-.breadcrumb__sep { color: var(--color-text-soft); }
+.api-breadcrumb__sep { color: var(--color-text-soft); }
 
 /* ── Empty state ──────────────────────────────────────────────
-   Centered placeholder shown before the user selects an item.
+   Centered placeholder shown before the user selects an item, or
+   when a list has nothing to show. Add --framed for the boxed
+   dashed-border look used on category index pages.
    ──────────────────────────────────────────────────────────── */
 .empty-state {
   display: flex;
@@ -1115,6 +1092,14 @@
   height: 100%;
   min-height: 300px;
   color: var(--color-text-muted);
+}
+.empty-state--framed {
+  height: auto;
+  min-height: 0;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated);
+  padding: var(--space-16) var(--space-8);
 }
 .empty-state__icon {
   width: 44px;

@@ -353,7 +353,7 @@ function selectEndpoint(op) {
   const [cat, sub] = (op.tags[0] || 'Other').split('\\');
   const breadcrumb = [cat, sub, prettifyId(op.operationId)].filter(Boolean)
     .map((s, i, arr) => i < arr.length - 1
-      ? `<span>${escHtml(s)}</span><span class="breadcrumb__sep">›</span>`
+      ? `<span>${escHtml(s)}</span><span class="api-breadcrumb__sep">›</span>`
       : `<span>${escHtml(s)}</span>`)
     .join('');
 
@@ -393,7 +393,7 @@ function selectEndpoint(op) {
   const hasBody = !!op.requestBody;
 
   dom.doc.innerHTML = `
-    <nav class="breadcrumb">${breadcrumb}</nav>
+    <nav class="api-breadcrumb">${breadcrumb}</nav>
 
     <div class="api-ep-header">
       <div>
