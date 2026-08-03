@@ -3,7 +3,7 @@
 
     <div class="page-hero">
       <h1 class="page-hero__heading">API Request Monitor</h1>
-      <p class="page-hero__desc">Live log of all Vimeo API calls proxied through this server. Last 5 minutes of data. Updates every 5 seconds.</p>
+      <p class="page-hero__desc">Live log of Vimeo API calls made with <%= locals.vimeoAuth ? 'your connected account' : 'the default demo account' %>. Last 5 minutes of data. Updates every 5 seconds.</p>
     </div>
 
     <div class="admin-toolbar">
@@ -66,7 +66,9 @@
         <h3 class="panel__title">Recent requests</h3>
         <div style="display:flex;align-items:center;gap:var(--space-4)">
           <span class="panel__subtitle" id="log-subtitle"></span>
-          <button class="btn btn--ghost" id="clear-btn" style="font-size:0.78rem;padding:0.2em 0.6em">Clear</button>
+          <% if (locals.vimeoAuth) { %>
+            <button class="btn btn--ghost" id="clear-btn" style="font-size:0.78rem;padding:0.2em 0.6em">Clear</button>
+          <% } %>
         </div>
       </div>
       <div class="panel__body" style="padding:0">

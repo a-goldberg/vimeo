@@ -7,6 +7,7 @@ const MemoryStore = require('memorystore')(session);
 const path = require('path');
 
 const { formatDate, statusClass } = require('./utils/helpers');
+const { clientVimeoAccess } = require('./middleware/vimeo-access');
 const pagesRouter = require('./routes/pages');
 const apiRouter = require('./routes/api');
 const smartCardRouter = require('./routes/smart-card');
@@ -70,7 +71,13 @@ app.locals.statusClass = statusClass;
 // Templates read vimeoAuth.userName etc. — never contains the access token.
 // currentPath is used by the auth widget to set the returnTo URL.
 app.use((req, res, next) => {
-  res.locals.vimeoAuth = req.session?.vimeoAuth || null;
+  const auth = req.session?.vimeoAuth;
+  res.locals.vimeoAuth = auth ? {
+    userUri: auth.userUri,
+    userName: auth.userName,
+    userProfileLink: auth.userProfileLink,
+  } : null;
+  res.locals.vimeoAccess = clientVimeoAccess(req);
   res.locals.currentPath = req.path;
   next();
 });

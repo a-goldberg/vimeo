@@ -6,10 +6,10 @@ const requireVimeoAuth = require('../middleware/require-vimeo-auth');
 router.use(requireVimeoAuth);
 
 // Lead capture endpoints require CAPABILITY_ACCESS_LEADS — a Vimeo account-level capability
-// not automatically granted to standard OAuth user tokens. Use VIMEO_TOKEN (a privileged
-// server-side PAT that has the capability) when available; fall back to the session token.
+// not automatically granted to standard OAuth user tokens. A connected visitor's token takes
+// precedence; VIMEO_TOKEN remains the fallback for routes that permit demo-mode reads.
 function resolveCredentials(req) {
-  const token = process.env.VIMEO_TOKEN || req.session.vimeoAuth.accessToken;
+  const token = req.session.vimeoAuth.accessToken || process.env.VIMEO_TOKEN;
   const eventId = (req.query.eventId || '').trim() || process.env.VIMEO_EVENT_ID;
   return { token, eventId };
 }
@@ -19,6 +19,7 @@ function meta(req) {
     referer: req.headers.referer || null,
     ip: (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress,
     userAgent: req.headers['user-agent'] || null,
+    vimeoUserUri: req.session?.vimeoAuth?.userUri || null,
   };
 }
 

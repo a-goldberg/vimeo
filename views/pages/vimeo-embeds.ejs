@@ -8,7 +8,7 @@
       <p class="page-hero__desc">Load any Vimeo video to explore the structured metadata it generates — the VideoObject schema and Open Graph tags that help search engines and AI answer engines understand your content. Watch Player SDK events stream in live as you interact with the video.</p>
     </div>
 
-<% if (locals.vimeoAuth) { %>
+<% if (locals.vimeoAccess.canRead) { %>
 
     <!-- Video ID input -->
     <div class="card">
@@ -25,6 +25,7 @@
           <button type="submit" class="btn btn--primary" id="loadBtn">Load Video</button>
         </div>
         <p id="inputError" class="form-group__error hidden"></p>
+        <%- include('../partials/vimeo-video-examples', { inputId: 'videoInput', formId: 'loadForm' }) %>
       </form>
     </div>
 

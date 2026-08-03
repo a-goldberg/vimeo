@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { vimeo, handleVimeoError } = require('../utils/vimeo');
+const {
+  requireVimeoMethodAccess,
+  createAnonymousVimeoRateLimit,
+} = require('../middleware/vimeo-access');
 
 // Capture raw body for all content types, including application/vnd.vimeo.*+json.
 // express.json() (mounted globally) only parses application/json, so Vimeo-specific
@@ -10,15 +14,11 @@ router.use(express.raw({ type: '*/*', limit: '100kb' }));
 // Forwards any METHOD /api/vimeo/<path>?<qs> → METHOD https://api.vimeo.com/<path>?<qs>
 // req.url inside this router is already relative to the mount point and includes the query string.
 //
-// Requires an active user OAuth session — no fallback to the server admin token.
-router.all('*', async (req, res) => {
-  const token = req.session?.vimeoAuth?.accessToken;
-  if (!token) {
-    return res.status(401).json({
-      error: 'Vimeo account not connected. Connect your Vimeo account to use this feature.',
-      authUrl: '/auth/vimeo/start',
-    });
-  }
+// Demo-mode reads use VIMEO_TOKEN. All other methods require a user OAuth session.
+const anonymousRateLimit = createAnonymousVimeoRateLimit();
+
+router.all('*', requireVimeoMethodAccess, anonymousRateLimit, async (req, res) => {
+  const { token } = req.vimeoAccess;
   try {
     const opts = {
       token,
@@ -29,8 +29,13 @@ router.all('*', async (req, res) => {
         vimeoUserUri: req.session?.vimeoAuth?.userUri || null,
       },
     };
-    if (req.body && req.body.length) {
-      opts.body = req.body;
+    const requestBody = Buffer.isBuffer(req.body)
+      ? req.body
+      : req.body && Object.keys(req.body).length
+        ? JSON.stringify(req.body)
+        : null;
+    if (requestBody) {
+      opts.body = requestBody;
       if (req.headers['content-type']) {
         opts.headers = { 'Content-Type': req.headers['content-type'] };
       }

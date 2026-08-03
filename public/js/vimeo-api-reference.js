@@ -400,18 +400,13 @@ function selectEndpoint(op) {
         <h1 class="api-ep-title">${escHtml(prettifyId(op.operationId))}</h1>
         <p class="api-ep-summary">${escHtml(op.summary)}</p>
       </div>
-      ${window.VIMEO_CONNECTED
-        ? `<a href="/vimeo-api-playground?op=${encodeURIComponent(op.operationId)}" class="btn btn--primary api-try-btn">
-             Try it out
-             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-               <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-             </svg>
-           </a>`
-        : `<a href="/auth/vimeo/start?returnTo=${encodeURIComponent('/vimeo-api-playground?op=' + op.operationId)}" class="btn btn--secondary api-try-btn" title="Connect your Vimeo account to use the Playground">
-             Connect to try it out
-           </a>`
-      }
+      <a href="/vimeo-api-playground?op=${encodeURIComponent(op.operationId)}" class="btn btn--primary api-try-btn">
+        Try it out
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1 2-2V8a2 2 0 0 1 2-2h6"/>
+          <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+      </a>
     </div>
 
     <hr class="api-divider">

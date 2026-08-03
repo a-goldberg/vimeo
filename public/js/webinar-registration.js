@@ -83,6 +83,7 @@ regForm.addEventListener("submit", async (e) => {
     regError.classList.remove("hidden");
     return;
   }
+  if (!window.vimeoWriteAllowed(showToast, 'Demo mode: connect your Vimeo account to submit a registration.')) return;
 
   regError.classList.add("hidden");
   registerBtn.disabled = true;
@@ -138,6 +139,8 @@ function showAlreadyRegistered() {
 
 // ── Get Attendees List ───────────────────────────────────────────────────────────
 getAttendeesBtn.addEventListener("click", async () => {
+  if (!window.vimeoWriteAllowed(showToast, 'Connect your Vimeo account to view attendee data.')) return;
+
   getAttendeesBtn.disabled = true;
   getAttendeesBtn.textContent = "Loading…";
   attendeesTable.classList.remove("hidden");

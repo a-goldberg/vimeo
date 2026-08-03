@@ -8,7 +8,7 @@
       <p class="page-hero__desc">Enter a Vimeo video URL to preview its smart card, edit metadata, and manage tags and thumbnails.</p>
     </div>
 
-<% if (locals.vimeoAuth) { %>
+<% if (locals.vimeoAccess.canRead) { %>
 
     <!-- URL input -->
     <div class="card">
@@ -25,6 +25,7 @@
           <button type="submit" class="btn btn--primary" id="loadBtn">Load Video</button>
         </div>
         <p id="urlError" class="form-group__error hidden"></p>
+        <%- include('../partials/vimeo-video-examples', { inputId: 'urlInput', formId: 'urlForm' }) %>
       </form>
     </div>
 
@@ -75,7 +76,7 @@
       <div class="card panel">
         <div class="panel__header">
           <h2 class="panel__title">Video Metadata</h2>
-          <p class="panel__subtitle">Changes are saved directly to Vimeo</p>
+          <p class="panel__subtitle"><%= locals.vimeoAccess.canWrite ? 'Changes are saved directly to Vimeo' : 'Demo mode: connect your account to save changes' %></p>
         </div>
         <div class="panel__body">
 

@@ -7,11 +7,11 @@
       <p class="page-hero__desc">
         Register attendees for a Vimeo-powered webinar. Enter your event
         credentials below, or leave them blank to use the server defaults from
-        <code>.env</code>.
+        <code>.env</code>.<% if (!locals.vimeoAccess.canWrite) { %> Connect your Vimeo account to submit registrations or view attendee data.<% } %>
       </p>
     </div>
 
-<% if (locals.vimeoAuth) { %>
+<% if (locals.vimeoAccess.canRead) { %>
 
     <!-- Event config (optional override) -->
     <div class="card">

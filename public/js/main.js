@@ -4,6 +4,25 @@
 (function () {
   'use strict';
 
+  window.vimeoWriteAllowed = function vimeoWriteAllowed(notify, message) {
+    if (window.VIMEO_ACCESS?.canWrite) return true;
+    notify(message || 'Demo mode: connect your Vimeo account to make changes.', 'info');
+    return false;
+  };
+
+  document.querySelectorAll('[data-vimeo-example-url]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const input = document.getElementById(link.dataset.inputId);
+      const form = document.getElementById(link.dataset.formId);
+      if (!input || !form) return;
+
+      input.value = link.dataset.vimeoExampleUrl;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      form.requestSubmit();
+    });
+  });
+
   // ── Mobile nav toggle ───────────────────────────────────────
   const toggle = document.getElementById('navToggle');
   const links  = document.getElementById('navLinks');

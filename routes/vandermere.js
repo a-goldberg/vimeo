@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const course = require('../data/vandermere-course');
+const { getVimeoAccess } = require('../middleware/vimeo-access');
+const { vimeo } = require('../utils/vimeo');
 
 const EXTRA_SCRIPTS = '<script src="/js/vandermere-course.js"></script>';
 
@@ -17,11 +19,10 @@ course.modules.forEach((m) => {
 
 // Module-level metadata cache. One Vimeo API call fetches all Vandermere
 // videos; subsequent searches are matched locally with no per-query calls.
-let metaCache = { ts: 0, videos: [] };
+const metaCaches = new Map();
 const META_TTL = 60 * 60 * 1000; // 1 hour
 
-async function fetchVandermereVideos() {
-  const token = process.env.VIMEO_TOKEN;
+async function fetchVandermereVideos(token, meta) {
   if (!token) return [];
 
   const params = new URLSearchParams({
@@ -32,12 +33,7 @@ async function fetchVandermereVideos() {
   });
 
   try {
-    const res = await fetch(`https://api.vimeo.com/search/189331235/items?${params}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/vnd.vimeo.*+json;version=3.4',
-      },
-    });
+    const res = await vimeo('GET', `/search/189331235/items?${params}`, { token, _meta: meta });
     if (!res.ok) return [];
 
     const data = await res.json();
@@ -68,11 +64,22 @@ router.get('/search', async (req, res) => {
   const q = (req.query.q || '').trim().slice(0, 100).toLowerCase();
   if (q.length < 2) return res.json({ videos: [] });
 
+  const access = getVimeoAccess(req);
+  const cacheKey = access.connected ? req.session.vimeoAuth.userUri || 'oauth' : 'demo';
+  const metaCache = metaCaches.get(cacheKey) || { ts: 0, videos: [] };
+  const requestMeta = {
+    referer: req.headers.referer || null,
+    ip: (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress,
+    userAgent: req.headers['user-agent'] || null,
+    vimeoUserUri: req.session?.vimeoAuth?.userUri || null,
+  };
+
   if (Date.now() - metaCache.ts > META_TTL) {
-    const fresh = await fetchVandermereVideos();
+    const fresh = await fetchVandermereVideos(access.token, requestMeta);
     if (fresh.length > 0 || metaCache.videos.length === 0) {
       metaCache.videos = fresh;
       metaCache.ts = Date.now();
+      metaCaches.set(cacheKey, metaCache);
     }
   }
 

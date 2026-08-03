@@ -231,6 +231,7 @@ videoTagsInput.addEventListener('keydown', e => {
 async function addTag() {
   const tag = videoTagsInput.value.trim();
   if (!tag || !state.videoId) return;
+  if (!window.vimeoWriteAllowed(showToast)) return;
 
   if (state.tags.includes(tag)) {
     showToast(`Tag "${tag}" already exists`, 'warning');
@@ -256,6 +257,7 @@ async function addTag() {
 tagsContainer.addEventListener('click', async (e) => {
   const btn = e.target.closest('.chip__remove');
   if (!btn || !state.videoId) return;
+  if (!window.vimeoWriteAllowed(showToast)) return;
 
   const tag = btn.dataset.tag;
   btn.disabled = true;
@@ -275,6 +277,7 @@ tagsContainer.addEventListener('click', async (e) => {
 // ── Save metadata ─────────────────────────────────────────────────────────────
 saveMetadataBtn.addEventListener('click', async () => {
   if (!state.videoId) return;
+  if (!window.vimeoWriteAllowed(showToast)) return;
 
   saveMetadataBtn.disabled = true;
   saveMetadataBtn.textContent = 'Saving...';
@@ -449,6 +452,7 @@ function formatTranscript(segments) {
 // ── Thumbnail upload ──────────────────────────────────────────────────────────
 uploadThumbBtn.addEventListener('click', async () => {
   if (!state.thumbFile || !state.videoId) return;
+  if (!window.vimeoWriteAllowed(showToast)) return;
 
   uploadThumbBtn.disabled = true;
   uploadThumbBtn.textContent = 'Uploading...';

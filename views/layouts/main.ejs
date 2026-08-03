@@ -34,6 +34,15 @@
 
   <%- include('../partials/footer') %>
 
+  <script>
+    window.VIMEO_ACCESS = Object.freeze({
+      connected: <%= Boolean(locals.vimeoAccess.connected) %>,
+      demoAvailable: <%= Boolean(locals.vimeoAccess.demoAvailable) %>,
+      canRead: <%= Boolean(locals.vimeoAccess.canRead) %>,
+      canWrite: <%= Boolean(locals.vimeoAccess.canWrite) %>,
+      mode: '<%= locals.vimeoAccess.mode %>'
+    });
+  </script>
   <script src="/js/main.js"></script>
   <%# To load a page-specific script, pass extraScripts from the route: %>
   <%# res.render('pages/foo', { extraScripts: '<script src="/js/foo.js"><\/script>' }) %>

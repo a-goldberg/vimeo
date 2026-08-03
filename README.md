@@ -165,22 +165,22 @@ These are good for:
 If a tool needs to call the Vimeo API:
 
 1. Add a server-side route file in `routes/` and mount it in `server.js`
-2. Apply `requireVimeoAuth` middleware — all Vimeo-touching routes require a user session
-3. Use `req.session.vimeoAuth.accessToken` as the token in each `vimeo()` call
+2. Apply `requireVimeoRead` or `requireVimeoWrite` from `middleware/vimeo-access.js`
+3. Use `req.vimeoAccess.token` as the token in each `vimeo()` call
 4. Have the browser call your local Express endpoint; the token never touches the browser
 
 Example pattern:
 ```
 Browser → GET /api/my-tool/results  (session cookie sent automatically)
-       → requireVimeoAuth checks session, rejects with 401 if not connected
-       → handler calls vimeo('GET', '/endpoint', { token: req.session.vimeoAuth.accessToken })
+       → requireVimeoRead resolves the OAuth session or VIMEO_TOKEN fallback
+       → handler calls vimeo('GET', '/endpoint', { token: req.vimeoAccess.token })
        → returns JSON to browser
 ```
 
-Show the connect prompt on the EJS page template when not authenticated:
+Show the tool whenever either demo or OAuth read access is available:
 
 ```ejs
-<% if (locals.vimeoAuth) { %>
+<% if (locals.vimeoAccess.canRead) { %>
   <!-- tool UI here -->
 <% } else { %>
   <%- include('../partials/vimeo-auth-required') %>
@@ -224,26 +224,17 @@ Generate a secret: `node -e "console.log(require('crypto').randomBytes(48).toStr
 
 - After connecting, `req.session.vimeoAuth` holds `{ accessToken, userUri, userName, userProfileLink }`.
 - All EJS templates get `vimeoAuth` (minus the token) via `res.locals`.
-- All Vimeo API routes require an active session — there is no server-side admin token fallback.
+- Connected visitors use their OAuth token for reads and writes. Anonymous GET/HEAD requests use
+  `VIMEO_TOKEN`; anonymous Vimeo mutations are rejected by both the browser and server.
 - Sessions expire after 8 hours. A PM2 restart clears all sessions (memorystore is in-process).
 
-### Adding a Vimeo-authenticated tool page
+### Adding a Vimeo write route
 
-Show the connect prompt when the user hasn't authenticated:
-
-```ejs
-<% if (!vimeoAuth) { %>
-  <%- include('../partials/vimeo-auth-required') %>
-<% } else { %>
-  <!-- tool UI here -->
-<% } %>
-```
-
-For API routes that must have a user token (no admin fallback):
+All Vimeo mutations must require a user token, even when the browser also suppresses the action:
 
 ```js
-const requireVimeoAuth = require('../middleware/require-vimeo-auth');
-router.get('/my-endpoint', requireVimeoAuth, handler);
+const { requireVimeoWrite } = require('../middleware/vimeo-access');
+router.patch('/my-endpoint', requireVimeoWrite, handler);
 ```
 
 ---
@@ -253,12 +244,12 @@ router.get('/my-endpoint', requireVimeoAuth, handler);
 - Never commit `.env` to GitHub — it's in `.gitignore`
 - Never put API tokens, passwords, or customer data in front-end JS files
 - Vimeo access tokens are stored server-side only; the browser only sees a session cookie
-- All Vimeo API routes (`/api/vimeo/*`, `/api/smart-card/*`, `/api/webinar-registration/*`, `/api/admin/*`) require an active OAuth session — no anonymous access
-- **Exception:** `routes/webinar-registration.js` and `routes/vandermere.js` use a privileged
-  server-side `VIMEO_TOKEN` (a personal access token) rather than the session token, because they
-  need an account-level capability a standard user OAuth token doesn't have (lead capture; federated
-  search). This is the one place a server-side token is intentionally used — see `CLAUDE.md` for
-  details before assuming "no server-side token" applies everywhere.
+- Anonymous Vimeo GET/HEAD requests use `VIMEO_TOKEN`. Any data readable with that token must be
+  treated as public while demo mode is enabled.
+- The generic anonymous Vimeo proxy allows 60 requests per IP per minute.
+- Anonymous Vimeo POST/PUT/PATCH/DELETE requests are rejected with `403` and never forwarded.
+- Anonymous `/admin` reads show demo-token traffic; connected visitors see their account's traffic.
+  Clearing logs and all webinar registration/attendee APIs remain OAuth-gated.
 - Logout uses POST (not GET) to prevent CSRF; the `returnTo` redirect param is validated to block open redirects
 - Session IDs are regenerated after OAuth login to prevent session fixation
 - OAuth state includes an expiry timestamp; stale or tampered states are rejected with a 400

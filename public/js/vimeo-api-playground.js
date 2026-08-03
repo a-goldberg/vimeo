@@ -308,20 +308,18 @@ function selectEndpoint(op) {
   dom.doc.classList.remove("hidden");
   dom.doc.parentElement.scrollTop = 0;
 
-  // Don't allow destructive operations until I can hook up the OAuth bit, so users can play with their own data
-
-  if (["post", "put", "get"].includes(op.method)) {
-    document
-      .getElementById("pg-send")
-      .addEventListener("click", () =>
-        sendRequest(op, hasBody ? bodyInfo.contentType : null),
-      );
-  } else document.getElementById("pg-send").disabled = true;
+  document
+    .getElementById("pg-send")
+    .addEventListener("click", () =>
+      sendRequest(op, hasBody ? bodyInfo.contentType : null),
+    );
 }
 
 // ── Request execution ─────────────────────────────────────────────────────────
 
 async function sendRequest(op, contentType) {
+  if (op.method !== 'get' && !window.vimeoWriteAllowed(showToast)) return;
+
   const sendBtn = document.getElementById('pg-send');
   const responseEl = document.getElementById('pg-response');
   const statusBadge = document.getElementById('pg-status-badge');

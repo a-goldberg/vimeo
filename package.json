@@ -7,10 +7,10 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "lint": "echo \"No linter configured yet\"",
-    "test": "echo \"No tests configured yet\""
+    "test": "node --test"
   },
   "dependencies": {
-    "adm-zip": "^0.5.17",
+    "adm-zip": "^0.6.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",

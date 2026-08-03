@@ -14,13 +14,14 @@ function addEntry(entry) {
   if (entries.length > MAX_ENTRIES) entries.length = MAX_ENTRIES;
 }
 
-function getEntries() {
+function getEntries(predicate) {
   evict();
-  return entries;
+  return predicate ? entries.filter(predicate) : entries;
 }
 
-function getStats() {
+function getStats(predicate) {
   evict();
+  const selectedEntries = predicate ? entries.filter(predicate) : entries;
 
   const now = Date.now();
   const BUCKET_MS = 10_000;
@@ -37,7 +38,7 @@ function getStats() {
   const byIp = {};
   let latestRateLimit = null;
 
-  for (const e of entries) {
+  for (const e of selectedEntries) {
     const ts = new Date(e.timestamp).getTime();
 
     // Bucket assignment
@@ -63,7 +64,7 @@ function getStats() {
   }
 
   return {
-    totalEntries: entries.length,
+    totalEntries: selectedEntries.length,
     buckets: buckets.map((b) => ({
       label: new Date(b.startMs).toISOString(),
       count: b.count,
@@ -86,8 +87,8 @@ function extractPath(url) {
   }
 }
 
-function clear() {
-  entries = [];
+function clear(predicate) {
+  entries = predicate ? entries.filter((entry) => !predicate(entry)) : [];
 }
 
 // Shared helper: build and record one log entry from a fetch Response.

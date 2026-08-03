@@ -4,8 +4,8 @@
 // Usage:
 //   const { vimeo, handleVimeoError } = require('./utils/vimeo');
 //
-// Always pass a token explicitly — every call requires a user OAuth session token
-// obtained via the /auth/vimeo/* flow. There is no server-side admin token fallback.
+// Always pass a token explicitly. Route access middleware decides whether that token
+// comes from a connected user's OAuth session or the read-only demo fallback.
 
 const requestLog = require('./request-log');
 
@@ -14,7 +14,7 @@ const VIMEO_VERSION = '3.4';
 
 // Builds the standard Vimeo auth + version headers.
 // Pass extra = { 'Content-Type': 'application/json' } etc. when needed.
-// token is required — callers must supply it explicitly from req.session.vimeoAuth.accessToken.
+// token is required — callers obtain it from the shared Vimeo access middleware.
 function vimeoHeaders(extra = {}, token) {
   return {
     Authorization: `Bearer ${token}`,
@@ -30,7 +30,7 @@ function vimeoHeaders(extra = {}, token) {
 //   options  — {
 //     headers  — extra request headers (optional)
 //     body     — request body (optional)
-//     token    — user OAuth session token (required)
+//     token    — resolved Vimeo access token (required)
 //     _meta    — { referer, ip, userAgent, vimeoUserUri } for request logging (optional)
 //   }
 //
